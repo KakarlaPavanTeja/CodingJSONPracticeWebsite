@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .loader {
-            border-top-color: #ffffff;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
+        body { font-family: 'Inter', sans-serif; }
+        .loader { border-top-color: #ffffff; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .selection-card {
             border: 1px solid #334155;
             border-radius: 0.75rem;
@@ -32,36 +19,17 @@
             background-color: #1e293b;
             cursor: pointer;
         }
-
         .selection-card:hover {
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
             border-color: #38bdf8;
             transform: translateY(-4px);
         }
-
-        .file-upload-label {
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            padding: 1.5rem;
-        }
-
+        .file-upload-label { cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 1.5rem; }
         .icon-container {
-            width: 4rem;
-            height: 4rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
+            width: 4rem; height: 4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;
         }
     </style>
 </head>
-
 <body class="bg-slate-900 min-h-screen flex items-center justify-center p-4">
 
     <main class="w-full max-w-4xl mx-auto">
@@ -69,39 +37,23 @@
         <div id="type-selection-page">
             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
                 <header class="text-center mb-10">
-                    <div
-                        class="inline-flex items-center justify-center bg-slate-700 text-sky-400 rounded-full p-3 mb-4 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                        </svg>
+                    <div class="inline-flex items-center justify-center bg-slate-700 text-sky-400 rounded-full p-3 mb-4 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                     </div>
-                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Coding Question JSON
-                        Preparation</h1>
+                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Coding Question JSON Preparation</h1>
                     <p class="mt-3 text-lg text-slate-400">Step 1: Select the question type.</p>
-                    <button id="show-guides-btn"
-                        class="mt-4 text-sky-400 hover:text-sky-300 transition-colors text-sm font-medium">
+                     <button id="show-guides-btn" class="mt-4 text-sky-400 hover:text-sky-300 transition-colors text-sm font-medium">
                         Reference & Guides &rarr;
                     </button>
                 </header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div id="select-standard" class="selection-card">
-                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-emerald-400"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                            </svg></div>
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg></div>
                         <h3 class="text-xl font-semibold text-slate-200">Standard Question</h3>
                         <p class="mt-1 text-slate-400">For arrays, strings, math, etc.</p>
                     </div>
                     <div id="select-node" class="selection-card">
-                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-sky-400"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                            </svg></div>
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg></div>
                         <h3 class="text-xl font-semibold text-slate-200">Node-Based Question</h3>
                         <p class="mt-1 text-slate-400">For Linked Lists, Binary Trees.</p>
                     </div>
@@ -111,38 +63,23 @@
 
         <!-- Page 2: Action Selection (Create/Update) -->
         <div id="action-selection-page" class="hidden">
-            <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
-                <button id="back-to-type"
-                    class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
+             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
+                <button id="back-to-type" class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back to Question Type
                 </button>
-                <header class="text-center mb-10">
+                 <header class="text-center mb-10">
                     <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Create or Update?</h1>
                     <p class="mt-3 text-lg text-slate-400">Step 2: Choose your action.</p>
                 </header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div id="select-create" class="selection-card">
-                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-green-400"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg></div>
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
                         <h3 class="text-xl font-semibold text-slate-200">Create New</h3>
                         <p class="mt-1 text-slate-400">Generate a new JSON from scratch.</p>
                     </div>
                     <div id="select-update" class="selection-card">
-                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-yellow-400"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
-                            </svg></div>
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" /></svg></div>
                         <h3 class="text-xl font-semibold text-slate-200">Update Existing</h3>
                         <p class="mt-1 text-slate-400">Modify a JSON file, keeping IDs.</p>
                     </div>
@@ -153,40 +90,24 @@
         <!-- Page 3: Preparation Page -->
         <div id="preparation-page" class="hidden">
             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
-                <button id="back-to-action"
-                    class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
+                 <button id="back-to-action" class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Back to Action Selection
                 </button>
                 <header class="text-center mb-10">
-                    <h1 id="prep-page-title" class="text-3xl md:text-4xl font-bold text-slate-100 tracking-tight"></h1>
-                    <p class="mt-2 text-lg text-slate-400">Step 3: Upload your files.</p>
+                     <h1 id="prep-page-title" class="text-3xl md:text-4xl font-bold text-slate-100 tracking-tight"></h1>
+                     <p class="mt-2 text-lg text-slate-400">Step 3: Upload your files.</p>
                 </header>
-
-                <div id="node-h-warning"
-                    class="hidden mb-8 bg-sky-900/50 border border-sky-700 text-sky-300 px-4 py-3 rounded-lg text-sm flex items-start">
-                    <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div><span class="font-bold">Important:</span> For Node-Based questions, ensure your `.lua` file has
-                        a `NODE_H_CONTENT` section.</div>
+                
+                <div id="node-h-warning" class="hidden mb-8 bg-sky-900/50 border border-sky-700 text-sky-300 px-4 py-3 rounded-lg text-sm flex items-start">
+                    <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <div><span class="font-bold">Important:</span> For Node-Based questions, ensure your `.lua` file has a `NODE_H_CONTENT` section.</div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                     <div id="existing-json-upload-wrapper" class="selection-card hidden">
                         <label for="existing-json-upload" class="file-upload-label">
-                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-yellow-400" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                                    </path>
-                                </svg></div>
+                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg></div>
                             <h3 class="text-lg font-semibold text-slate-200">Upload Existing JSON</h3>
                             <p id="existing-json-filename" class="mt-1 text-sm text-slate-400">Select file to update</p>
                         </label>
@@ -194,25 +115,15 @@
                     </div>
                     <div class="selection-card">
                         <label for="lua-upload" class="file-upload-label">
-                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-sky-400" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                    </path>
-                                </svg></div>
+                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
                             <h3 class="text-lg font-semibold text-slate-200">Upload .lua Config</h3>
                             <p id="lua-filename" class="mt-1 text-sm text-slate-400">Select a file</p>
                         </label>
                         <input id="lua-upload" type="file" class="hidden" accept=".lua">
                     </div>
                     <div class="selection-card">
-                        <label for="testcases-upload" class="file-upload-label">
-                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-emerald-400" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 21h7a2 2 0 002-2V5a2 2 0 00-2-2h-7a2 2 0 00-2 2v14a2 2 0 002 2zM10 9h4m-4 4h4m4-8v4m-4-4h4">
-                                    </path>
-                                </svg></div>
+                         <label for="testcases-upload" class="file-upload-label">
+                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V5a2 2 0 00-2-2h-7a2 2 0 00-2 2v14a2 2 0 002 2zM10 9h4m-4 4h4m4-8v4m-4-4h4"></path></svg></div>
                             <h3 class="text-lg font-semibold text-slate-200">Upload .json Test Cases</h3>
                             <p id="testcases-filename" class="mt-1 text-sm text-slate-400">Select a file</p>
                         </label>
@@ -220,128 +131,84 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <button id="generate-btn"
-                        class="w-full md:w-auto bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sky-300/50 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed mx-auto">
-                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                        </svg>
+                     <button id="generate-btn" class="w-full md:w-auto bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sky-300/50 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed mx-auto">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         <span id="button-text">Generate & Download JSON</span>
-                        <div id="loader"
-                            class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 hidden">
-                        </div>
+                        <div id="loader" class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 hidden"></div>
                     </button>
-                    <div id="success-message"
-                        class="mt-6 text-green-300 bg-green-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-green-700">
-                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg><span class="font-medium"></span></div>
-                    <div id="error-message"
-                        class="mt-6 text-red-300 bg-red-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-red-700">
-                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg><span class="font-medium"></span></div>
+                    <div id="success-message" class="mt-6 text-green-300 bg-green-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-green-700"><svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="font-medium"></span></div>
+                    <div id="error-message" class="mt-6 text-red-300 bg-red-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-red-700"><svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="font-medium"></span></div>
                 </div>
             </div>
         </div>
 
         <!-- Page 4: Guides Page -->
         <div id="guides-page" class="hidden">
-            <div
-                class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700 text-slate-300">
-                <button id="back-to-home-btn"
-                    class="mb-8 flex items-center text-slate-400 hover:text-sky-400 transition-colors"><svg
-                        class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>Back to Home</button>
-                <header class="text-center mb-10">
-                    <h1 class="text-4xl font-bold text-slate-100 tracking-tight">Reference & Guides</h1>
-                </header>
+            <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700 text-slate-300">
+                <button id="back-to-home-btn" class="mb-8 flex items-center text-slate-400 hover:text-sky-400 transition-colors"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>Back to Home</button>
+                <header class="text-center mb-10"><h1 class="text-4xl font-bold text-slate-100 tracking-tight">Reference & Guides</h1></header>
                 <div class="space-y-10">
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">How to Use
-                        </h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">How to Use</h2>
                         <ol class="list-decimal list-inside space-y-3 text-slate-300">
-                            <li><strong class="font-semibold text-slate-200">Choose Question Type:</strong> On the home
-                                page, select "Standard" or "Node-Based".</li>
-                            <li><strong class="font-semibold text-slate-200">Choose Action:</strong> Select "Create New"
-                                for a new question or "Update Existing" to modify one.</li>
-                            <li><strong class="font-semibold text-slate-200">Prepare Your Files:</strong> Use the
-                                outline templates linked below to prepare your `.lua` and `.json` files.</li>
-                            <li><strong class="font-semibold text-slate-200">Upload Files:</strong> Upload all required
-                                files. The "Update" action requires the existing JSON file as well.</li>
-                            <li><strong class="font-semibold text-slate-200">Generate & Download:</strong> Click the
-                                button to receive your final `coding_questions.json` file.</li>
+                            <li><strong class="font-semibold text-slate-200">Choose Question Type:</strong> On the home page, select "Standard" or "Node-Based".</li>
+                            <li><strong class="font-semibold text-slate-200">Choose Action:</strong> Select "Create New" for a new question or "Update Existing" to modify one.</li>
+                            <li><strong class="font-semibold text-slate-200">Prepare Your Files:</strong> Use the outline templates linked below to prepare your `.lua` and `.json` files.</li>
+                            <li><strong class="font-semibold text-slate-200">Upload Files:</strong> Upload all required files. The "Update" action requires the existing JSON file as well.</li>
+                            <li><strong class="font-semibold text-slate-200">Generate & Download:</strong> Click the button to receive your final `coding_questions.json` file.</li>
                         </ol>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool
-                            Features</h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool Features</h2>
                         <ul class="list-disc list-inside space-y-2 text-slate-300">
-                            <li><strong class="font-semibold text-slate-200">Create & Update:</strong> Supports both
-                                generating new question JSONs and updating existing ones while preserving key IDs.</li>
-                            <li><strong class="font-semibold text-slate-200">Dual Question Type Support:</strong> Works
-                                for both Standard and Node-Based (Linked List, Binary Tree) questions.</li>
-                            <li><strong class="font-semibold text-slate-200">Automatic Weightage Calculation:</strong>
-                                Test case weights are calculated for you based on question difficulty.</li>
-                            <li><strong class="font-semibold text-slate-200">Comprehensive Parsing:</strong> Handles all
-                                metadata, hints, follow-up questions, and debug code.</li>
+                            <li><strong class="font-semibold text-slate-200">Create & Update:</strong> Supports both generating new question JSONs and updating existing ones while preserving key IDs.</li>
+                            <li><strong class="font-semibold text-slate-200">Dual Question Type Support:</strong> Works for both Standard and Node-Based (Linked List, Binary Tree) questions.</li>
+                            <li><strong class="font-semibold text-slate-200">Automatic Weightage Calculation:</strong> Test case weights are calculated for you based on question difficulty.</li>
+                            <li><strong class="font-semibold text-slate-200">Comprehensive Parsing:</strong> Handles all metadata, hints, follow-up questions, and debug code.</li>
                         </ul>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.lua File
-                            Outlines</h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.lua File Outlines</h2>
                         <div class="space-y-6">
                             <div>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Standard (Non-Node) Questions</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <a href="https://docs.google.com/document/d/1lRTJKPanrtlue0Di9QJ7TgoH7u3KbQrAlChg6K6B47o/edit?usp=drive_link"
-                                        target="_blank"
-                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example
-                                        Outline (With Content)</a>
-                                    <a href="https://docs.google.com/document/d/1f4_WaXBxxD9E8PEWYjTb3XE6zQ_lvixJBUSGKEJ_uOQ/edit?usp=drive_link"
-                                        target="_blank"
-                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank
-                                        Outline (Template)</a>
+                                    <a href="https://docs.google.com/document/d/1lRTJKPanrtlue0Di9QJ7TgoH7u3KbQrAlChg6K6B47o/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example Outline (With Content)</a>
+                                    <a href="https://docs.google.com/document/d/1f4_WaXBxxD9E8PEWYjTb3XE6zQ_lvixJBUSGKEJ_uOQ/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank Outline (Template)</a>
                                 </div>
                             </div>
-                            <div>
+                             <div>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Node-Based Questions</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <a href="https://docs.google.com/document/d/1th2isNaKzNn-bZ4KDm35a-QKnraFr7V3T7LFKCn9k7I/edit?usp=drive_link"
-                                        target="_blank"
-                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example
-                                        Outline (With Content)</a>
-                                    <a href="https://docs.google.com/document/d/1p1kqCDuNSfzy_cX6d7p4zcQHggeuLHK9wK-6_RvI4S4/edit?usp=drive_link"
-                                        target="_blank"
-                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank
-                                        Outline (Template)</a>
+                                    <a href="https://docs.google.com/document/d/1th2isNaKzNn-bZ4KDm35a-QKnraFr7V3T7LFKCn9k7I/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example Outline (With Content)</a>
+                                    <a href="https://docs.google.com/document/d/1p1kqCDuNSfzy_cX6d7p4zcQHggeuLHK9wK-6_RvI4S4/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank Outline (Template)</a>
                                 </div>
+                            </div>
+                             <div>
+                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Hint Section Format</h3>
+                                <p class="mb-2 text-slate-400">The tool automatically generates hint titles (e.g., "Hint 1", "Hint 2") and sets the unlock time to 5 seconds. You only need to provide the description content for each hint in your <code>.lua</code> file as follows:</p>
+                                <pre class="bg-slate-900/70 p-4 rounded text-slate-300 text-xs whitespace-pre-wrap"><code>----------HINTS_START----------
+
+----------HINTS_START_1----------
+Description for the first hint. This can be multi-line and supports Markdown.
+----------HINTS_END_1----------
+
+----------HINTS_START_2----------
+Description for the second hint.
+----------HINTS_END_2----------
+
+----------HINTS_END----------</code></pre>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.json Test
-                            Case Outlines</h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.json Test Case Outlines</h2>
                         <div class="space-y-6">
                             <div>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Test Case Formats</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <a href="https://drive.google.com/file/d/1353ZYhK7DLAVfYs1JNTXQ9BhfKoq27-8/view?usp=drive_link"
-                                        target="_blank"
-                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Single
-                                        Output Format Example</a>
-                                    <a href="https://drive.google.com/file/d/1ao8CSPo87Uz0iTsESZ8suRbrRyqlWirW/view?usp=drive_link"
-                                        target="_blank"
-                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Multiple
-                                        Output Format Example</a>
+                                    <a href="https://drive.google.com/file/d/1353ZYhK7DLAVfYs1JNTXQ9BhfKoq27-8/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Single Output Format Example</a>
+                                    <a href="https://drive.google.com/file/d/1ao8CSPo87Uz0iTsESZ8suRbrRyqlWirW/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Multiple Output Format Example</a>
                                 </div>
                             </div>
                         </div>
@@ -350,9 +217,7 @@
             </div>
         </div>
 
-        <footer class="text-center mt-8">
-            <p class="text-slate-400">Tool made by Kakarla Pavan Teja</p>
-        </footer>
+        <footer class="text-center mt-8"><p class="text-slate-400">Tool made by Kakarla Pavan Teja</p></footer>
     </main>
 
     <script>
@@ -376,7 +241,7 @@
             backToHome: document.getElementById('back-to-home-btn'),
             generate: document.getElementById('generate-btn'),
         };
-
+        
         // Input and display elements
         const UIElements = {
             prepPageTitle: document.getElementById('prep-page-title'),
@@ -417,7 +282,7 @@
             });
             UIElements.successMessage.parentElement.classList.add('hidden');
             UIElements.errorMessage.parentElement.classList.add('hidden');
-            state = { ...state, luaFileContent: '', testcasesFileContent: '', existingJsonContent: '' };
+            state = {...state, luaFileContent: '', testcasesFileContent: '', existingJsonContent: ''};
         };
 
         buttons.selectStandard.addEventListener('click', () => { state.questionType = 'standard'; showPage('actionSelection'); });
@@ -473,18 +338,32 @@
         };
         const parseTags = s => s ? s.split(',').map(t => t.trim()).filter(Boolean) : [];
         const formatCompanies = l => l.map(c => ({ "company_name": c.trim().toUpperCase() }));
+        
         const parseHints = c => {
             const block = parseSection(c, '----------HINTS_START----------', '----------HINTS_END----------');
-            if (!block) return {};
-            const hints = {}; let i = 1;
+            if (!block) return [];
+            const hints = []; let i = 1;
             while (true) {
-                const content = parseSection(block, `----------HINTS_START_${i}----------`, `----------HINTS_END_${i}----------`);
-                if (!content) break;
-                hints[`hint_${i}`] = content; i++;
+                const descriptionText = parseSection(block, `----------HINTS_START_${i}----------`, `----------HINTS_END_${i}----------`);
+                if (!descriptionText) break;
+                
+                hints.push({
+                    time_left_to_unlock_hint_in_seconds: 5,
+                    hint_details: {
+                        title: { 
+                            content: `Hint ${i}`, 
+                            content_type: 'TEXT' 
+                        },
+                        description: { 
+                            content: descriptionText, 
+                            content_type: 'MARKDOWN' 
+                        }
+                    }
+                });
+                i++;
             } return hints;
         };
-
-        // --- MODIFIED: parseFollowUpQuestions to match new format ---
+        
         const parseFollowUpQuestions = c => {
             const block = parseSection(c, '----------FOLLOW_UP_QUESTIONS_START----------', '----------FOLLOW_UP_QUESTIONS_END----------');
             if (!block) return [];
@@ -495,18 +374,15 @@
                 const titleText = parseSection(b, '----------QUESTION_START----------', '----------QUESTION_END----------');
                 const contentText = parseSection(b, '----------ANSWER_START----------', '----------ANSWER_END----------');
                 if (titleText && contentText) {
-                    questions.push({
-                        title: titleText,
-                        content: {
-                            content_type: 'TEXT',
-                            content: contentText
-                        }
+                    questions.push({ 
+                        title: titleText, 
+                        content: { content_type: 'TEXT', content: contentText } 
                     });
                 }
                 i++;
             } return questions;
         };
-
+        
         const parseDebugHelperCode = (c, lang) => {
             const block = parseSection(c, `----------DEBUG_HELPER_CODE_${lang.toUpperCase()}_START----------`, `----------DEBUG_HELPER_CODE_${lang.toUpperCase()}_END----------`);
             if (!block) return null;
@@ -515,7 +391,7 @@
                 post_user_code: parseSection(block, '----------POST_USER_CODE_START----------', '----------POST_USER_CODE_END----------')
             }, null, 2);
         };
-        const parseTestCases = data => data.test_cases.map((tc, i) => ({ id: generateUUID(), input: tc.input, output: tc.output || "", is_hidden: (i + 1) > 2, weightage: null, evaluation_type: "DEFAULT", display_text: null, criteria: null, tags: [], order: i + 1, ... (tc.multiple_possible_output && { multiple_possible_output: true, outputs: tc.outputs }) }));
+        const parseTestCases = data => data.test_cases.map((tc, i) => ({ id: generateUUID(), input: tc.input, output: tc.output || "", is_hidden: (i + 1) > 2, weightage: null, evaluation_type: "DEFAULT", display_text: null, criteria: null, tags: [], order: i + 1, ... (tc.multiple_possible_output && {multiple_possible_output: true, outputs: tc.outputs}) }));
         const assignWeights = (tcs, diff) => {
             const totals = { "EASY": 20, "MEDIUM": 25, "HARD": 30 };
             const total = totals[diff.toUpperCase()];
@@ -523,11 +399,11 @@
             let weights = new Array(tcs.length).fill(0.1);
             let rem = total - tcs.length * 0.1;
             if (rem < 0) return tcs;
-            const rParts = Array.from({ length: tcs.length }, () => Math.random());
+            const rParts = Array.from({length: tcs.length}, () => Math.random());
             const tParts = rParts.reduce((s, p) => s + p, 0);
             rParts.forEach((p, i) => { weights[i] += (p / tParts) * rem; });
             const sum = weights.reduce((s, w) => s + w, 0);
-            weights[weights.length - 1] += total - sum;
+            weights[weights.length-1] += total - sum;
             tcs.forEach((tc, i) => tc.weightage = parseFloat(weights[i].toFixed(2)));
             return tcs;
         };
@@ -538,7 +414,7 @@
             a.click();
             URL.revokeObjectURL(a.href);
         };
-
+        
         const runProcess = () => {
             UIElements.loader.classList.remove('hidden');
             UIElements.buttonText.classList.add('hidden');
@@ -549,7 +425,7 @@
             setTimeout(() => {
                 try {
                     if (!state.luaFileContent || !state.testcasesFileContent || (state.actionMode === 'update' && !state.existingJsonContent)) {
-                        throw new Error("Please upload all required files.");
+                       throw new Error("Please upload all required files.");
                     }
                     const lua = state.luaFileContent;
                     const testCasesData = JSON.parse(state.testcasesFileContent);
@@ -569,13 +445,13 @@
                                 short_text: parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------"), multimedia: [], language: "ENGLISH", content_type: "MARKDOWN", question_id: questionId,
                                 default_tag_names: parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------")), concept_tag_names: [],
                                 concept_filter_tag_names: [...parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")), ...parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")), ...parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"))],
-                                topic_tag_names: { beginner_tag_names: parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")), intermediate_tag_names: parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")), advanced_tag_names: parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------")) },
-                                metadata: JSON.stringify({ real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), follow_up_questions: parseFollowUpQuestions(lua) }, null, 2),
+                                topic_tag_names: { beginner_tag_names: parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")), intermediate_tag_names: parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")), advanced_tag_names: parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"))},
+                                metadata: JSON.stringify({ real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), follow_up_questions: parseFollowUpQuestions(lua)}, null, 2),
                             },
                             coding_question_details: [
-                                { code_content: parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"), default_code: true, language: "CPP", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'CPP') },
-                                { code_content: parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"), default_code: false, language: "PYTHON", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'PYTHON') },
-                                { code_content: parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"), default_code: false, language: "JAVA", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'JAVA') }
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"), default_code: true, language: "CPP", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'CPP')},
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"), default_code: false, language: "PYTHON", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'PYTHON')},
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"), default_code: false, language: "JAVA", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'JAVA')}
                             ],
                             code_repository_details: null,
                             language_code_repository_details: [
@@ -583,7 +459,8 @@
                                 { language: "PYTHON", file_path_to_execute: "main.py", default_file_path_to_submit_code: "solution.py", code_repository: [{ file_name: "main.py", file_type: "FILE", file_content: btoa(parseSection(lua, "----------CODE_BASE64_PYTHON_START----------", "----------CODE_BASE64_PYTHON_END----------")) }] },
                                 { language: "JAVA", file_path_to_execute: "Main.java", default_file_path_to_submit_code: "Solution.java", code_repository: [{ file_name: "Main.java", file_type: "FILE", file_content: btoa(parseSection(lua, "----------CODE_BASE64_JAVA_START----------", "----------CODE_BASE64_JAVA_END----------")) }] }
                             ],
-                            solutions: [], hints: parseHints(lua),
+                            solutions: [], 
+                            hints: parseHints(lua),
                             test_case_evaluation_metrics: [
                                 { language: "CPP", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___1.0" },
                                 { language: "PYTHON", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___4.0" },
@@ -604,7 +481,7 @@
                         const advanced = parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"));
                         q.question.concept_filter_tag_names = [...beginner, ...intermediate, ...advanced];
                         q.question.topic_tag_names = { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced };
-                        q.question.metadata = JSON.stringify({ real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), follow_up_questions: parseFollowUpQuestions(lua) }, null, 2);
+                        q.question.metadata = JSON.stringify({ real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), follow_up_questions: parseFollowUpQuestions(lua)}, null, 2);
                         q.hints = parseHints(lua);
                         q.coding_question_details.forEach(d => {
                             if (d.language === 'CPP') { d.code_content = parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'CPP'); }
@@ -624,7 +501,7 @@
                         if (!nodeHContent) throw new Error("Node-Based question requires a NODE_H_CONTENT section in the .lua file.");
                         const existingNodeH = cppRepo.code_repository.find(f => f.file_name === 'node.h');
                         if (existingNodeH) { existingNodeH.file_content = btoa(nodeHContent); }
-                        else { cppRepo.code_repository.push({ file_name: "node.h", file_type: "FILE", file_content: btoa(nodeHContent) }); }
+                        else { cppRepo.code_repository.push({ file_name: "node.h", file_type: "FILE", file_content: btoa(nodeHContent) });}
                     }
 
                     let finalJsonString = JSON.stringify(finalJson, null, 4).replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1');
@@ -644,5 +521,5 @@
         buttons.generate.addEventListener('click', runProcess);
     </script>
 </body>
-
 </html>
+
