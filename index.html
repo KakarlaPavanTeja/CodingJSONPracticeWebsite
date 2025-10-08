@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .loader { border-top-color: #ffffff; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .file-upload-card, .type-selection-card {
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .loader {
+            border-top-color: #ffffff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .selection-card {
             border: 1px solid #334155;
             border-radius: 0.75rem;
             padding: 1.5rem;
@@ -19,47 +32,76 @@
             background-color: #1e293b;
             cursor: pointer;
         }
-        .file-upload-card:hover, .type-selection-card:hover {
+
+        .selection-card:hover {
             box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
             border-color: #38bdf8;
             transform: translateY(-4px);
         }
-        .file-upload-label { cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; }
-        .upload-icon-container, .type-icon-container {
-            width: 4rem; height: 4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;
+
+        .file-upload-label {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 1.5rem;
+        }
+
+        .icon-container {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
+
 <body class="bg-slate-900 min-h-screen flex items-center justify-center p-4">
 
     <main class="w-full max-w-4xl mx-auto">
-        <!-- Page 1: Landing/Selection Page -->
-        <div id="landing-page">
+        <!-- Page 1: Type Selection -->
+        <div id="type-selection-page">
             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
                 <header class="text-center mb-10">
-                    <div class="inline-flex items-center justify-center bg-slate-700 text-sky-400 rounded-full p-3 mb-4 shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
+                    <div
+                        class="inline-flex items-center justify-center bg-slate-700 text-sky-400 rounded-full p-3 mb-4 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
                     </div>
-                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Coding Question JSON Preparation</h1>
-                    <p class="mt-3 text-lg text-slate-400">Select the type of coding question you are preparing.</p>
-                    <button id="show-guides-btn" class="mt-4 text-sky-400 hover:text-sky-300 transition-colors text-sm font-medium">
+                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Coding Question JSON
+                        Preparation</h1>
+                    <p class="mt-3 text-lg text-slate-400">Step 1: Select the question type.</p>
+                    <button id="show-guides-btn"
+                        class="mt-4 text-sky-400 hover:text-sky-300 transition-colors text-sm font-medium">
                         Reference & Guides &rarr;
                     </button>
                 </header>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <!-- Standard Question Card -->
-                    <div id="select-standard" class="type-selection-card">
-                        <div class="type-icon-container bg-slate-700">
-                             <svg class="w-8 h-8 text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" /></svg>
-                        </div>
+                    <div id="select-standard" class="selection-card">
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-emerald-400"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                            </svg></div>
                         <h3 class="text-xl font-semibold text-slate-200">Standard Question</h3>
                         <p class="mt-1 text-slate-400">For arrays, strings, math, etc.</p>
                     </div>
-                    <!-- Node-Based Question Card -->
-                    <div id="select-node" class="type-selection-card">
-                        <div class="type-icon-container bg-slate-700">
-                           <svg class="w-8 h-8 text-sky-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-                        </div>
+                    <div id="select-node" class="selection-card">
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-sky-400"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg></div>
                         <h3 class="text-xl font-semibold text-slate-200">Node-Based Question</h3>
                         <p class="mt-1 text-slate-400">For Linked Lists, Binary Trees.</p>
                     </div>
@@ -67,139 +109,243 @@
             </div>
         </div>
 
-        <!-- Page 2: Preparation Page (Initially Hidden) -->
+        <!-- Page 2: Action Selection (Create/Update) -->
+        <div id="action-selection-page" class="hidden">
+            <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
+                <button id="back-to-type"
+                    class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Question Type
+                </button>
+                <header class="text-center mb-10">
+                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Create or Update?</h1>
+                    <p class="mt-3 text-lg text-slate-400">Step 2: Choose your action.</p>
+                </header>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div id="select-create" class="selection-card">
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-green-400"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg></div>
+                        <h3 class="text-xl font-semibold text-slate-200">Create New</h3>
+                        <p class="mt-1 text-slate-400">Generate a new JSON from scratch.</p>
+                    </div>
+                    <div id="select-update" class="selection-card">
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-yellow-400"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
+                            </svg></div>
+                        <h3 class="text-xl font-semibold text-slate-200">Update Existing</h3>
+                        <p class="mt-1 text-slate-400">Modify a JSON file, keeping IDs.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 3: Preparation Page -->
         <div id="preparation-page" class="hidden">
             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
-                 <button id="back-btn" class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Back to Selection
+                <button id="back-to-action"
+                    class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Action Selection
                 </button>
-
                 <header class="text-center mb-10">
-                     <h1 id="prep-page-title" class="text-3xl md:text-4xl font-bold text-slate-100 tracking-tight"></h1>
-                     <p class="mt-2 text-lg text-slate-400">Upload your configuration files to generate the JSON.</p>
+                    <h1 id="prep-page-title" class="text-3xl md:text-4xl font-bold text-slate-100 tracking-tight"></h1>
+                    <p class="mt-2 text-lg text-slate-400">Step 3: Upload your files.</p>
                 </header>
-                
-                <div id="node-h-warning" class="hidden mb-8 bg-sky-900/50 border border-sky-700 text-sky-300 px-4 py-3 rounded-lg text-sm flex items-start">
-                    <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <div>
-                        <span class="font-bold">Important:</span> For Node-Based questions, please ensure your <strong class="font-semibold">.lua</strong> file contains a section with the C++ Node definition, like so:
-                        <code class="block bg-slate-900/70 p-2 rounded mt-2 text-slate-300 text-xs">----------NODE_H_CONTENT_START----------<br>// Your C++ struct/class for Node here... <br>----------NODE_H_CONTENT_END----------</code>
-                    </div>
+
+                <div id="node-h-warning"
+                    class="hidden mb-8 bg-sky-900/50 border border-sky-700 text-sky-300 px-4 py-3 rounded-lg text-sm flex items-start">
+                    <svg class="w-5 h-5 mr-3 mt-0.5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><span class="font-bold">Important:</span> For Node-Based questions, ensure your `.lua` file has
+                        a `NODE_H_CONTENT` section.</div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                    <div class="file-upload-card">
+                    <div id="existing-json-upload-wrapper" class="selection-card hidden">
+                        <label for="existing-json-upload" class="file-upload-label">
+                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-yellow-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                    </path>
+                                </svg></div>
+                            <h3 class="text-lg font-semibold text-slate-200">Upload Existing JSON</h3>
+                            <p id="existing-json-filename" class="mt-1 text-sm text-slate-400">Select file to update</p>
+                        </label>
+                        <input id="existing-json-upload" type="file" class="hidden" accept=".json">
+                    </div>
+                    <div class="selection-card">
                         <label for="lua-upload" class="file-upload-label">
-                            <div class="upload-icon-container bg-slate-700">
-                                <svg class="w-8 h-8 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                            </div>
+                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-sky-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
+                                </svg></div>
                             <h3 class="text-lg font-semibold text-slate-200">Upload .lua Config</h3>
                             <p id="lua-filename" class="mt-1 text-sm text-slate-400">Select a file</p>
                         </label>
                         <input id="lua-upload" type="file" class="hidden" accept=".lua">
                     </div>
-
-                    <div class="file-upload-card">
-                         <label for="testcases-upload" class="file-upload-label">
-                            <div class="upload-icon-container bg-slate-700">
-                                <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V5a2 2 0 00-2-2h-7a2 2 0 00-2 2v14a2 2 0 002 2zM10 9h4m-4 4h4m4-8v4m-4-4h4"></path></svg>
-                            </div>
+                    <div class="selection-card">
+                        <label for="testcases-upload" class="file-upload-label">
+                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-emerald-400" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 21h7a2 2 0 002-2V5a2 2 0 00-2-2h-7a2 2 0 00-2 2v14a2 2 0 002 2zM10 9h4m-4 4h4m4-8v4m-4-4h4">
+                                    </path>
+                                </svg></div>
                             <h3 class="text-lg font-semibold text-slate-200">Upload .json Test Cases</h3>
                             <p id="testcases-filename" class="mt-1 text-sm text-slate-400">Select a file</p>
                         </label>
                         <input id="testcases-upload" type="file" class="hidden" accept=".json">
                     </div>
                 </div>
-
                 <div class="text-center">
-                     <button id="generate-btn" class="w-full md:w-auto bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sky-300/50 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed mx-auto">
-                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <button id="generate-btn"
+                        class="w-full md:w-auto bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-sky-300/50 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed mx-auto">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
                         <span id="button-text">Generate & Download JSON</span>
-                        <div id="loader" class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 hidden"></div>
+                        <div id="loader"
+                            class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 hidden">
+                        </div>
                     </button>
-
-                    <div id="success-message" class="mt-6 text-green-300 bg-green-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-green-700">
-                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="font-medium"></span>
-                    </div>
-                    <div id="error-message" class="mt-6 text-red-300 bg-red-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-red-700">
-                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span class="font-medium"></span>
-                    </div>
+                    <div id="success-message"
+                        class="mt-6 text-green-300 bg-green-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-green-700">
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg><span class="font-medium"></span></div>
+                    <div id="error-message"
+                        class="mt-6 text-red-300 bg-red-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-red-700">
+                        <svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg><span class="font-medium"></span></div>
                 </div>
             </div>
         </div>
 
-        <!-- Page 3: Guides Page (Initially Hidden) -->
+        <!-- Page 4: Guides Page -->
         <div id="guides-page" class="hidden">
-            <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700 text-slate-300">
-                <button id="back-to-home-btn" class="mb-8 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Back to Home
-                </button>
+            <div
+                class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700 text-slate-300">
+                <button id="back-to-home-btn"
+                    class="mb-8 flex items-center text-slate-400 hover:text-sky-400 transition-colors"><svg
+                        class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>Back to Home</button>
                 <header class="text-center mb-10">
                     <h1 class="text-4xl font-bold text-slate-100 tracking-tight">Reference & Guides</h1>
                 </header>
-                
                 <div class="space-y-10">
-                    <!-- NEW: How to Use Section -->
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">How to Use</h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">How to Use
+                        </h2>
                         <ol class="list-decimal list-inside space-y-3 text-slate-300">
-                            <li><strong class="font-semibold text-slate-200">Choose Question Type:</strong> On the home page, select either "Standard" or "Node-Based" question.</li>
-                            <li><strong class="font-semibold text-slate-200">Prepare Your Files:</strong> Use the outline templates linked below to prepare your `.lua` config and `.json` test case files.</li>
-                            <li><strong class="font-semibold text-slate-200">Upload Files:</strong> On the preparation page, upload your completed `.lua` and `.json` files.</li>
-                            <li><strong class="font-semibold text-slate-200">Generate & Download:</strong> Click the "Generate & Download JSON" button to receive your final `coding_questions.json` file.</li>
+                            <li><strong class="font-semibold text-slate-200">Choose Question Type:</strong> On the home
+                                page, select "Standard" or "Node-Based".</li>
+                            <li><strong class="font-semibold text-slate-200">Choose Action:</strong> Select "Create New"
+                                for a new question or "Update Existing" to modify one.</li>
+                            <li><strong class="font-semibold text-slate-200">Prepare Your Files:</strong> Use the
+                                outline templates linked below to prepare your `.lua` and `.json` files.</li>
+                            <li><strong class="font-semibold text-slate-200">Upload Files:</strong> Upload all required
+                                files. The "Update" action requires the existing JSON file as well.</li>
+                            <li><strong class="font-semibold text-slate-200">Generate & Download:</strong> Click the
+                                button to receive your final `coding_questions.json` file.</li>
                         </ol>
                     </div>
-
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool Features</h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool
+                            Features</h2>
                         <ul class="list-disc list-inside space-y-2 text-slate-300">
-                            <li><strong class="font-semibold text-slate-200">Dual Question Type Support:</strong> Generate JSON for both Standard and Node-Based (Linked List, Binary Tree) questions.</li>
-                            <li><strong class="font-semibold text-slate-200">Direct File Uploads:</strong> No more copy-pasting. Directly upload your `.lua` and `.json` files.</li>
-                            <li><strong class="font-semibold text-slate-200">Automatic Weightage Calculation:</strong> Test case weights are calculated automatically based on question difficulty.</li>
-                            <li><strong class="font-semibold text-slate-200">Comprehensive Parsing:</strong> Handles all metadata, hints, follow-up questions, and language-specific debug code.</li>
-                            <li><strong class="font-semibold text-slate-200">One-Click Generation:</strong> Instantly generates and downloads the final `coding_questions.json` file.</li>
+                            <li><strong class="font-semibold text-slate-200">Create & Update:</strong> Supports both
+                                generating new question JSONs and updating existing ones while preserving key IDs.</li>
+                            <li><strong class="font-semibold text-slate-200">Dual Question Type Support:</strong> Works
+                                for both Standard and Node-Based (Linked List, Binary Tree) questions.</li>
+                            <li><strong class="font-semibold text-slate-200">Automatic Weightage Calculation:</strong>
+                                Test case weights are calculated for you based on question difficulty.</li>
+                            <li><strong class="font-semibold text-slate-200">Comprehensive Parsing:</strong> Handles all
+                                metadata, hints, follow-up questions, and debug code.</li>
                         </ul>
                     </div>
-
                     <div>
-                        <!-- MODIFIED: Heading cleaned up -->
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.lua File Outlines</h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.lua File
+                            Outlines</h2>
                         <div class="space-y-6">
                             <div>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Standard (Non-Node) Questions</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <a href="https://docs.google.com/document/d/1lRTJKPanrtlue0Di9QJ7TgoH7u3KbQrAlChg6K6B47o/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example Outline (With Content)</a>
-                                    <a href="https://docs.google.com/document/d/1f4_WaXBxxD9E8PEWYjTb3XE6zQ_lvixJBUSGKEJ_uOQ/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank Outline (Template)</a>
+                                    <a href="https://docs.google.com/document/d/1lRTJKPanrtlue0Di9QJ7TgoH7u3KbQrAlChg6K6B47o/edit?usp=drive_link"
+                                        target="_blank"
+                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example
+                                        Outline (With Content)</a>
+                                    <a href="https://docs.google.com/document/d/1f4_WaXBxxD9E8PEWYjTb3XE6zQ_lvixJBUSGKEJ_uOQ/edit?usp=drive_link"
+                                        target="_blank"
+                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank
+                                        Outline (Template)</a>
                                 </div>
                             </div>
-                             <div>
+                            <div>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Node-Based Questions</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <a href="https://docs.google.com/document/d/1th2isNaKzNn-bZ4KDm35a-QKnraFr7V3T7LFKCn9k7I/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example Outline (With Content)</a>
-                                    <a href="https://docs.google.com/document/d/1p1kqCDuNSfzy_cX6d7p4zcQHggeuLHK9wK-6_RvI4S4/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank Outline (Template)</a>
+                                    <a href="https://docs.google.com/document/d/1th2isNaKzNn-bZ4KDm35a-QKnraFr7V3T7LFKCn9k7I/edit?usp=drive_link"
+                                        target="_blank"
+                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example
+                                        Outline (With Content)</a>
+                                    <a href="https://docs.google.com/document/d/1p1kqCDuNSfzy_cX6d7p4zcQHggeuLHK9wK-6_RvI4S4/edit?usp=drive_link"
+                                        target="_blank"
+                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank
+                                        Outline (Template)</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
                     <div>
-                        <!-- MODIFIED: Heading cleaned up -->
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.json Test Case Outlines</h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.json Test
+                            Case Outlines</h2>
                         <div class="space-y-6">
                             <div>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Test Case Formats</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <a href="https://drive.google.com/file/d/1353ZYhK7DLAVfYs1JNTXQ9BhfKoq27-8/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Single Output Format Example</a>
-                                    <a href="https://drive.google.com/file/d/1ao8CSPo87Uz0iTsESZ8suRbrRyqlWirW/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Multiple Output Format Example</a>
+                                    <a href="https://drive.google.com/file/d/1353ZYhK7DLAVfYs1JNTXQ9BhfKoq27-8/view?usp=drive_link"
+                                        target="_blank"
+                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Single
+                                        Output Format Example</a>
+                                    <a href="https://drive.google.com/file/d/1ao8CSPo87Uz0iTsESZ8suRbrRyqlWirW/view?usp=drive_link"
+                                        target="_blank"
+                                        class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Multiple
+                                        Output Format Example</a>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -210,333 +356,293 @@
     </main>
 
     <script>
-        // Page navigation elements
-        const landingPage = document.getElementById('landing-page');
-        const preparationPage = document.getElementById('preparation-page');
-        const guidesPage = document.getElementById('guides-page'); // New page
-        const selectStandardBtn = document.getElementById('select-standard');
-        const selectNodeBtn = document.getElementById('select-node');
-        const backBtn = document.getElementById('back-btn');
-        const prepPageTitle = document.getElementById('prep-page-title');
-        const nodeHWarning = document.getElementById('node-h-warning');
-        const showGuidesBtn = document.getElementById('show-guides-btn'); // New button
-        const backToHomeBtn = document.getElementById('back-to-home-btn'); // New button
-
-        // File upload and generation elements
-        const luaUpload = document.getElementById('lua-upload');
-        const testcasesUpload = document.getElementById('testcases-upload');
-        const luaFilename = document.getElementById('lua-filename');
-        const testcasesFilename = document.getElementById('testcases-filename');
-        const generateBtn = document.getElementById('generate-btn');
-        const buttonText = document.getElementById('button-text');
-        const successMessage = document.getElementById('success-message').querySelector('span');
-        const errorMessage = document.getElementById('error-message').querySelector('span');
-        const loader = document.getElementById('loader');
-
-        let luaFileContent = '';
-        let testcasesFileContent = '';
-        let questionType = '';
-
-        // --- Page Navigation Logic ---
-        const showPage = (pageToShow) => {
-            [landingPage, preparationPage, guidesPage].forEach(page => page.classList.add('hidden'));
-            pageToShow.classList.remove('hidden');
+        // Page elements
+        const pageElements = {
+            typeSelection: document.getElementById('type-selection-page'),
+            actionSelection: document.getElementById('action-selection-page'),
+            preparation: document.getElementById('preparation-page'),
+            guides: document.getElementById('guides-page'),
         };
 
-        const showPreparationPage = (type, title) => {
-            questionType = type;
-            prepPageTitle.textContent = title;
-            if (type === 'node') {
-                nodeHWarning.classList.remove('hidden');
-            } else {
-                nodeHWarning.classList.add('hidden');
-            }
-            showPage(preparationPage);
+        // Button elements
+        const buttons = {
+            selectStandard: document.getElementById('select-standard'),
+            selectNode: document.getElementById('select-node'),
+            selectCreate: document.getElementById('select-create'),
+            selectUpdate: document.getElementById('select-update'),
+            backToType: document.getElementById('back-to-type'),
+            backToAction: document.getElementById('back-to-action'),
+            showGuides: document.getElementById('show-guides-btn'),
+            backToHome: document.getElementById('back-to-home-btn'),
+            generate: document.getElementById('generate-btn'),
         };
 
-        const showLandingPage = () => {
-            showPage(landingPage);
-            // Reset file inputs and messages from prep page
-            luaUpload.value = '';
-            testcasesUpload.value = '';
-            luaFilename.textContent = 'Select a file';
-            testcasesFilename.textContent = 'Select a file';
-            luaFilename.classList.remove('text-sky-400', 'font-semibold');
-            testcasesFilename.classList.remove('text-sky-400', 'font-semibold');
-            successMessage.parentElement.classList.add('hidden');
-            errorMessage.parentElement.classList.add('hidden');
-            luaFileContent = '';
-            testcasesFileContent = '';
+        // Input and display elements
+        const UIElements = {
+            prepPageTitle: document.getElementById('prep-page-title'),
+            nodeHWarning: document.getElementById('node-h-warning'),
+            existingJsonUploadWrapper: document.getElementById('existing-json-upload-wrapper'),
+            existingJsonUpload: document.getElementById('existing-json-upload'),
+            existingJsonFilename: document.getElementById('existing-json-filename'),
+            luaUpload: document.getElementById('lua-upload'),
+            luaFilename: document.getElementById('lua-filename'),
+            testcasesUpload: document.getElementById('testcases-upload'),
+            testcasesFilename: document.getElementById('testcases-filename'),
+            buttonText: document.getElementById('button-text'),
+            loader: document.getElementById('loader'),
+            successMessage: document.getElementById('success-message').querySelector('span'),
+            errorMessage: document.getElementById('error-message').querySelector('span'),
         };
 
-        selectStandardBtn.addEventListener('click', () => showPreparationPage('standard', 'Standard Question Preparation'));
-        selectNodeBtn.addEventListener('click', () => showPreparationPage('node', 'Node-Based Question Preparation'));
-        backBtn.addEventListener('click', showLandingPage);
-        showGuidesBtn.addEventListener('click', () => showPage(guidesPage));
-        backToHomeBtn.addEventListener('click', showLandingPage);
-        
-        // --- File Reading Logic ---
-        luaUpload.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    luaFileContent = e.target.result;
-                    luaFilename.textContent = file.name;
-                    luaFilename.classList.add('text-sky-400', 'font-semibold');
-                };
-                reader.readAsText(file);
-            }
+        // App state
+        let state = {
+            questionType: '', // 'standard' or 'node'
+            actionMode: '', // 'create' or 'update'
+            luaFileContent: '',
+            testcasesFileContent: '',
+            existingJsonContent: ''
+        };
+
+        // --- Page Navigation ---
+        const showPage = (pageId) => {
+            Object.values(pageElements).forEach(page => page.classList.add('hidden'));
+            pageElements[pageId].classList.remove('hidden');
+        };
+
+        const resetFileUploads = () => {
+            ['luaUpload', 'testcasesUpload', 'existingJsonUpload'].forEach(id => { UIElements[id].value = ''; });
+            ['luaFilename', 'testcasesFilename', 'existingJsonFilename'].forEach(id => {
+                UIElements[id].textContent = id === 'existingJsonFilename' ? 'Select file to update' : 'Select a file';
+                UIElements[id].classList.remove('text-sky-400', 'font-semibold');
+            });
+            UIElements.successMessage.parentElement.classList.add('hidden');
+            UIElements.errorMessage.parentElement.classList.add('hidden');
+            state = { ...state, luaFileContent: '', testcasesFileContent: '', existingJsonContent: '' };
+        };
+
+        buttons.selectStandard.addEventListener('click', () => { state.questionType = 'standard'; showPage('actionSelection'); });
+        buttons.selectNode.addEventListener('click', () => { state.questionType = 'node'; showPage('actionSelection'); });
+        buttons.backToType.addEventListener('click', () => showPage('typeSelection'));
+        buttons.showGuides.addEventListener('click', () => showPage('guides'));
+        buttons.backToHome.addEventListener('click', () => showPage('typeSelection'));
+        buttons.backToAction.addEventListener('click', () => showPage('actionSelection'));
+
+        buttons.selectCreate.addEventListener('click', () => {
+            state.actionMode = 'create';
+            UIElements.prepPageTitle.textContent = 'Create New Question';
+            UIElements.existingJsonUploadWrapper.classList.add('hidden');
+            UIElements.nodeHWarning.style.display = state.questionType === 'node' ? 'flex' : 'none';
+            showPage('preparation');
+            resetFileUploads();
         });
 
-        testcasesUpload.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    testcasesFileContent = e.target.result;
-                    testcasesFilename.textContent = file.name;
-                    testcasesFilename.classList.add('text-sky-400', 'font-semibold');
-                };
-                reader.readAsText(file);
-            }
+        buttons.selectUpdate.addEventListener('click', () => {
+            state.actionMode = 'update';
+            UIElements.prepPageTitle.textContent = 'Update Existing Question';
+            UIElements.existingJsonUploadWrapper.classList.remove('hidden');
+            UIElements.nodeHWarning.style.display = state.questionType === 'node' ? 'flex' : 'none';
+            showPage('preparation');
+            resetFileUploads();
         });
 
-        // --- Core JSON Generation Logic ---
-        const generateUUID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-        
-        const parseSection = (content, startMarker, endMarker) => {
-            try {
-                const startIndex = content.indexOf(startMarker) + startMarker.length;
-                const endIndex = content.indexOf(endMarker, startIndex);
-                if (startIndex - startMarker.length < 0 || endIndex < 0 || startIndex >= endIndex) return "";
-                return content.substring(startIndex, endIndex).trim();
-            } catch (e) { return ""; }
-        };
-
-        const parseDebugHelperCode = (fullContent, language) => {
-            const langUpper = language.toUpperCase();
-            const mainBlock = parseSection(fullContent, `----------DEBUG_HELPER_CODE_${langUpper}_START----------`, `----------DEBUG_HELPER_CODE_${langUpper}_END----------`);
-            if (!mainBlock) {
-                return null;
-            }
-            const preCode = parseSection(mainBlock, `----------PRE_USER_CODE_START----------`, `----------PRE_USER_CODE_END----------`);
-            const postCode = parseSection(mainBlock, `----------POST_USER_CODE_START----------`, `----------POST_USER_CODE_END----------`);
-            
-            const debugObject = {
-                pre_user_code: preCode,
-                post_user_code: postCode
-            };
-            
-            return JSON.stringify(debugObject, null, 2);
-        };
-
-        const parseTags = (tagString) => !tagString ? [] : tagString.split(',').map(tag => tag.trim()).filter(Boolean);
-        const formatCompanies = (companyList) => companyList.map(c => ({ "company_name": c.trim().toUpperCase() }));
-        
-        const parseFollowUpQuestions = (fullContent) => {
-            const mainBlock = parseSection(fullContent, '----------FOLLOW_UP_QUESTIONS_START----------', '----------FOLLOW_UP_QUESTIONS_END----------');
-            if (!mainBlock) return [];
-            const questions = [];
-            let i = 1;
-            while (true) {
-                const startMarker = `----------FOLLOW_UP_QUESTION_START_${i}----------`;
-                const endMarker = `----------FOLLOW_UP_QUESTION_END_${i}----------`;
-                const blockContent = parseSection(mainBlock, startMarker, endMarker);
-                if (!blockContent) break;
-                const questionText = parseSection(blockContent, '----------QUESTION_START----------', '----------QUESTION_END----------');
-                const answerText = parseSection(blockContent, '----------ANSWER_START----------', '----------ANSWER_END----------');
-                if (questionText && answerText) questions.push({ question: questionText, answer: answerText });
-                i++;
-            }
-            return questions;
-        };
-        
-        const parseHints = (fullContent) => {
-            const mainBlock = parseSection(fullContent, '----------HINTS_START----------', '----------HINTS_END----------');
-            if (!mainBlock) return {};
-            const hints = {};
-            let i = 1;
-            while (true) {
-                const startMarker = `----------HINTS_START_${i}----------`;
-                const endMarker = `----------HINTS_END_${i}----------`;
-                const hintContent = parseSection(mainBlock, startMarker, endMarker);
-                if (!hintContent) break;
-                hints[`hint_${i}`] = hintContent;
-                i++;
-            }
-            return hints;
-        };
-
-        const parseTestCases = (testCasesData) => {
-            return testCasesData.test_cases.map((tc, index) => {
-                const testCase = {
-                    id: generateUUID(),
-                    input: tc.input,
-                    output: tc.output || "",
-                    is_hidden: (index + 1) > 2,
-                    weightage: null, evaluation_type: "DEFAULT", display_text: null, criteria: null, tags: [],
-                    order: index + 1,
-                };
-                if (tc.multiple_possible_output) {
-                    testCase.multiple_possible_output = true;
-                    testCase.outputs = tc.outputs;
+        // --- File Reading ---
+        const setupFileReader = (inputElement, filenameElement, contentKey) => {
+            inputElement.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        state[contentKey] = e.target.result;
+                        filenameElement.textContent = file.name;
+                        filenameElement.classList.add('text-sky-400', 'font-semibold');
+                    };
+                    reader.readAsText(file);
                 }
-                return testCase;
             });
         };
-        
-        const assignWeights = (testCases, difficultyLevel) => {
-            const level = difficultyLevel.trim().toUpperCase();
-            const totals = { "EASY": 20, "MEDIUM": 25, "HARD": 30 };
-            const totalScore = totals[level];
-            if (!totalScore || testCases.length === 0) return testCases;
-            let weights = new Array(testCases.length).fill(0.1);
-            let remaining = totalScore - testCases.length * 0.1;
-            if (remaining < 0) return testCases;
-            let randomParts = Array.from({ length: testCases.length }, () => Math.random());
-            const totalParts = randomParts.reduce((sum, part) => sum + part, 0);
-            for (let i = 0; i < testCases.length; i++) {
-                weights[i] = parseFloat((weights[i] + (randomParts[i] / totalParts) * remaining).toFixed(2));
-            }
-            const currentSum = weights.reduce((sum, w) => sum + w, 0);
-            let diff = parseFloat((totalScore - currentSum).toFixed(2));
-            weights[weights.length - 1] = parseFloat((weights[weights.length - 1] + diff).toFixed(2));
-            testCases.forEach((tc, i) => { tc.weightage = weights[i]; });
-            return testCases;
+        setupFileReader(UIElements.luaUpload, UIElements.luaFilename, 'luaFileContent');
+        setupFileReader(UIElements.testcasesUpload, UIElements.testcasesFilename, 'testcasesFileContent');
+        setupFileReader(UIElements.existingJsonUpload, UIElements.existingJsonFilename, 'existingJsonContent');
+
+        // --- Core Logic ---
+        const generateUUID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => (Math.random() * 16 | 0).toString(16));
+        const parseSection = (content, start, end) => {
+            const sIdx = content.indexOf(start) + start.length;
+            const eIdx = content.indexOf(end, sIdx);
+            return (sIdx < start.length || eIdx < 0) ? "" : content.substring(sIdx, eIdx).trim();
+        };
+        const parseTags = s => s ? s.split(',').map(t => t.trim()).filter(Boolean) : [];
+        const formatCompanies = l => l.map(c => ({ "company_name": c.trim().toUpperCase() }));
+        const parseHints = c => {
+            const block = parseSection(c, '----------HINTS_START----------', '----------HINTS_END----------');
+            if (!block) return {};
+            const hints = {}; let i = 1;
+            while (true) {
+                const content = parseSection(block, `----------HINTS_START_${i}----------`, `----------HINTS_END_${i}----------`);
+                if (!content) break;
+                hints[`hint_${i}`] = content; i++;
+            } return hints;
         };
 
+        // --- MODIFIED: parseFollowUpQuestions to match new format ---
+        const parseFollowUpQuestions = c => {
+            const block = parseSection(c, '----------FOLLOW_UP_QUESTIONS_START----------', '----------FOLLOW_UP_QUESTIONS_END----------');
+            if (!block) return [];
+            const questions = []; let i = 1;
+            while (true) {
+                const b = parseSection(block, `----------FOLLOW_UP_QUESTION_START_${i}----------`, `----------FOLLOW_UP_QUESTION_END_${i}----------`);
+                if (!b) break;
+                const titleText = parseSection(b, '----------QUESTION_START----------', '----------QUESTION_END----------');
+                const contentText = parseSection(b, '----------ANSWER_START----------', '----------ANSWER_END----------');
+                if (titleText && contentText) {
+                    questions.push({
+                        title: titleText,
+                        content: {
+                            content_type: 'TEXT',
+                            content: contentText
+                        }
+                    });
+                }
+                i++;
+            } return questions;
+        };
+
+        const parseDebugHelperCode = (c, lang) => {
+            const block = parseSection(c, `----------DEBUG_HELPER_CODE_${lang.toUpperCase()}_START----------`, `----------DEBUG_HELPER_CODE_${lang.toUpperCase()}_END----------`);
+            if (!block) return null;
+            return JSON.stringify({
+                pre_user_code: parseSection(block, '----------PRE_USER_CODE_START----------', '----------PRE_USER_CODE_END----------'),
+                post_user_code: parseSection(block, '----------POST_USER_CODE_START----------', '----------POST_USER_CODE_END----------')
+            }, null, 2);
+        };
+        const parseTestCases = data => data.test_cases.map((tc, i) => ({ id: generateUUID(), input: tc.input, output: tc.output || "", is_hidden: (i + 1) > 2, weightage: null, evaluation_type: "DEFAULT", display_text: null, criteria: null, tags: [], order: i + 1, ... (tc.multiple_possible_output && { multiple_possible_output: true, outputs: tc.outputs }) }));
+        const assignWeights = (tcs, diff) => {
+            const totals = { "EASY": 20, "MEDIUM": 25, "HARD": 30 };
+            const total = totals[diff.toUpperCase()];
+            if (!total || tcs.length === 0) return tcs;
+            let weights = new Array(tcs.length).fill(0.1);
+            let rem = total - tcs.length * 0.1;
+            if (rem < 0) return tcs;
+            const rParts = Array.from({ length: tcs.length }, () => Math.random());
+            const tParts = rParts.reduce((s, p) => s + p, 0);
+            rParts.forEach((p, i) => { weights[i] += (p / tParts) * rem; });
+            const sum = weights.reduce((s, w) => s + w, 0);
+            weights[weights.length - 1] += total - sum;
+            tcs.forEach((tc, i) => tc.weightage = parseFloat(weights[i].toFixed(2)));
+            return tcs;
+        };
         const downloadJsonFile = (content, fileName) => {
             const a = document.createElement('a');
-            const file = new Blob([content], { type: 'application/json' });
-            a.href = URL.createObjectURL(file);
+            a.href = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
             a.download = fileName;
-            document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
             URL.revokeObjectURL(a.href);
         };
 
-        const generateJson = () => {
-            loader.classList.remove('hidden');
-            buttonText.classList.add('hidden');
-            generateBtn.disabled = true;
-            successMessage.parentElement.classList.add('hidden');
-            errorMessage.parentElement.classList.add('hidden');
+        const runProcess = () => {
+            UIElements.loader.classList.remove('hidden');
+            UIElements.buttonText.classList.add('hidden');
+            buttons.generate.disabled = true;
+            UIElements.successMessage.parentElement.classList.add('hidden');
+            UIElements.errorMessage.parentElement.classList.add('hidden');
 
             setTimeout(() => {
                 try {
-                    const content = luaFileContent;
-                    const testCasesDataRaw = testcasesFileContent;
-
-                    if (!content.trim() || !testCasesDataRaw.trim()) {
-                       throw new Error("Please upload both a .lua and a .json file.");
+                    if (!state.luaFileContent || !state.testcasesFileContent || (state.actionMode === 'update' && !state.existingJsonContent)) {
+                        throw new Error("Please upload all required files.");
                     }
-                    
-                    const testCasesData = JSON.parse(testCasesDataRaw);
-                    const difficultyLevel = parseSection(content, "----------QUESTION_LEVEL_START----------", "----------QUESTION_LEVEL_END----------");
-                    if (!difficultyLevel) throw new Error("QUESTION_LEVEL is missing from the .lua file.");
+                    const lua = state.luaFileContent;
+                    const testCasesData = JSON.parse(state.testcasesFileContent);
+                    const difficulty = parseSection(lua, "----------QUESTION_LEVEL_START----------", "----------QUESTION_LEVEL_END----------");
+                    if (!difficulty) throw new Error("QUESTION_LEVEL is missing from .lua file.");
 
-                    const companiesRaw = parseTags(parseSection(content, "----------COMPANIES_START----------", "----------COMPANIES_END----------"));
-                    const testCases = assignWeights(parseTestCases(testCasesData[0]), difficultyLevel);
-                    const codingDetailsId = generateUUID();
-                    const questionId = generateUUID();
-
-                    const finalJson = [{
-                        test_cases: testCases,
-                        total_score: { "EASY": 20, "MEDIUM": 25, "HARD": 30 }[difficultyLevel.toUpperCase()],
-                        question_type: "CODING",
-                        question_asked_by_companies_info: formatCompanies(companiesRaw),
-                        question: {
-                            difficulty: difficultyLevel,
-                            content: parseSection(content, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------"),
-                            short_text: parseSection(content, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------"),
-                            multimedia: [], language: "ENGLISH", content_type: "MARKDOWN", question_id: questionId,
-                            default_tag_names: parseTags(parseSection(content, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------")),
-                            concept_tag_names: [],
-                            concept_filter_tag_names: [
-                                ...parseTags(parseSection(content, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")),
-                                ...parseTags(parseSection(content, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")),
-                                ...parseTags(parseSection(content, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"))
+                    let finalJson;
+                    if (state.actionMode === 'create') {
+                        const codingDetailsId = generateUUID(); const questionId = generateUUID();
+                        finalJson = [{
+                            test_cases: assignWeights(parseTestCases(testCasesData[0]), difficulty),
+                            total_score: { "EASY": 20, "MEDIUM": 25, "HARD": 30 }[difficulty.toUpperCase()],
+                            question_type: "CODING",
+                            question_asked_by_companies_info: formatCompanies(parseTags(parseSection(lua, "----------COMPANIES_START----------", "----------COMPANIES_END----------"))),
+                            question: {
+                                difficulty, content: parseSection(lua, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------"),
+                                short_text: parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------"), multimedia: [], language: "ENGLISH", content_type: "MARKDOWN", question_id: questionId,
+                                default_tag_names: parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------")), concept_tag_names: [],
+                                concept_filter_tag_names: [...parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")), ...parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")), ...parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"))],
+                                topic_tag_names: { beginner_tag_names: parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")), intermediate_tag_names: parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")), advanced_tag_names: parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------")) },
+                                metadata: JSON.stringify({ real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), follow_up_questions: parseFollowUpQuestions(lua) }, null, 2),
+                            },
+                            coding_question_details: [
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"), default_code: true, language: "CPP", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'CPP') },
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"), default_code: false, language: "PYTHON", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'PYTHON') },
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"), default_code: false, language: "JAVA", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'JAVA') }
                             ],
-                            topic_tag_names: {
-                                beginner_tag_names: parseTags(parseSection(content, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")),
-                                intermediate_tag_names: parseTags(parseSection(content, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")),
-                                advanced_tag_names: parseTags(parseSection(content, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------")),
-                            },
-                            metadata: JSON.stringify({
-                                real_life_example: parseSection(content, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"),
-                                follow_up_questions: parseFollowUpQuestions(content)
-                            }, null, 2),
-                        },
-                        coding_question_details: [
-                            { 
-                                code_content: parseSection(content, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"), 
-                                default_code: true, language: "CPP", code_id: codingDetailsId, is_function_based: true,
-                                debug_helper_code: parseDebugHelperCode(content, 'CPP')
-                            },
-                            { 
-                                code_content: parseSection(content, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"), 
-                                default_code: false, language: "PYTHON", code_id: codingDetailsId, is_function_based: true,
-                                debug_helper_code: parseDebugHelperCode(content, 'PYTHON')
-                            },
-                            { 
-                                code_content: parseSection(content, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"), 
-                                default_code: false, language: "JAVA", code_id: codingDetailsId, is_function_based: true,
-                                debug_helper_code: parseDebugHelperCode(content, 'JAVA')
-                            }
-                        ],
-                        code_repository_details: null,
-                        language_code_repository_details: [
-                            { language: "CPP", file_path_to_execute: "main.cpp", default_file_path_to_submit_code: "solution.cpp", code_repository: [{ file_name: "main.cpp", file_type: "FILE", file_content: btoa(parseSection(content, "----------CODE_BASE64_CPP_START----------", "----------CODE_BASE64_CPP_END----------")) }] },
-                            { language: "PYTHON", file_path_to_execute: "main.py", default_file_path_to_submit_code: "solution.py", code_repository: [{ file_name: "main.py", file_type: "FILE", file_content: btoa(parseSection(content, "----------CODE_BASE64_PYTHON_START----------", "----------CODE_BASE64_PYTHON_END----------")) }] },
-                            { language: "JAVA", file_path_to_execute: "Main.java", default_file_path_to_submit_code: "Solution.java", code_repository: [{ file_name: "Main.java", file_type: "FILE", file_content: btoa(parseSection(content, "----------CODE_BASE64_JAVA_START----------", "----------CODE_BASE64_JAVA_END----------")) }] }
-                        ],
-                        solutions: [],
-                        hints: parseHints(content),
-                        test_case_evaluation_metrics: [
-                            { language: "CPP", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___1.0" },
-                            { language: "PYTHON", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___4.0" },
-                            { language: "JAVA", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___2.0" }
-                        ]
-                    }];
-
-                    if (questionType === 'node') {
-                        const cppRepoDetails = finalJson[0].language_code_repository_details.find(repo => repo.language === 'CPP');
-                        const nodeHContent = parseSection(content, "----------NODE_H_CONTENT_START----------", "----------NODE_H_CONTENT_END----------");
-                        if (!nodeHContent) throw new Error("Node-Based question requires a NODE_H_CONTENT section in the .lua file.");
-                        
-                        cppRepoDetails.code_repository.push({
-                            file_name: "node.h",
-                            file_type: "FILE",
-                            file_content: btoa(nodeHContent)
+                            code_repository_details: null,
+                            language_code_repository_details: [
+                                { language: "CPP", file_path_to_execute: "main.cpp", default_file_path_to_submit_code: "solution.cpp", code_repository: [{ file_name: "main.cpp", file_type: "FILE", file_content: btoa(parseSection(lua, "----------CODE_BASE64_CPP_START----------", "----------CODE_BASE64_CPP_END----------")) }] },
+                                { language: "PYTHON", file_path_to_execute: "main.py", default_file_path_to_submit_code: "solution.py", code_repository: [{ file_name: "main.py", file_type: "FILE", file_content: btoa(parseSection(lua, "----------CODE_BASE64_PYTHON_START----------", "----------CODE_BASE64_PYTHON_END----------")) }] },
+                                { language: "JAVA", file_path_to_execute: "Main.java", default_file_path_to_submit_code: "Solution.java", code_repository: [{ file_name: "Main.java", file_type: "FILE", file_content: btoa(parseSection(lua, "----------CODE_BASE64_JAVA_START----------", "----------CODE_BASE64_JAVA_END----------")) }] }
+                            ],
+                            solutions: [], hints: parseHints(lua),
+                            test_case_evaluation_metrics: [
+                                { language: "CPP", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___1.0" },
+                                { language: "PYTHON", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___4.0" },
+                                { language: "JAVA", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___2.0" }
+                            ]
+                        }];
+                    } else { // Update mode
+                        finalJson = JSON.parse(state.existingJsonContent);
+                        const q = finalJson[0];
+                        q.test_cases = assignWeights(parseTestCases(testCasesData[0]), difficulty);
+                        q.question.difficulty = difficulty;
+                        q.question.content = parseSection(lua, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------");
+                        q.question.short_text = parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------");
+                        q.question_asked_by_companies_info = formatCompanies(parseTags(parseSection(lua, "----------COMPANIES_START----------", "----------COMPANIES_END----------")));
+                        q.question.default_tag_names = parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------"));
+                        const beginner = parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------"));
+                        const intermediate = parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------"));
+                        const advanced = parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"));
+                        q.question.concept_filter_tag_names = [...beginner, ...intermediate, ...advanced];
+                        q.question.topic_tag_names = { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced };
+                        q.question.metadata = JSON.stringify({ real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), follow_up_questions: parseFollowUpQuestions(lua) }, null, 2);
+                        q.hints = parseHints(lua);
+                        q.coding_question_details.forEach(d => {
+                            if (d.language === 'CPP') { d.code_content = parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'CPP'); }
+                            if (d.language === 'PYTHON') { d.code_content = parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'PYTHON'); }
+                            if (d.language === 'JAVA') { d.code_content = parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'JAVA'); }
+                        });
+                        q.language_code_repository_details.forEach(r => {
+                            if (r.language === 'CPP') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_CPP_START----------", "----------CODE_BASE64_CPP_END----------"));
+                            if (r.language === 'PYTHON') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_PYTHON_START----------", "----------CODE_BASE64_PYTHON_END----------"));
+                            if (r.language === 'JAVA') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_JAVA_START----------", "----------CODE_BASE64_JAVA_END----------"));
                         });
                     }
 
-                    let finalJsonString = JSON.stringify(finalJson, null, 4);
-                    finalJsonString = finalJsonString.replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1');
+                    if (state.questionType === 'node') {
+                        const cppRepo = finalJson[0].language_code_repository_details.find(r => r.language === 'CPP');
+                        const nodeHContent = parseSection(lua, "----------NODE_H_CONTENT_START----------", "----------NODE_H_CONTENT_END----------");
+                        if (!nodeHContent) throw new Error("Node-Based question requires a NODE_H_CONTENT section in the .lua file.");
+                        const existingNodeH = cppRepo.code_repository.find(f => f.file_name === 'node.h');
+                        if (existingNodeH) { existingNodeH.file_content = btoa(nodeHContent); }
+                        else { cppRepo.code_repository.push({ file_name: "node.h", file_type: "FILE", file_content: btoa(nodeHContent) }); }
+                    }
 
+                    let finalJsonString = JSON.stringify(finalJson, null, 4).replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1');
                     downloadJsonFile(finalJsonString, 'coding_questions.json');
-                    
-                    successMessage.textContent = 'Success! Your file is downloading.';
-                    successMessage.parentElement.classList.remove('hidden');
-
+                    UIElements.successMessage.textContent = 'Success! Your file is downloading.';
+                    UIElements.successMessage.parentElement.classList.remove('hidden');
                 } catch (e) {
-                    errorMessage.textContent = `Error: ${e.message}`;
-                    errorMessage.parentElement.classList.remove('hidden');
+                    UIElements.errorMessage.textContent = `Error: ${e.message}`;
+                    UIElements.errorMessage.parentElement.classList.remove('hidden');
                 } finally {
-                    loader.classList.add('hidden');
-                    buttonText.classList.remove('hidden');
-                    generateBtn.disabled = false;
+                    UIElements.loader.classList.add('hidden');
+                    UIElements.buttonText.classList.remove('hidden');
+                    buttons.generate.disabled = false;
                 }
             }, 500);
         };
-
-        generateBtn.addEventListener('click', generateJson);
+        buttons.generate.addEventListener('click', runProcess);
     </script>
 </body>
-</html>
 
+</html>
