@@ -392,21 +392,61 @@ Description for the second hint.
             }, null, 2);
         };
         const parseTestCases = data => data.test_cases.map((tc, i) => ({ id: generateUUID(), input: tc.input, output: tc.output || "", is_hidden: (i + 1) > 2, weightage: null, evaluation_type: "DEFAULT", display_text: null, criteria: null, tags: [], order: i + 1, ... (tc.multiple_possible_output && {multiple_possible_output: true, outputs: tc.outputs}) }));
+        
         const assignWeights = (tcs, diff) => {
             const totals = { "EASY": 20, "MEDIUM": 25, "HARD": 30 };
             const total = totals[diff.toUpperCase()];
             if (!total || tcs.length === 0) return tcs;
-            let weights = new Array(tcs.length).fill(0.1);
-            let rem = total - tcs.length * 0.1;
-            if (rem < 0) return tcs;
-            const rParts = Array.from({length: tcs.length}, () => Math.random());
+
+            const n = tcs.length;
+            const min_weight = 0.1;
+            if (total < n * min_weight) {
+                // Fallback for when score is too low for the number of test cases
+                tcs.forEach(tc => tc.weightage = parseFloat((total / n).toFixed(2)));
+                return tcs;
+            }
+
+            let weights = new Array(n).fill(min_weight);
+            let rem = total - n * min_weight;
+
+            const rParts = Array.from({ length: n }, (_, i) => {
+                if (i < 2) return Math.random() * 0.2; // Smaller random part for first two
+                return 0.5 + Math.random() * 0.5; // Larger random part for the rest
+            });
+
             const tParts = rParts.reduce((s, p) => s + p, 0);
-            rParts.forEach((p, i) => { weights[i] += (p / tParts) * rem; });
-            const sum = weights.reduce((s, w) => s + w, 0);
-            weights[weights.length-1] += total - sum;
-            tcs.forEach((tc, i) => tc.weightage = parseFloat(weights[i].toFixed(2)));
+            if (tParts > 0) {
+                rParts.forEach((p, i) => { weights[i] += (p / tParts) * rem; });
+            }
+           
+            let roundedSum = 0;
+            for (let i = 0; i < n - 1; i++) {
+                weights[i] = parseFloat(weights[i].toFixed(2));
+                roundedSum += weights[i];
+            }
+            
+            // The last weight is calculated precisely to make the sum exact.
+            weights[n - 1] = parseFloat((total - roundedSum).toFixed(2));
+            
+            // A final check to ensure no weight is below the minimum due to rounding adjustments
+            if (weights[n-1] < min_weight) {
+                // If it happens, re-distribute the tiny difference from other test cases. A simple way is to take it from the largest.
+                let maxIdx = 0;
+                for(let i=0; i < n-1; i++) {
+                    if(weights[i] > weights[maxIdx]) maxIdx = i;
+                }
+                const deficit = min_weight - weights[n - 1];
+                weights[maxIdx] -= deficit;
+                weights[n-1] = min_weight;
+            }
+
+            tcs.forEach((tc, i) => {
+                tc.weightage = parseFloat(weights[i].toFixed(2));
+            });
+
             return tcs;
         };
+
         const downloadJsonFile = (content, fileName) => {
             const a = document.createElement('a');
             a.href = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
@@ -522,4 +562,3 @@ Description for the second hint.
     </script>
 </body>
 </html>
-
