@@ -198,12 +198,12 @@
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool Features & Output Expectations</h2>
                         <ul class="list-disc list-inside space-y-2 text-slate-300">
                             <li><strong>Create & Update:</strong> Supports both generating new question JSONs and modifying existing ones while preserving key IDs.</li>
-                            <li><strong>ID Changer Mode:</strong> This mode takes an existing JSON file and regenerates **all** question, code, solution, and test case IDs, treating it as a new question copy. It also ensures the time limits are output in the correct float format (e.g., `1.0`).</li>
+                            <li><strong>ID Changer Mode:</strong> This mode takes an existing JSON file and regenerates all question, code, solution, and test case IDs, treating it as a new question copy. It also ensures the time limits are output in the correct float format (e.g., `1.0`).</li>
                             <li><strong>Question Level Validation:</strong> The tool only accepts question levels of <strong>EASY</strong>, <strong>MEDIUM</strong>, or <strong>HARD</strong> (case-insensitive).</li>
                             <li><strong>Conditional ID Preservation (Update Mode):</strong>
                                 <ul>
-                                    <li>If the number of new test cases <strong>is equal</strong> to the number of existing test cases, the UUIDs of the test cases, the **Solutions ID**, the **Question ID**, and the **Code Content IDs** are **preserved**.</li>
-                                    <li>If the number of new test cases is <strong>increased or decreased</strong>, **all** UUIDs associated with the question (test cases, solutions, question, and code content) are **replaced with new IDs** to ensure correct ordering and data integrity.</li>
+                                    <li>If the number of new test cases <strong>is equal</strong> to the number of existing test cases, the UUIDs of the test cases, the Solutions ID, the Question ID, and the Code Content IDs are preserved.</li>
+                                    <li>If the number of new test cases is <strong>increased or decreased</strong>, all UUIDs associated with the question (test cases, solutions, question, and code content) are replaced with new IDs to ensure correct ordering and data integrity.</li>
                                 </ul>
                             </li>
                             <li><strong>Detailed Error Reporting:</strong> The UI displays the exact error message from any exceptions encountered during processing.</li>
