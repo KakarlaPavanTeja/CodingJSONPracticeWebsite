@@ -145,7 +145,6 @@
                 <header class="text-center mb-10"><h1 class="text-4xl font-bold text-slate-100 tracking-tight">Reference & Guides</h1></header>
                 <div class="space-y-10">
                     
-                    
                     <div>
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">How to Use</h2>
                         <ol class="list-decimal list-inside space-y-3 text-slate-300">
@@ -153,16 +152,10 @@
                             <li><strong>Choose Action:</strong> Select "Create New" or "Update Existing" (Update requires uploading the old JSON).</li>
                             <li><strong>Upload Files:</strong> Upload the <code>.lua</code> config file and the <code>.json</code> test cases file.</li>
                             <li><strong>Generate & Download:</strong> The tool generates the final <code>coding_questions.json</code>.</li>
-                            <li><strong>Choose Question Type:</strong> Select "Standard" or "Node-Based" (affects C++ repository structure).</li>
-                            <li><strong>Choose Action:</strong> Select "Create New" or "Update Existing" (Update requires uploading the old JSON).</li>
-                            <li><strong>Upload Files:</strong> Upload the <code>.lua</code> config file and the <code>.json</code> test cases file.</li>
-                            <li><strong>Generate & Download:</strong> The tool generates the final <code>coding_questions.json</code>.</li>
                         </ol>
                     </div>
 
-
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool Features & Output Expectations</h2>
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool Features & Output Expectations</h2>
                         <ul class="list-disc list-inside space-y-2 text-slate-300">
                             <li><strong>Create & Update:</strong> Supports both generating new question JSONs and modifying existing ones while preserving key IDs.</li>
@@ -178,16 +171,12 @@
                         </ul>
                     </div>
                     
-                    
                     <div>
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.lua File Outlines</h2>
                         
-                        
                         <div class="space-y-6">
                             
-                            
                             <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Standard (Non-Node) Questions - Lua Templates</h3>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Standard (Non-Node) Questions - Lua Templates</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
                                     <a href="https://docs.google.com/document/d/1lRTJKPanrtlue0Di9QJ7TgoH7u3KbQrAlChg6K6B47o/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example Outline (With Content)</a>
@@ -195,9 +184,7 @@
                                 </div>
                             </div>
                             
-                            
                              <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Node-Based Questions - Lua Templates</h3>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Node-Based Questions - Lua Templates</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
                                     <a href="https://docs.google.com/document/d/1th2isNaKzNn-bZ4KDm35a-QKnraFr7V3T7LFKCn9k7I/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example Outline (With Content)</a>
@@ -205,17 +192,7 @@
                                 </div>
                             </div>
 
-
                              <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mt-4 mb-2">Hints Configuration Details</h3>
-                                <p class="mb-2 text-slate-400">The tool generates hint titles (e.g., "Hint 1") and sets the unlock time sequentially:</p>
-                                <ul class="list-disc list-inside space-y-1 text-slate-300 pl-4">
-                                    <li>Hint 1 unlocks at <strong>10 seconds</strong>.</li>
-                                    <li>Hint 2 unlocks at <strong>20 seconds</strong>.</li>
-                                    <li>Hint N unlocks at <strong>N * 10 seconds</strong>.</li>
-                                </ul>
-                                <p class="mt-2 text-slate-400">Provide the description content (Markdown is supported) for each hint in the <code>.lua</code> file:</p>
-                                <pre class="bg-slate-900/70 p-4 rounded text-slate-300 text-xs whitespace-pre-wrap mt-4"><code>----------HINTS_START----------
                                 <h3 class="text-xl font-semibold text-slate-200 mt-4 mb-2">Hints Configuration Details</h3>
                                 <p class="mb-2 text-slate-400">The tool generates hint titles (e.g., "Hint 1") and sets the unlock time sequentially:</p>
                                 <ul class="list-disc list-inside space-y-1 text-slate-300 pl-4">
@@ -227,7 +204,6 @@
                                 <pre class="bg-slate-900/70 p-4 rounded text-slate-300 text-xs whitespace-pre-wrap mt-4"><code>----------HINTS_START----------
 
 ----------HINTS_START_1----------
-Description for the first hint.
 Description for the first hint.
 ----------HINTS_END_1----------
 
@@ -254,26 +230,8 @@ Description for the second hint.
 ----------SOLUTIONS_JAVA_END----------</code></pre>
                             </div>
 
-                            
-                             <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mt-4 mb-2">Solution Code Configuration Details</h3>
-                                <p class="mb-2 text-slate-400">The tool only includes a language's solution in the final JSON if content is present between its START/END tags. If all solution sections are empty, <code>"solutions": []</code> will be output.</p>
-                                <pre class="bg-slate-900/70 p-4 rounded text-slate-300 text-xs whitespace-pre-wrap mt-4"><code>----------SOLUTIONS_CPP_START----------
-// Add C++ solution code here (optional)
-----------SOLUTIONS_CPP_END----------
-
-----------SOLUTIONS_PYTHON_START----------
-# Add Python solution code here (optional)
-----------SOLUTIONS_PYTHON_END----------
-
-----------SOLUTIONS_JAVA_START----------
-// Add Java solution code here (optional)
-----------SOLUTIONS_JAVA_END----------</code></pre>
-                            </div>
-
                         </div>
                     </div>
-
 
                     <div>
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Test Case Expectations (.json)</h2>
@@ -284,16 +242,7 @@ Description for the second hint.
                             <li><strong>Hidden Test Cases:</strong> Test cases at index 0 and 1 are set to <code>is_hidden: false</code>. All subsequent test cases (index 2 onwards) are set to <code>is_hidden: true</code>.</li>
                         </ul>
                         <div class="space-y-6 mt-4">
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Test Case Expectations (.json)</h2>
-                        <ul class="list-disc list-inside space-y-2 text-slate-300">
-                            <li><strong>Validation:</strong> Every test case must include <code>input</code>, <code>weightage</code>, and <code>order</code>.</li>
-                            <li><strong>Multi-Output Validation:</strong> If <code>multiple_possible_output: true</code> is set, the <code>outputs</code> array must also be present and populated. If not, the standard <code>output</code> field is expected.</li>
-                            <li><strong>Total Score Calculation:</strong> The final <code>total_score</code> field in the output JSON is derived by summing the <code>weightage</code> of all input test cases.</li>
-                            <li><strong>Hidden Test Cases:</strong> Test cases at index 0 and 1 are set to <code>is_hidden: false</code>. All subsequent test cases (index 2 onwards) are set to <code>is_hidden: true</code>.</li>
-                        </ul>
-                        <div class="space-y-6 mt-4">
                             <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Test Case Templates</h3>
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Test Case Templates</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
                                     <a href="https://drive.google.com/file/d/108wCZZGco-ofFthztC_T9Lvv2c-sj1mI/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Single Output Format Example</a>
@@ -374,23 +323,11 @@ Description for the second hint.
             UIElements.testcasesFilename.textContent = 'Select a file';
             UIElements.existingJsonFilename.textContent = 'Select file to update';
             
-            // Clear the file input values to ensure the 'change' event fires on re-upload
-            UIElements.luaUpload.value = '';
-            UIElements.testcasesUpload.value = '';
-            UIElements.existingJsonUpload.value = '';
-
-            // Reset UI labels
-            UIElements.luaFilename.textContent = 'Select a file';
-            UIElements.testcasesFilename.textContent = 'Select a file';
-            UIElements.existingJsonFilename.textContent = 'Select file to update';
-            
             ['luaFilename', 'testcasesFilename', 'existingJsonFilename'].forEach(id => {
                 UIElements[id].classList.remove('text-sky-400', 'font-semibold');
             });
             UIElements.successMessage.parentElement.classList.add('hidden');
             UIElements.errorMessage.parentElement.classList.add('hidden');
-            
-            // Clear the content in JS state
             
             // Clear the content in JS state
             state = {...state, luaFileContent: '', testcasesFileContent: '', existingJsonContent: ''};
@@ -461,8 +398,6 @@ Description for the second hint.
                 hints.push({
                     // Hint time is now (index * 10) seconds
                     time_left_to_unlock_hint_in_seconds: i * 10,
-                    // Hint time is now (index * 10) seconds
-                    time_left_to_unlock_hint_in_seconds: i * 10,
                     hint_details: {
                         title: { 
                             content: `Hint ${i}`, 
@@ -490,10 +425,6 @@ Description for the second hint.
                 if (titleText && contentText) {
                     questions.push({ 
                         title: titleText, 
-                        content: { 
-                            content_type: 'MARKDOWN',
-                            content: contentText 
-                        } 
                         content: { 
                             content_type: 'MARKDOWN',
                             content: contentText 
@@ -590,7 +521,6 @@ Description for the second hint.
                 "complexity_analysis": { "content": "", "content_type": "" }
             }];
         };
-
 
 
         const downloadJsonFile = (content, fileName) => {
@@ -706,17 +636,12 @@ Description for the second hint.
                         finalJson = [{
                             test_cases: parsedTestCases, 
                             total_score: totalScore, 
-                            test_cases: parsedTestCases, 
-                            total_score: totalScore, 
                             question_type: "CODING",
                             question_asked_by_companies_info: formatCompanies(parseTags(parseSection(lua, "----------COMPANIES_START----------", "----------COMPANIES_END----------"))),
                             question: {
                                 difficulty: difficulty, content: parseSection(lua, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------"),
                                 short_text: parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------"), multimedia: [], language: "ENGLISH", content_type: "MARKDOWN", question_id: finalQuestionId,
                                 default_tag_names: parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------")), concept_tag_names: [],
-                                concept_filter_tag_names: allTopics,
-                                topic_tag_names: { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced },
-                                metadata: metadataString, 
                                 concept_filter_tag_names: allTopics,
                                 topic_tag_names: { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced },
                                 metadata: metadataString, 
@@ -733,7 +658,6 @@ Description for the second hint.
                                 { language: "JAVA", file_path_to_execute: "Main.java", default_file_path_to_submit_code: "Solution.java", code_repository: [{ file_name: "Main.java", file_type: "FILE", file_content: btoa(parseSection(lua, "----------CODE_BASE64_JAVA_START----------", "----------CODE_BASE64_JAVA_END----------")) }] }
                             ],
                             solutions: parsedSolutions, 
-                            solutions: parsedSolutions, 
                             hints: parseHints(lua),
                             test_case_evaluation_metrics: [
                                 { language: "CPP", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___1.0" },
@@ -746,8 +670,6 @@ Description for the second hint.
                         const q = finalJson[0];
                         q.test_cases = parsedTestCases; 
                         q.total_score = totalScore; 
-                        q.test_cases = parsedTestCases; 
-                        q.total_score = totalScore; 
                         q.question.difficulty = difficulty;
                         q.question.content = parseSection(lua, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------");
                         q.question.short_text = parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------");
@@ -757,7 +679,6 @@ Description for the second hint.
                         q.question.question_id = finalQuestionId; // Update ID if needed
                         q.question.concept_filter_tag_names = allTopics;
                         q.question.topic_tag_names = { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced };
-                        q.question.metadata = metadataString;
                         q.question.metadata = metadataString;
                         q.hints = parseHints(lua);
                         q.solutions = parsedSolutions; 
@@ -769,7 +690,6 @@ Description for the second hint.
                             if (d.language === 'PYTHON') { d.code_content = parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'PYTHON'); }
                             if (d.language === 'JAVA') { d.code_content = parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'JAVA'); }
                         });
-                        // Update code repository (base64)
                         // Update code repository (base64)
                         q.language_code_repository_details.forEach(r => {
                             if (r.language === 'CPP') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_CPP_START----------", "----------CODE_BASE64_CPP_END----------"));
@@ -804,16 +724,9 @@ Description for the second hint.
                     UIElements.successMessage.textContent = 'Success! Your file is downloading.';
                     UIElements.successMessage.parentElement.classList.remove('hidden');
 
-
                 } catch (e) {
                     UIElements.errorMessage.textContent = `Error: ${e.message}`;
                     UIElements.errorMessage.parentElement.classList.remove('hidden');
-                    
-                    // CRITICAL: Clear file input values on error to allow re-uploading the same file path without refresh
-                    UIElements.luaUpload.value = '';
-                    UIElements.testcasesUpload.value = '';
-                    UIElements.existingJsonUpload.value = '';
-
                     
                     // CRITICAL: Clear file input values on error to allow re-uploading the same file path without refresh
                     UIElements.luaUpload.value = '';
