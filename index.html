@@ -160,6 +160,12 @@
                         <ul class="list-disc list-inside space-y-2 text-slate-300">
                             <li><strong>Create & Update:</strong> Supports both generating new question JSONs and modifying existing ones while preserving key IDs.</li>
                             <li><strong>Question Level Validation:</strong> The tool only accepts question levels of <strong>EASY</strong>, <strong>MEDIUM</strong>, or <strong>HARD</strong> (case-insensitive).</li>
+                            <li><strong>Conditional ID Preservation (Update Mode):</strong>
+                                <ul>
+                                    <li>If the number of new test cases <strong>is equal</strong> to the number of existing test cases, the UUIDs of the test cases, the **Solutions ID**, the **Question ID**, and the **Code Content IDs** are **preserved**.</li>
+                                    <li>If the number of new test cases is <strong>increased or decreased</strong>, **all** UUIDs associated with the question (test cases, solutions, question, and code content) are **replaced with new IDs** to ensure correct ordering and data integrity.</li>
+                                </ul>
+                            </li>
                             <li><strong>Detailed Error Reporting:</strong> The UI displays the exact error message from any exceptions encountered during processing.</li>
                             <li><strong>Metadata Fields:</strong> The final JSON <code>metadata</code> includes <code>real_life_example</code>, <code>follow_up_questions</code> (with <code>content_type: MARKDOWN</code> for answers), and a comprehensive <code>topics</code> array combining all difficulty tags.</li>
                         </ul>
@@ -240,7 +246,7 @@ Description for the second hint.
                                 <h3 class="text-xl font-semibold text-slate-200 mb-2">Test Case Templates</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
                                     <a href="https://drive.google.com/file/d/108wCZZGco-ofFthztC_T9Lvv2c-sj1mI/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Single Output Format Example</a>
-                                    <a href= "https://drive.google.com/file/d/17276wU06e-B9aqS6UzHUz_FlQ6n9cGRU/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Multiple Output Format Example</a>
+                                    <a href="https://drive.google.com/file/d/17276wU06e-B9aqS6UzHUz_FlQ6n9cGRU/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Multiple Output Format Example</a>
                                 </div>
                             </div>
                         </div>
@@ -438,8 +444,7 @@ Description for the second hint.
             }, null, 2);
         };
         
-        // MODIFIED: Enhanced validation for all required fields in test cases
-        const parseTestCases = data => data.test_cases.map((tc, i) => {
+        const parseTestCases = (data, existingTestCases = []) => data.test_cases.map((tc, i) => {
             if (typeof tc.input === 'undefined' || tc.input === null) {
                 throw new Error(`Test case at index ${i} is missing the required 'input' field.`);
             }
@@ -458,13 +463,17 @@ Description for the second hint.
                 }
             } else {
                 if (typeof tc.output === 'undefined' || tc.output === null) {
-                     // Allow output to be an empty string, but key must exist
                     throw new Error(`Test case at index ${i} is missing the required 'output' field for single output format.`);
                 }
             }
             
+            // Conditional ID assignment: use existing ID if available, otherwise generate new one
+            const id = (existingTestCases[i] && existingTestCases[i].id) 
+                       ? existingTestCases[i].id 
+                       : generateUUID();
+
             const base = {
-                id: generateUUID(), 
+                id: id, 
                 input: tc.input, 
                 output: tc.output || (isMultipleOutput ? "" : ""), 
                 is_hidden: (i + 1) > 2, 
@@ -483,8 +492,9 @@ Description for the second hint.
         
         const calculateTotalScore = (tcs) => tcs.reduce((sum, tc) => sum + tc.weightage, 0);
 
-        const parseSolutions = (luaContent) => {
-            const solutionsCodeId = generateUUID();
+        const parseSolutions = (luaContent, existingId) => {
+            // Use existing ID if provided, otherwise generate new
+            const solutionsCodeId = existingId || generateUUID(); 
             const cppContent = parseSection(luaContent, "----------SOLUTIONS_CPP_START----------", "----------SOLUTIONS_CPP_END----------");
             const pythonContent = parseSection(luaContent, "----------SOLUTIONS_PYTHON_START----------", "----------SOLUTIONS_PYTHON_END----------");
             const javaContent = parseSection(luaContent, "----------SOLUTIONS_JAVA_START----------", "----------SOLUTIONS_JAVA_END----------");
@@ -529,6 +539,13 @@ Description for the second hint.
             UIElements.errorMessage.parentElement.classList.add('hidden');
 
             setTimeout(() => {
+                let existingTestCases = [];
+                let existingSolutionsId = null;
+                let existingQuestionId = null;
+                let existingCodeContentId = null;
+                let isTestCaseCountChanged = false;
+                let forceNewIds = false; // Initialized here
+
                 try {
                     if (!state.luaFileContent || !state.testcasesFileContent || (state.actionMode === 'update' && !state.existingJsonContent)) {
                        throw new Error("Please upload all required files.");
@@ -549,8 +566,50 @@ Description for the second hint.
                         throw new Error(`Invalid or missing QUESTION_LEVEL: Must be one of EASY, MEDIUM, or HARD (case-insensitive). Found: '${rawDifficulty}'`);
                     }
                     const difficulty = rawDifficulty;
+                    
+                    let finalJson;
+                    let parsedTestCases;
+                    
+                    if (state.actionMode === 'update') {
+                         let tempJson;
+                        try {
+                             tempJson = JSON.parse(state.existingJsonContent);
+                        } catch (e) {
+                            throw new Error(`Existing JSON parsing failed: ${e.message}`);
+                        }
+                        finalJson = tempJson;
+                        const qJson = finalJson[0];
 
-                    const parsedTestCases = parseTestCases(testCasesData[0]);
+                        existingTestCases = qJson.test_cases || [];
+                        existingQuestionId = qJson.question.question_id;
+                        
+                        if (qJson.coding_question_details && qJson.coding_question_details.length > 0) {
+                            existingCodeContentId = qJson.coding_question_details[0].code_id;
+                        }
+                        if (qJson.solutions && qJson.solutions.length > 0 && qJson.solutions[0].code_details && qJson.solutions[0].code_details.length > 0) {
+                            existingSolutionsId = qJson.solutions[0].code_details[0].code_id;
+                        }
+
+                        // Check if the number of test cases has changed
+                        isTestCaseCountChanged = testCasesData[0].test_cases.length !== existingTestCases.length;
+                        
+                        // Determine if we should force new IDs for all structural elements
+                        forceNewIds = isTestCaseCountChanged;
+
+                        // Parse new test cases. If forceNewIds is true, pass an empty array to force new IDs.
+                        parsedTestCases = parseTestCases(testCasesData[0], forceNewIds ? [] : existingTestCases);
+                        
+                        if (forceNewIds) {
+                            existingQuestionId = null;
+                            existingCodeContentId = null;
+                            existingSolutionsId = null;
+                        }
+
+                    } else { // Create mode
+                        // In create mode, generate new IDs always
+                        parsedTestCases = parseTestCases(testCasesData[0], []);
+                    }
+                    
                     const totalScore = parseFloat(calculateTotalScore(parsedTestCases).toFixed(2));
 
                     // Parse topic tags and solutions
@@ -558,7 +617,9 @@ Description for the second hint.
                     const intermediate = parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------"));
                     const advanced = parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"));
                     const allTopics = [...beginner, ...intermediate, ...advanced];
-                    const parsedSolutions = parseSolutions(lua);
+                    
+                    // Pass existingSolutionsId (null in create, preserved/null in update based on test case count)
+                    const parsedSolutions = parseSolutions(lua, existingSolutionsId); 
 
                     const metadataObject = {
                         real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), 
@@ -567,10 +628,11 @@ Description for the second hint.
                     };
                     const metadataString = JSON.stringify(metadataObject, null, 2);
 
-                    let finalJson;
-                    if (state.actionMode === 'create') {
-                        const codingDetailsId = generateUUID(); const questionId = generateUUID();
+                    // Determine final IDs
+                    const finalQuestionId = existingQuestionId || generateUUID();
+                    const finalCodeContentId = existingCodeContentId || generateUUID();
 
+                    if (state.actionMode === 'create') {
                         finalJson = [{
                             test_cases: parsedTestCases, 
                             total_score: totalScore, 
@@ -578,16 +640,16 @@ Description for the second hint.
                             question_asked_by_companies_info: formatCompanies(parseTags(parseSection(lua, "----------COMPANIES_START----------", "----------COMPANIES_END----------"))),
                             question: {
                                 difficulty: difficulty, content: parseSection(lua, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------"),
-                                short_text: parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------"), multimedia: [], language: "ENGLISH", content_type: "MARKDOWN", question_id: questionId,
+                                short_text: parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------"), multimedia: [], language: "ENGLISH", content_type: "MARKDOWN", question_id: finalQuestionId,
                                 default_tag_names: parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------")), concept_tag_names: [],
                                 concept_filter_tag_names: allTopics,
                                 topic_tag_names: { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced },
                                 metadata: metadataString, 
                             },
                             coding_question_details: [
-                                { code_content: parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"), default_code: true, language: "CPP", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'CPP')},
-                                { code_content: parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"), default_code: false, language: "PYTHON", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'PYTHON')},
-                                { code_content: parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"), default_code: false, language: "JAVA", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'JAVA')}
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"), default_code: true, language: "CPP", code_id: finalCodeContentId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'CPP')},
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"), default_code: false, language: "PYTHON", code_id: finalCodeContentId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'PYTHON')},
+                                { code_content: parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"), default_code: false, language: "JAVA", code_id: finalCodeContentId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'JAVA')}
                             ],
                             code_repository_details: null,
                             language_code_repository_details: [
@@ -605,14 +667,6 @@ Description for the second hint.
                         }];
                     } else { // Update mode
                         
-                        let tempJson;
-                        try {
-                             tempJson = JSON.parse(state.existingJsonContent);
-                        } catch (e) {
-                            throw new Error(`Existing JSON parsing failed: ${e.message}`);
-                        }
-                       
-                        finalJson = tempJson;
                         const q = finalJson[0];
                         q.test_cases = parsedTestCases; 
                         q.total_score = totalScore; 
@@ -622,14 +676,16 @@ Description for the second hint.
                         q.question_asked_by_companies_info = formatCompanies(parseTags(parseSection(lua, "----------COMPANIES_START----------", "----------COMPANIES_END----------")));
                         q.question.default_tag_names = parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------"));
                         
+                        q.question.question_id = finalQuestionId; // Update ID if needed
                         q.question.concept_filter_tag_names = allTopics;
                         q.question.topic_tag_names = { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced };
                         q.question.metadata = metadataString;
                         q.hints = parseHints(lua);
                         q.solutions = parsedSolutions; 
                         
-                        // Update coding details (snippet code)
+                        // Update coding details (snippet code) and ID
                         q.coding_question_details.forEach(d => {
+                            d.code_id = finalCodeContentId; // Update ID if needed
                             if (d.language === 'CPP') { d.code_content = parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'CPP'); }
                             if (d.language === 'PYTHON') { d.code_content = parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'PYTHON'); }
                             if (d.language === 'JAVA') { d.code_content = parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'JAVA'); }
@@ -639,6 +695,12 @@ Description for the second hint.
                             if (r.language === 'CPP') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_CPP_START----------", "----------CODE_BASE64_CPP_END----------"));
                             if (r.language === 'PYTHON') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_PYTHON_START----------", "----------CODE_BASE64_PYTHON_END----------"));
                             if (r.language === 'JAVA') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_JAVA_START----------", "----------CODE_BASE64_JAVA_END----------"));
+                        });
+                        
+                         q.test_case_evaluation_metrics.forEach(m => {
+                            if (m.language === 'CPP') m.time_limit_to_execute_in_seconds = "___FLOAT_PLACEHOLDER___1.0";
+                            if (m.language === 'PYTHON') m.time_limit_to_execute_in_seconds = "___FLOAT_PLACEHOLDER___4.0";
+                            if (m.language === 'JAVA') m.time_limit_to_execute_in_seconds = "___FLOAT_PLACEHOLDER___2.0";
                         });
                     }
 
@@ -651,7 +713,10 @@ Description for the second hint.
                         else { cppRepo.code_repository.push({ file_name: "node.h", file_type: "FILE", file_content: btoa(nodeHContent) });}
                     }
 
-                    let finalJsonString = JSON.stringify(finalJson, null, 4).replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1');
+                    // --- FINAL STRING FIX ---
+                    let finalJsonString = JSON.stringify(finalJson, null, 4);
+                    // This regex converts "___FLOAT_PLACEHOLDER___1.0" into 1.0 (a bare float number, not a quoted string)
+                    finalJsonString = finalJsonString.replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1'); 
                     
                     // Reset UI and state on SUCCESS before download
                     resetFileUploads();
