@@ -39,7 +39,7 @@
                     <div class="inline-flex items-center justify-center bg-slate-700 text-sky-400 rounded-full p-3 mb-4 shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                     </div>
-                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">CQ Practice JSON Preparation</h1>
+                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Coding Question JSON Preparation</h1>
                     <p class="mt-3 text-lg text-slate-400">Step 1: Select the question type.</p>
                      <button id="show-guides-btn" class="mt-4 text-sky-400 hover:text-sky-300 transition-colors text-sm font-medium">
                         Reference & Guides &rarr;
@@ -67,19 +67,24 @@
                     Back to Question Type
                 </button>
                  <header class="text-center mb-10">
-                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Create or Update?</h1>
+                    <h1 class="text-4xl md:text-5xl font-bold text-slate-100 tracking-tight">Select Action</h1>
                     <p class="mt-3 text-lg text-slate-400">Step 2: Choose your action.</p>
                 </header>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div id="select-create" class="selection-card">
                         <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
                         <h3 class="text-xl font-semibold text-slate-200">Create New</h3>
-                        <p class="mt-1 text-slate-400">Generate a new JSON from scratch.</p>
+                        <p class="mt-1 text-slate-400">Generate new JSON from scratch.</p>
                     </div>
                     <div id="select-update" class="selection-card">
                         <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" /></svg></div>
                         <h3 class="text-xl font-semibold text-slate-200">Update Existing</h3>
-                        <p class="mt-1 text-slate-400">Modify a JSON file, keeping IDs.</p>
+                        <p class="mt-1 text-slate-400">Modify JSON, preserving stable IDs.</p>
+                    </div>
+                    <div id="select-id-changer" class="selection-card">
+                        <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-red-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2-3-.895-3-2 1.343-2 3-2zM4 16h16M4 16l-1 4h18l-1-4M4 16L1 12m22 4L23 12" /></svg></div>
+                        <h3 class="text-xl font-semibold text-slate-200">ID Changer</h3>
+                        <p class="mt-1 text-slate-400">Force new IDs for all content.</p>
                     </div>
                 </div>
             </div>
@@ -138,6 +143,40 @@
                 </div>
             </div>
         </div>
+        
+        <div id="id-changer-page" class="hidden">
+            <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
+                 <button id="back-to-action-from-changer" class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Back to Action Selection
+                </button>
+                <header class="text-center mb-10">
+                     <h1 class="text-3xl md:text-4xl font-bold text-slate-100 tracking-tight">ID Changer</h1>
+                     <p class="mt-2 text-lg text-slate-400">Step 3: Upload the existing JSON file to regenerate all IDs.</p>
+                </header>
+                
+                <div class="grid grid-cols-1 gap-8 mb-10 max-w-md mx-auto">
+                    <div class="selection-card">
+                        <label for="changer-json-upload" class="file-upload-label">
+                            <div class="icon-container bg-slate-700"><svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg></div>
+                            <h3 class="text-lg font-semibold text-slate-200">Upload Existing JSON</h3>
+                            <p id="changer-json-filename" class="mt-1 text-sm text-slate-400">Select file to regenerate IDs</p>
+                        </label>
+                        <input id="changer-json-upload" type="file" class="hidden" accept=".json">
+                    </div>
+                </div>
+                <div class="text-center">
+                     <button id="regenerate-btn" class="w-full md:w-auto bg-gradient-to-r from-red-500 to-pink-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-red-300/50 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed mx-auto">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5"></path></svg>
+                        <span id="changer-button-text">Regenerate & Download JSON</span>
+                        <div id="changer-loader" class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 hidden"></div>
+                    </button>
+                    <div id="changer-success-message" class="mt-6 text-green-300 bg-green-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-green-700"><svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="font-medium"></span></div>
+                    <div id="changer-error-message" class="mt-6 text-red-300 bg-red-900/50 p-4 rounded-lg hidden items-center justify-center text-left max-w-md mx-auto border border-red-700"><svg class="w-6 h-6 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span class="font-medium"></span></div>
+                </div>
+            </div>
+        </div>
+
 
         <div id="guides-page" class="hidden">
             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700 text-slate-300">
@@ -149,8 +188,8 @@
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">How to Use</h2>
                         <ol class="list-decimal list-inside space-y-3 text-slate-300">
                             <li><strong>Choose Question Type:</strong> Select "Standard" or "Node-Based" (affects C++ repository structure).</li>
-                            <li><strong>Choose Action:</strong> Select "Create New" or "Update Existing" (Update requires uploading the old JSON).</li>
-                            <li><strong>Upload Files:</strong> Upload the <code>.lua</code> config file and the <code>.json</code> test cases file.</li>
+                            <li><strong>Choose Action:</strong> Select "Create New", "Update Existing", or the dedicated <strong>ID Changer</strong>.</li>
+                            <li><strong>Upload Files:</strong> Upload the <code>.lua</code> config file and the <code>.json</code> test cases file for Create/Update, or just the <code>coding_questions.json</code> for ID Changer.</li>
                             <li><strong>Generate & Download:</strong> The tool generates the final <code>coding_questions.json</code>.</li>
                         </ol>
                     </div>
@@ -159,6 +198,7 @@
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool Features & Output Expectations</h2>
                         <ul class="list-disc list-inside space-y-2 text-slate-300">
                             <li><strong>Create & Update:</strong> Supports both generating new question JSONs and modifying existing ones while preserving key IDs.</li>
+                            <li><strong>ID Changer Mode:</strong> This mode takes an existing JSON file and regenerates **all** question, code, solution, and test case IDs, treating it as a new question copy. It also ensures the time limits are output in the correct float format (e.g., `1.0`).</li>
                             <li><strong>Question Level Validation:</strong> The tool only accepts question levels of <strong>EASY</strong>, <strong>MEDIUM</strong>, or <strong>HARD</strong> (case-insensitive).</li>
                             <li><strong>Conditional ID Preservation (Update Mode):</strong>
                                 <ul>
@@ -265,6 +305,7 @@ Description for the second hint.
             actionSelection: document.getElementById('action-selection-page'),
             preparation: document.getElementById('preparation-page'),
             guides: document.getElementById('guides-page'),
+            idChanger: document.getElementById('id-changer-page'), 
         };
 
         // Button elements
@@ -273,11 +314,14 @@ Description for the second hint.
             selectNode: document.getElementById('select-node'),
             selectCreate: document.getElementById('select-create'),
             selectUpdate: document.getElementById('select-update'),
+            selectIdChanger: document.getElementById('select-id-changer'), 
             backToType: document.getElementById('back-to-type'),
             backToAction: document.getElementById('back-to-action'),
+            backToActionFromChanger: document.getElementById('back-to-action-from-changer'), 
             showGuides: document.getElementById('show-guides-btn'),
             backToHome: document.getElementById('back-to-home-btn'),
             generate: document.getElementById('generate-btn'),
+            regenerate: document.getElementById('regenerate-btn'), 
         };
         
         // Input and display elements
@@ -295,15 +339,24 @@ Description for the second hint.
             loader: document.getElementById('loader'),
             successMessage: document.getElementById('success-message').querySelector('span'),
             errorMessage: document.getElementById('error-message').querySelector('span'),
+            
+            // ID Changer Elements
+            changerJsonUpload: document.getElementById('changer-json-upload'),
+            changerJsonFilename: document.getElementById('changer-json-filename'),
+            changerButtonText: document.getElementById('changer-button-text'),
+            changerLoader: document.getElementById('changer-loader'),
+            changerSuccessMessage: document.getElementById('changer-success-message').querySelector('span'),
+            changerErrorMessage: document.getElementById('changer-error-message').querySelector('span'),
         };
 
         // App state
         let state = {
             questionType: '', // 'standard' or 'node'
-            actionMode: '', // 'create' or 'update'
+            actionMode: '', // 'create' or 'update' or 'changer'
             luaFileContent: '',
             testcasesFileContent: '',
-            existingJsonContent: ''
+            existingJsonContent: '', // Used for Update
+            changerJsonContent: ''  // Used for ID Changer
         };
 
         // --- Page Navigation ---
@@ -313,24 +366,30 @@ Description for the second hint.
         };
 
         const resetFileUploads = () => {
-            // Clear the file input values to ensure the 'change' event fires on re-upload
+            // Clear input values
             UIElements.luaUpload.value = '';
             UIElements.testcasesUpload.value = '';
             UIElements.existingJsonUpload.value = '';
+            UIElements.changerJsonUpload.value = '';
 
             // Reset UI labels
             UIElements.luaFilename.textContent = 'Select a file';
             UIElements.testcasesFilename.textContent = 'Select a file';
             UIElements.existingJsonFilename.textContent = 'Select file to update';
+            UIElements.changerJsonFilename.textContent = 'Select file to regenerate IDs';
             
-            ['luaFilename', 'testcasesFilename', 'existingJsonFilename'].forEach(id => {
+            ['luaFilename', 'testcasesFilename', 'existingJsonFilename', 'changerJsonFilename'].forEach(id => {
                 UIElements[id].classList.remove('text-sky-400', 'font-semibold');
             });
+            
+            // Hide messages
             UIElements.successMessage.parentElement.classList.add('hidden');
             UIElements.errorMessage.parentElement.classList.add('hidden');
+            UIElements.changerSuccessMessage.parentElement.classList.add('hidden');
+            UIElements.changerErrorMessage.parentElement.classList.add('hidden');
             
             // Clear the content in JS state
-            state = {...state, luaFileContent: '', testcasesFileContent: '', existingJsonContent: ''};
+            state = {...state, luaFileContent: '', testcasesFileContent: '', existingJsonContent: '', changerJsonContent: ''};
         };
 
         buttons.selectStandard.addEventListener('click', () => { state.questionType = 'standard'; showPage('actionSelection'); });
@@ -338,7 +397,10 @@ Description for the second hint.
         buttons.backToType.addEventListener('click', () => showPage('typeSelection'));
         buttons.showGuides.addEventListener('click', () => showPage('guides'));
         buttons.backToHome.addEventListener('click', () => showPage('typeSelection'));
+        
+        // Navigation from Prep Page back to Action Select
         buttons.backToAction.addEventListener('click', () => showPage('actionSelection'));
+        buttons.backToActionFromChanger.addEventListener('click', () => showPage('actionSelection'));
 
         buttons.selectCreate.addEventListener('click', () => {
             state.actionMode = 'create';
@@ -355,6 +417,12 @@ Description for the second hint.
             UIElements.existingJsonUploadWrapper.classList.remove('hidden');
             UIElements.nodeHWarning.style.display = state.questionType === 'node' ? 'flex' : 'none';
             showPage('preparation');
+            resetFileUploads();
+        });
+        
+        buttons.selectIdChanger.addEventListener('click', () => {
+            state.actionMode = 'changer';
+            showPage('idChanger');
             resetFileUploads();
         });
 
@@ -376,6 +444,7 @@ Description for the second hint.
         setupFileReader(UIElements.luaUpload, UIElements.luaFilename, 'luaFileContent');
         setupFileReader(UIElements.testcasesUpload, UIElements.testcasesFilename, 'testcasesFileContent');
         setupFileReader(UIElements.existingJsonUpload, UIElements.existingJsonFilename, 'existingJsonContent');
+        setupFileReader(UIElements.changerJsonUpload, UIElements.changerJsonFilename, 'changerJsonContent');
 
         // --- Core Logic ---
         const generateUUID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => (Math.random() * 16 | 0).toString(16));
@@ -479,7 +548,6 @@ Description for the second hint.
                 is_hidden: (i + 1) > 2, 
                 weightage: parseFloat(tc.weightage), 
                 evaluation_type: "DEFAULT", 
-                display_text: null, 
                 criteria: null, 
                 tags: [], 
                 order: tc.order
@@ -522,6 +590,112 @@ Description for the second hint.
             }];
         };
 
+        // ------------------------------------------------------------
+        // ID CHANGER LOGIC
+        // ------------------------------------------------------------
+        const regenerateAllIds = (jsonContent) => {
+            let finalJson;
+            try {
+                finalJson = JSON.parse(jsonContent);
+            } catch (e) {
+                throw new Error(`JSON parsing failed: ${e.message}`);
+            }
+
+            if (!Array.isArray(finalJson) || !finalJson[0] || !finalJson[0].question) {
+                throw new Error("Invalid JSON structure. Expecting array containing question object.");
+            }
+
+            const q = finalJson[0];
+            
+            const newQuestionId = generateUUID();
+            const newCodeContentId = generateUUID();
+            const newSolutionsId = generateUUID();
+
+            // 1. Regenerate Question ID
+            q.question.question_id = newQuestionId;
+
+            // 2. Regenerate Code Content IDs
+            if (q.coding_question_details) {
+                q.coding_question_details.forEach(d => {
+                    d.code_id = newCodeContentId;
+                });
+            }
+
+            // 3. Regenerate Solutions ID
+            if (q.solutions && q.solutions.length > 0 && q.solutions[0].code_details) {
+                q.solutions[0].code_details.forEach(d => {
+                    d.code_id = newSolutionsId;
+                });
+            }
+
+            // 4. Regenerate Test Case IDs
+            if (q.test_cases) {
+                q.test_cases.forEach(tc => {
+                    tc.id = generateUUID();
+                });
+            }
+            
+            // 5. FIX: Ensure float placeholders are correctly set for time limits
+            if (q.test_case_evaluation_metrics) {
+                q.test_case_evaluation_metrics.forEach(m => {
+                    if (m.language === 'CPP') m.time_limit_to_execute_in_seconds = "___FLOAT_PLACEHOLDER___1.0";
+                    else if (m.language === 'PYTHON') m.time_limit_to_execute_in_seconds = "___FLOAT_PLACEHOLDER___4.0";
+                    else if (m.language === 'JAVA') m.time_limit_to_execute_in_seconds = "___FLOAT_PLACEHOLDER___2.0";
+                });
+            }
+            
+            return finalJson;
+        };
+        
+        const runIdChanger = () => {
+            UIElements.changerLoader.classList.remove('hidden');
+            UIElements.changerButtonText.classList.add('hidden');
+            buttons.regenerate.disabled = true;
+            UIElements.changerSuccessMessage.parentElement.classList.add('hidden');
+            UIElements.changerErrorMessage.parentElement.classList.add('hidden');
+            
+            setTimeout(() => {
+                try {
+                    if (!state.changerJsonContent) {
+                        throw new Error("Please upload the existing JSON file.");
+                    }
+                    
+                    const updatedJson = regenerateAllIds(state.changerJsonContent);
+                    let finalJsonString = JSON.stringify(updatedJson, null, 4);
+
+                    // FIX: Reintroduce the float placeholder replacement for time limits
+                    // This regex converts "___FLOAT_PLACEHOLDER___1.0" into 1.0 (a bare float number, not a quoted string)
+                    finalJsonString = finalJsonString.replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1'); 
+
+                    // Reset UI and state on SUCCESS before download
+                    UIElements.changerJsonUpload.value = ''; // Clear file input
+                    state.changerJsonContent = '';
+                    
+                    downloadJsonFile(finalJsonString, 'coding_questions_new_ids.json');
+                    
+                    UIElements.changerJsonFilename.textContent = 'Select file to regenerate IDs';
+                    UIElements.changerJsonFilename.classList.remove('text-sky-400', 'font-semibold');
+                    
+                    UIElements.changerSuccessMessage.textContent = 'Success! File with new IDs is downloading.';
+                    UIElements.changerSuccessMessage.parentElement.classList.remove('hidden');
+
+                } catch (e) {
+                    UIElements.changerErrorMessage.textContent = `Error: ${e.message}`;
+                    UIElements.changerErrorMessage.parentElement.classList.remove('hidden');
+                    
+                    // Clear file input value on error
+                    UIElements.changerJsonUpload.value = '';
+
+                } finally {
+                    UIElements.changerLoader.classList.add('hidden');
+                    UIElements.changerButtonText.classList.remove('hidden');
+                    buttons.regenerate.disabled = false;
+                }
+            }, 500);
+        };
+        buttons.regenerate.addEventListener('click', runIdChanger);
+        // ------------------------------------------------------------
+
 
         const downloadJsonFile = (content, fileName) => {
             const a = document.createElement('a');
@@ -544,7 +718,7 @@ Description for the second hint.
                 let existingQuestionId = null;
                 let existingCodeContentId = null;
                 let isTestCaseCountChanged = false;
-                let forceNewIds = false; // Initialized here
+                let forceNewIds = false; 
 
                 try {
                     if (!state.luaFileContent || !state.testcasesFileContent || (state.actionMode === 'update' && !state.existingJsonContent)) {
@@ -676,7 +850,7 @@ Description for the second hint.
                         q.question_asked_by_companies_info = formatCompanies(parseTags(parseSection(lua, "----------COMPANIES_START----------", "----------COMPANIES_END----------")));
                         q.question.default_tag_names = parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------"));
                         
-                        q.question.question_id = finalQuestionId; // Update ID if needed
+                        q.question.question_id = finalQuestionId;
                         q.question.concept_filter_tag_names = allTopics;
                         q.question.topic_tag_names = { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced };
                         q.question.metadata = metadataString;
@@ -685,7 +859,7 @@ Description for the second hint.
                         
                         // Update coding details (snippet code) and ID
                         q.coding_question_details.forEach(d => {
-                            d.code_id = finalCodeContentId; // Update ID if needed
+                            d.code_id = finalCodeContentId;
                             if (d.language === 'CPP') { d.code_content = parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'CPP'); }
                             if (d.language === 'PYTHON') { d.code_content = parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'PYTHON'); }
                             if (d.language === 'JAVA') { d.code_content = parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'JAVA'); }
