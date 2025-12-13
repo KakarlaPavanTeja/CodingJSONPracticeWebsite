@@ -33,7 +33,6 @@
 <body class="bg-slate-900 min-h-screen flex items-center justify-center p-4">
 
     <main class="w-full max-w-4xl mx-auto">
-        <!-- Page 1: Type Selection -->
         <div id="type-selection-page">
             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
                 <header class="text-center mb-10">
@@ -61,7 +60,6 @@
             </div>
         </div>
 
-        <!-- Page 2: Action Selection (Create/Update) -->
         <div id="action-selection-page" class="hidden">
              <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
                 <button id="back-to-type" class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
@@ -87,7 +85,6 @@
             </div>
         </div>
 
-        <!-- Page 3: Preparation Page -->
         <div id="preparation-page" class="hidden">
             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700">
                  <button id="back-to-action" class="mb-6 flex items-center text-slate-400 hover:text-sky-400 transition-colors">
@@ -142,55 +139,66 @@
             </div>
         </div>
 
-        <!-- Page 4: Guides Page -->
         <div id="guides-page" class="hidden">
             <div class="bg-slate-800/60 backdrop-blur-xl rounded-2xl shadow-lg p-8 md:p-12 border border-slate-700 text-slate-300">
                 <button id="back-to-home-btn" class="mb-8 flex items-center text-slate-400 hover:text-sky-400 transition-colors"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>Back to Home</button>
                 <header class="text-center mb-10"><h1 class="text-4xl font-bold text-slate-100 tracking-tight">Reference & Guides</h1></header>
                 <div class="space-y-10">
+                    
                     <div>
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">How to Use</h2>
                         <ol class="list-decimal list-inside space-y-3 text-slate-300">
-                            <li><strong class="font-semibold text-slate-200">Choose Question Type:</strong> On the home page, select "Standard" or "Node-Based".</li>
-                            <li><strong class="font-semibold text-slate-200">Choose Action:</strong> Select "Create New" for a new question or "Update Existing" to modify one.</li>
-                            <li><strong class="font-semibold text-slate-200">Prepare Your Files:</strong> Use the outline templates linked below to prepare your `.lua` and `.json` files.</li>
-                            <li><strong class="font-semibold text-slate-200">Upload Files:</strong> Upload all required files. The "Update" action requires the existing JSON file as well.</li>
-                            <li><strong class="font-semibold text-slate-200">Generate & Download:</strong> Click the button to receive your final `coding_questions.json` file.</li>
+                            <li><strong>Choose Question Type:</strong> Select "Standard" or "Node-Based" (affects C++ repository structure).</li>
+                            <li><strong>Choose Action:</strong> Select "Create New" or "Update Existing" (Update requires uploading the old JSON).</li>
+                            <li><strong>Upload Files:</strong> Upload the <code>.lua</code> config file and the <code>.json</code> test cases file.</li>
+                            <li><strong>Generate & Download:</strong> The tool generates the final <code>coding_questions.json</code>.</li>
                         </ol>
                     </div>
+
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool Features</h2>
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Tool Features & Output Expectations</h2>
                         <ul class="list-disc list-inside space-y-2 text-slate-300">
-                            <li><strong class="font-semibold text-slate-200">Create & Update:</strong> Supports both generating new question JSONs and updating existing ones while preserving key IDs.</li>
-                            <li><strong class="font-semibold text-slate-200">Dual Question Type Support:</strong> Works for both Standard and Node-Based (Linked List, Binary Tree) questions.</li>
-                            <li><strong class="font-semibold text-slate-200">Automatic Weightage Calculation:</strong> Test case weights are calculated for you based on question difficulty.</li>
-                            <li><strong class="font-semibold text-slate-200">Comprehensive Parsing:</strong> Handles all metadata, hints, follow-up questions, and debug code.</li>
+                            <li><strong>Create & Update:</strong> Supports both generating new question JSONs and modifying existing ones while preserving key IDs.</li>
+                            <li><strong>Question Level Validation:</strong> The tool only accepts question levels of <strong>EASY</strong>, <strong>MEDIUM</strong>, or <strong>HARD</strong> (case-insensitive).</li>
+                            <li><strong>Detailed Error Reporting:</strong> The UI displays the exact error message from any exceptions encountered during processing.</li>
+                            <li><strong>Metadata Fields:</strong> The final JSON <code>metadata</code> includes <code>real_life_example</code>, <code>follow_up_questions</code> (with <code>content_type: MARKDOWN</code> for answers), and a comprehensive <code>topics</code> array combining all difficulty tags.</li>
                         </ul>
                     </div>
+                    
                     <div>
                         <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.lua File Outlines</h2>
+                        
                         <div class="space-y-6">
+                            
                             <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Standard (Non-Node) Questions</h3>
+                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Standard (Non-Node) Questions - Lua Templates</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
                                     <a href="https://docs.google.com/document/d/1lRTJKPanrtlue0Di9QJ7TgoH7u3KbQrAlChg6K6B47o/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example Outline (With Content)</a>
                                     <a href="https://docs.google.com/document/d/1f4_WaXBxxD9E8PEWYjTb3XE6zQ_lvixJBUSGKEJ_uOQ/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank Outline (Template)</a>
                                 </div>
                             </div>
+                            
                              <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Node-Based Questions</h3>
+                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Node-Based Questions - Lua Templates</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
                                     <a href="https://docs.google.com/document/d/1th2isNaKzNn-bZ4KDm35a-QKnraFr7V3T7LFKCn9k7I/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Example Outline (With Content)</a>
                                     <a href="https://docs.google.com/document/d/1p1kqCDuNSfzy_cX6d7p4zcQHggeuLHK9wK-6_RvI4S4/edit?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Blank Outline (Template)</a>
                                 </div>
                             </div>
+
                              <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Hint Section Format</h3>
-                                <p class="mb-2 text-slate-400">The tool automatically generates hint titles (e.g., "Hint 1", "Hint 2") and sets the unlock time to 5 seconds. You only need to provide the description content for each hint in your <code>.lua</code> file as follows:</p>
-                                <pre class="bg-slate-900/70 p-4 rounded text-slate-300 text-xs whitespace-pre-wrap"><code>----------HINTS_START----------
+                                <h3 class="text-xl font-semibold text-slate-200 mt-4 mb-2">Hints Configuration Details</h3>
+                                <p class="mb-2 text-slate-400">The tool generates hint titles (e.g., "Hint 1") and sets the unlock time sequentially:</p>
+                                <ul class="list-disc list-inside space-y-1 text-slate-300 pl-4">
+                                    <li>Hint 1 unlocks at <strong>10 seconds</strong>.</li>
+                                    <li>Hint 2 unlocks at <strong>20 seconds</strong>.</li>
+                                    <li>Hint N unlocks at <strong>N * 10 seconds</strong>.</li>
+                                </ul>
+                                <p class="mt-2 text-slate-400">Provide the description content (Markdown is supported) for each hint in the <code>.lua</code> file:</p>
+                                <pre class="bg-slate-900/70 p-4 rounded text-slate-300 text-xs whitespace-pre-wrap mt-4"><code>----------HINTS_START----------
 
 ----------HINTS_START_1----------
-Description for the first hint. This can be multi-line and supports Markdown.
+Description for the first hint.
 ----------HINTS_END_1----------
 
 ----------HINTS_START_2----------
@@ -199,16 +207,40 @@ Description for the second hint.
 
 ----------HINTS_END----------</code></pre>
                             </div>
+                            
+                             <div>
+                                <h3 class="text-xl font-semibold text-slate-200 mt-4 mb-2">Solution Code Configuration Details</h3>
+                                <p class="mb-2 text-slate-400">The tool only includes a language's solution in the final JSON if content is present between its START/END tags. If all solution sections are empty, <code>"solutions": []</code> will be output.</p>
+                                <pre class="bg-slate-900/70 p-4 rounded text-slate-300 text-xs whitespace-pre-wrap mt-4"><code>----------SOLUTIONS_CPP_START----------
+// Add C++ solution code here (optional)
+----------SOLUTIONS_CPP_END----------
+
+----------SOLUTIONS_PYTHON_START----------
+# Add Python solution code here (optional)
+----------SOLUTIONS_PYTHON_END----------
+
+----------SOLUTIONS_JAVA_START----------
+// Add Java solution code here (optional)
+----------SOLUTIONS_JAVA_END----------</code></pre>
+                            </div>
+
                         </div>
                     </div>
+
                     <div>
-                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">.json Test Case Outlines</h2>
-                        <div class="space-y-6">
+                        <h2 class="text-2xl font-semibold text-sky-400 border-b-2 border-slate-700 pb-2 mb-4">Test Case Expectations (.json)</h2>
+                        <ul class="list-disc list-inside space-y-2 text-slate-300">
+                            <li><strong>Validation:</strong> Every test case must include <code>input</code>, <code>weightage</code>, and <code>order</code>.</li>
+                            <li><strong>Multi-Output Validation:</strong> If <code>multiple_possible_output: true</code> is set, the <code>outputs</code> array must also be present and populated. If not, the standard <code>output</code> field is expected.</li>
+                            <li><strong>Total Score Calculation:</strong> The final <code>total_score</code> field in the output JSON is derived by summing the <code>weightage</code> of all input test cases.</li>
+                            <li><strong>Hidden Test Cases:</strong> Test cases at index 0 and 1 are set to <code>is_hidden: false</code>. All subsequent test cases (index 2 onwards) are set to <code>is_hidden: true</code>.</li>
+                        </ul>
+                        <div class="space-y-6 mt-4">
                             <div>
-                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Test Case Formats</h3>
+                                <h3 class="text-xl font-semibold text-slate-200 mb-2">Test Case Templates</h3>
                                 <div class="flex flex-col sm:flex-row gap-4">
-                                    <a href="https://drive.google.com/file/d/1353ZYhK7DLAVfYs1JNTXQ9BhfKoq27-8/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Single Output Format Example</a>
-                                    <a href="https://drive.google.com/file/d/1ao8CSPo87Uz0iTsESZ8suRbrRyqlWirW/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Multiple Output Format Example</a>
+                                    <a href="https://drive.google.com/file/d/108wCZZGco-ofFthztC_T9Lvv2c-sj1mI/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Single Output Format Example</a>
+                                    <a href= "https://drive.google.com/file/d/17276wU06e-B9aqS6UzHUz_FlQ6n9cGRU/view?usp=drive_link" target="_blank" class="flex-1 text-center bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-4 rounded-lg transition-colors">Multiple Output Format Example</a>
                                 </div>
                             </div>
                         </div>
@@ -275,13 +307,23 @@ Description for the second hint.
         };
 
         const resetFileUploads = () => {
-            ['luaUpload', 'testcasesUpload', 'existingJsonUpload'].forEach(id => { UIElements[id].value = ''; });
+            // Clear the file input values to ensure the 'change' event fires on re-upload
+            UIElements.luaUpload.value = '';
+            UIElements.testcasesUpload.value = '';
+            UIElements.existingJsonUpload.value = '';
+
+            // Reset UI labels
+            UIElements.luaFilename.textContent = 'Select a file';
+            UIElements.testcasesFilename.textContent = 'Select a file';
+            UIElements.existingJsonFilename.textContent = 'Select file to update';
+            
             ['luaFilename', 'testcasesFilename', 'existingJsonFilename'].forEach(id => {
-                UIElements[id].textContent = id === 'existingJsonFilename' ? 'Select file to update' : 'Select a file';
                 UIElements[id].classList.remove('text-sky-400', 'font-semibold');
             });
             UIElements.successMessage.parentElement.classList.add('hidden');
             UIElements.errorMessage.parentElement.classList.add('hidden');
+            
+            // Clear the content in JS state
             state = {...state, luaFileContent: '', testcasesFileContent: '', existingJsonContent: ''};
         };
 
@@ -348,7 +390,8 @@ Description for the second hint.
                 if (!descriptionText) break;
                 
                 hints.push({
-                    time_left_to_unlock_hint_in_seconds: 5,
+                    // Hint time is now (index * 10) seconds
+                    time_left_to_unlock_hint_in_seconds: i * 10,
                     hint_details: {
                         title: { 
                             content: `Hint ${i}`, 
@@ -376,7 +419,10 @@ Description for the second hint.
                 if (titleText && contentText) {
                     questions.push({ 
                         title: titleText, 
-                        content: { content_type: 'TEXT', content: contentText } 
+                        content: { 
+                            content_type: 'MARKDOWN',
+                            content: contentText 
+                        } 
                     });
                 }
                 i++;
@@ -391,61 +437,81 @@ Description for the second hint.
                 post_user_code: parseSection(block, '----------POST_USER_CODE_START----------', '----------POST_USER_CODE_END----------')
             }, null, 2);
         };
-        const parseTestCases = data => data.test_cases.map((tc, i) => ({ id: generateUUID(), input: tc.input, output: tc.output || "", is_hidden: (i + 1) > 2, weightage: null, evaluation_type: "DEFAULT", display_text: null, criteria: null, tags: [], order: i + 1, ... (tc.multiple_possible_output && {multiple_possible_output: true, outputs: tc.outputs}) }));
         
-        const assignWeights = (tcs, diff) => {
-            const totals = { "EASY": 20, "MEDIUM": 25, "HARD": 30 };
-            const total = totals[diff.toUpperCase()];
-            if (!total || tcs.length === 0) return tcs;
-
-            const n = tcs.length;
-            const min_weight = 0.1;
-            if (total < n * min_weight) {
-                // Fallback for when score is too low for the number of test cases
-                tcs.forEach(tc => tc.weightage = parseFloat((total / n).toFixed(2)));
-                return tcs;
+        // MODIFIED: Enhanced validation for all required fields in test cases
+        const parseTestCases = data => data.test_cases.map((tc, i) => {
+            if (typeof tc.input === 'undefined' || tc.input === null) {
+                throw new Error(`Test case at index ${i} is missing the required 'input' field.`);
             }
-
-            let weights = new Array(n).fill(min_weight);
-            let rem = total - n * min_weight;
-
-            const rParts = Array.from({ length: n }, (_, i) => {
-                if (i < 2) return Math.random() * 0.2; // Smaller random part for first two
-                return 0.5 + Math.random() * 0.5; // Larger random part for the rest
-            });
-
-            const tParts = rParts.reduce((s, p) => s + p, 0);
-            if (tParts > 0) {
-                rParts.forEach((p, i) => { weights[i] += (p / tParts) * rem; });
+            if (typeof tc.weightage === 'undefined' || tc.weightage === null) {
+                throw new Error(`Test case at index ${i} is missing the required 'weightage' field.`);
             }
-           
-            let roundedSum = 0;
-            for (let i = 0; i < n - 1; i++) {
-                weights[i] = parseFloat(weights[i].toFixed(2));
-                roundedSum += weights[i];
+            if (typeof tc.order === 'undefined' || tc.order === null) {
+                throw new Error(`Test case at index ${i} is missing the required 'order' field.`);
             }
             
-            // The last weight is calculated precisely to make the sum exact.
-            weights[n - 1] = parseFloat((total - roundedSum).toFixed(2));
-            
-            // A final check to ensure no weight is below the minimum due to rounding adjustments
-            if (weights[n-1] < min_weight) {
-                // If it happens, re-distribute the tiny difference from other test cases. A simple way is to take it from the largest.
-                let maxIdx = 0;
-                for(let i=0; i < n-1; i++) {
-                    if(weights[i] > weights[maxIdx]) maxIdx = i;
+            const isMultipleOutput = tc.multiple_possible_output === true;
+
+            if (isMultipleOutput) {
+                if (!Array.isArray(tc.outputs) || tc.outputs.length === 0) {
+                    throw new Error(`Test case at index ${i} is marked for multiple outputs but 'outputs' array is missing or empty.`);
                 }
-                const deficit = min_weight - weights[n - 1];
-                weights[maxIdx] -= deficit;
-                weights[n-1] = min_weight;
+            } else {
+                if (typeof tc.output === 'undefined' || tc.output === null) {
+                     // Allow output to be an empty string, but key must exist
+                    throw new Error(`Test case at index ${i} is missing the required 'output' field for single output format.`);
+                }
             }
+            
+            const base = {
+                id: generateUUID(), 
+                input: tc.input, 
+                output: tc.output || (isMultipleOutput ? "" : ""), 
+                is_hidden: (i + 1) > 2, 
+                weightage: parseFloat(tc.weightage), 
+                evaluation_type: "DEFAULT", 
+                display_text: null, 
+                criteria: null, 
+                tags: [], 
+                order: tc.order
+            };
+            
+            return isMultipleOutput
+                ? { ...base, multiple_possible_output: true, outputs: tc.outputs }
+                : base;
+        });
+        
+        const calculateTotalScore = (tcs) => tcs.reduce((sum, tc) => sum + tc.weightage, 0);
 
-            tcs.forEach((tc, i) => {
-                tc.weightage = parseFloat(weights[i].toFixed(2));
-            });
+        const parseSolutions = (luaContent) => {
+            const solutionsCodeId = generateUUID();
+            const cppContent = parseSection(luaContent, "----------SOLUTIONS_CPP_START----------", "----------SOLUTIONS_CPP_END----------");
+            const pythonContent = parseSection(luaContent, "----------SOLUTIONS_PYTHON_START----------", "----------SOLUTIONS_PYTHON_END----------");
+            const javaContent = parseSection(luaContent, "----------SOLUTIONS_JAVA_START----------", "----------SOLUTIONS_JAVA_END----------");
+            
+            const codeDetails = [];
 
-            return tcs;
+            if (cppContent) {
+                codeDetails.push({ "code_id": solutionsCodeId, "code_content": cppContent, "language": "CPP", "default_code": true });
+            }
+            if (pythonContent) {
+                codeDetails.push({ "code_id": solutionsCodeId, "code_content": pythonContent, "language": "PYTHON", "default_code": true });
+            }
+            if (javaContent) {
+                codeDetails.push({ "code_id": solutionsCodeId, "code_content": javaContent, "language": "JAVA", "default_code": true });
+            }
+            
+            if (codeDetails.length === 0) return [];
+
+            return [{
+                "order": 1,
+                "title": { "content": "Code", "content_type": "TEXT" },
+                "description": { "content": "", "content_type": "" },
+                "code_details": codeDetails,
+                "complexity_analysis": { "content": "", "content_type": "" }
+            }];
         };
+
 
         const downloadJsonFile = (content, fileName) => {
             const a = document.createElement('a');
@@ -468,25 +534,55 @@ Description for the second hint.
                        throw new Error("Please upload all required files.");
                     }
                     const lua = state.luaFileContent;
-                    const testCasesData = JSON.parse(state.testcasesFileContent);
-                    const difficulty = parseSection(lua, "----------QUESTION_LEVEL_START----------", "----------QUESTION_LEVEL_END----------");
-                    if (!difficulty) throw new Error("QUESTION_LEVEL is missing from .lua file.");
+                    
+                    let testCasesData;
+                    try {
+                        testCasesData = JSON.parse(state.testcasesFileContent);
+                    } catch (e) {
+                        throw new Error(`Test case JSON parsing failed: ${e.message}`);
+                    }
+
+                    // --- QUESTION LEVEL VALIDATION ---
+                    const rawDifficulty = parseSection(lua, "----------QUESTION_LEVEL_START----------", "----------QUESTION_LEVEL_END----------").toUpperCase();
+                    const validDifficulties = ["EASY", "MEDIUM", "HARD"];
+                    if (!rawDifficulty || !validDifficulties.includes(rawDifficulty)) {
+                        throw new Error(`Invalid or missing QUESTION_LEVEL: Must be one of EASY, MEDIUM, or HARD (case-insensitive). Found: '${rawDifficulty}'`);
+                    }
+                    const difficulty = rawDifficulty;
+
+                    const parsedTestCases = parseTestCases(testCasesData[0]);
+                    const totalScore = parseFloat(calculateTotalScore(parsedTestCases).toFixed(2));
+
+                    // Parse topic tags and solutions
+                    const beginner = parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------"));
+                    const intermediate = parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------"));
+                    const advanced = parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"));
+                    const allTopics = [...beginner, ...intermediate, ...advanced];
+                    const parsedSolutions = parseSolutions(lua);
+
+                    const metadataObject = {
+                        real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), 
+                        follow_up_questions: parseFollowUpQuestions(lua),
+                        topics: allTopics
+                    };
+                    const metadataString = JSON.stringify(metadataObject, null, 2);
 
                     let finalJson;
                     if (state.actionMode === 'create') {
                         const codingDetailsId = generateUUID(); const questionId = generateUUID();
+
                         finalJson = [{
-                            test_cases: assignWeights(parseTestCases(testCasesData[0]), difficulty),
-                            total_score: { "EASY": 20, "MEDIUM": 25, "HARD": 30 }[difficulty.toUpperCase()],
+                            test_cases: parsedTestCases, 
+                            total_score: totalScore, 
                             question_type: "CODING",
                             question_asked_by_companies_info: formatCompanies(parseTags(parseSection(lua, "----------COMPANIES_START----------", "----------COMPANIES_END----------"))),
                             question: {
-                                difficulty, content: parseSection(lua, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------"),
+                                difficulty: difficulty, content: parseSection(lua, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------"),
                                 short_text: parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------"), multimedia: [], language: "ENGLISH", content_type: "MARKDOWN", question_id: questionId,
                                 default_tag_names: parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------")), concept_tag_names: [],
-                                concept_filter_tag_names: [...parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")), ...parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")), ...parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"))],
-                                topic_tag_names: { beginner_tag_names: parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------")), intermediate_tag_names: parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------")), advanced_tag_names: parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"))},
-                                metadata: JSON.stringify({ real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), follow_up_questions: parseFollowUpQuestions(lua)}, null, 2),
+                                concept_filter_tag_names: allTopics,
+                                topic_tag_names: { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced },
+                                metadata: metadataString, 
                             },
                             coding_question_details: [
                                 { code_content: parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"), default_code: true, language: "CPP", code_id: codingDetailsId, is_function_based: true, debug_helper_code: parseDebugHelperCode(lua, 'CPP')},
@@ -499,7 +595,7 @@ Description for the second hint.
                                 { language: "PYTHON", file_path_to_execute: "main.py", default_file_path_to_submit_code: "solution.py", code_repository: [{ file_name: "main.py", file_type: "FILE", file_content: btoa(parseSection(lua, "----------CODE_BASE64_PYTHON_START----------", "----------CODE_BASE64_PYTHON_END----------")) }] },
                                 { language: "JAVA", file_path_to_execute: "Main.java", default_file_path_to_submit_code: "Solution.java", code_repository: [{ file_name: "Main.java", file_type: "FILE", file_content: btoa(parseSection(lua, "----------CODE_BASE64_JAVA_START----------", "----------CODE_BASE64_JAVA_END----------")) }] }
                             ],
-                            solutions: [], 
+                            solutions: parsedSolutions, 
                             hints: parseHints(lua),
                             test_case_evaluation_metrics: [
                                 { language: "CPP", time_limit_to_execute_in_seconds: "___FLOAT_PLACEHOLDER___1.0" },
@@ -508,26 +604,37 @@ Description for the second hint.
                             ]
                         }];
                     } else { // Update mode
-                        finalJson = JSON.parse(state.existingJsonContent);
+                        
+                        let tempJson;
+                        try {
+                             tempJson = JSON.parse(state.existingJsonContent);
+                        } catch (e) {
+                            throw new Error(`Existing JSON parsing failed: ${e.message}`);
+                        }
+                       
+                        finalJson = tempJson;
                         const q = finalJson[0];
-                        q.test_cases = assignWeights(parseTestCases(testCasesData[0]), difficulty);
+                        q.test_cases = parsedTestCases; 
+                        q.total_score = totalScore; 
                         q.question.difficulty = difficulty;
                         q.question.content = parseSection(lua, "----------QUESTION_DESCRIPTION_START----------", "----------QUESTION_DESCRIPTION_END----------");
                         q.question.short_text = parseSection(lua, "----------SHORT_TEXT_START----------", "----------SHORT_TEXT_END----------");
                         q.question_asked_by_companies_info = formatCompanies(parseTags(parseSection(lua, "----------COMPANIES_START----------", "----------COMPANIES_END----------")));
                         q.question.default_tag_names = parseTags(parseSection(lua, "----------DEFAULT_TAGS_START----------", "----------DEFAULT_TAGS_END----------"));
-                        const beginner = parseTags(parseSection(lua, "----------BEGINNER_TOPICS_START----------", "----------BEGINNER_TOPICS_END----------"));
-                        const intermediate = parseTags(parseSection(lua, "----------INTERMEDIATE_TOPICS_START----------", "----------INTERMEDIATE_TOPICS_END----------"));
-                        const advanced = parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"));
-                        q.question.concept_filter_tag_names = [...beginner, ...intermediate, ...advanced];
+                        
+                        q.question.concept_filter_tag_names = allTopics;
                         q.question.topic_tag_names = { beginner_tag_names: beginner, intermediate_tag_names: intermediate, advanced_tag_names: advanced };
-                        q.question.metadata = JSON.stringify({ real_life_example: parseSection(lua, "----------REAL_LIFE_EXAMPLES_START----------", "----------REAL_LIFE_EXAMPLES_END----------"), follow_up_questions: parseFollowUpQuestions(lua)}, null, 2);
+                        q.question.metadata = metadataString;
                         q.hints = parseHints(lua);
+                        q.solutions = parsedSolutions; 
+                        
+                        // Update coding details (snippet code)
                         q.coding_question_details.forEach(d => {
                             if (d.language === 'CPP') { d.code_content = parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'CPP'); }
                             if (d.language === 'PYTHON') { d.code_content = parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'PYTHON'); }
                             if (d.language === 'JAVA') { d.code_content = parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'JAVA'); }
                         });
+                        // Update code repository (base64)
                         q.language_code_repository_details.forEach(r => {
                             if (r.language === 'CPP') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_CPP_START----------", "----------CODE_BASE64_CPP_END----------"));
                             if (r.language === 'PYTHON') r.code_repository[0].file_content = btoa(parseSection(lua, "----------CODE_BASE64_PYTHON_START----------", "----------CODE_BASE64_PYTHON_END----------"));
@@ -545,12 +652,22 @@ Description for the second hint.
                     }
 
                     let finalJsonString = JSON.stringify(finalJson, null, 4).replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1');
+                    
+                    // Reset UI and state on SUCCESS before download
+                    resetFileUploads();
                     downloadJsonFile(finalJsonString, 'coding_questions.json');
                     UIElements.successMessage.textContent = 'Success! Your file is downloading.';
                     UIElements.successMessage.parentElement.classList.remove('hidden');
+
                 } catch (e) {
                     UIElements.errorMessage.textContent = `Error: ${e.message}`;
                     UIElements.errorMessage.parentElement.classList.remove('hidden');
+                    
+                    // CRITICAL: Clear file input values on error to allow re-uploading the same file path without refresh
+                    UIElements.luaUpload.value = '';
+                    UIElements.testcasesUpload.value = '';
+                    UIElements.existingJsonUpload.value = '';
+
                 } finally {
                     UIElements.loader.classList.add('hidden');
                     UIElements.buttonText.classList.remove('hidden');
