@@ -7,6 +7,7 @@ Provides API endpoints to generate hints and real-life examples for coding probl
 import sys
 import os
 import json
+import fcntl
 from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -27,7 +28,7 @@ COST_PER_1K_COMPLETION_TOKENS = 0.01  # $10 per 1M tokens = $0.01 per 1K
 def get_current_exchange_rate():
     """Fetch current USD to INR exchange rate"""
     try:
-        response = requests.get('https://api.exchangerate-api.com/v4/latest/USD', timeout=2)
+        response = requests.get('https://api.exchangerate-api.com/v4/latest/USD', timeout=5)
         if response.status_code == 200:
             return response.json().get('rates', {}).get('INR', 87.0)
     except Exception:
@@ -50,41 +51,61 @@ def load_usage_tracker():
     }
 
 def save_usage_tracker(tracker):
-    """Save usage tracker to JSON file"""
+    """Save usage tracker to JSON file with locking"""
     with open(USAGE_TRACKER_FILE, 'w') as f:
-        json.dump(tracker, f, indent=2)
+        fcntl.flock(f, fcntl.LOCK_EX)
+        try:
+            json.dump(tracker, f, indent=2)
+        finally:
+            fcntl.flock(f, fcntl.LOCK_UN)
 
 def update_usage(prompt_tokens, completion_tokens, problem_name):
-    """Update usage tracker with new API call"""
-    tracker = load_usage_tracker()
+    """Update usage tracker with new API call (Thread-safe read-modify-write)"""
+    # We need to lock the file for the entire Read-Modify-Write cycle
+    # Since standard open() truncates on 'w', we use 'r+' or a separate lock file.
+    # For simplicity with fcntl on the data file itself, we open with 'r+' to lock, read, seek 0, write, truncate.
     
-    total_tokens = prompt_tokens + completion_tokens
-    cost = (prompt_tokens / 1000 * COST_PER_1K_PROMPT_TOKENS) + \
-           (completion_tokens / 1000 * COST_PER_1K_COMPLETION_TOKENS)
-    
-    tracker['total_requests'] += 1
-    tracker['total_tokens'] += total_tokens
-    tracker['total_cost_usd'] += cost
-    tracker['prompt_tokens'] += prompt_tokens
-    tracker['completion_tokens'] += completion_tokens
-    tracker['last_updated'] = datetime.now().isoformat()
-    
-    # Add to history
-    tracker['history'].append({
-        'timestamp': datetime.now().isoformat(),
-        'problem_name': problem_name,
-        'prompt_tokens': prompt_tokens,
-        'completion_tokens': completion_tokens,
-        'total_tokens': total_tokens,
-        'cost_usd': round(cost, 6)
-    })
-    
-    # Keep only last 100 entries in history
-    if len(tracker['history']) > 100:
-        tracker['history'] = tracker['history'][-100:]
-    
-    save_usage_tracker(tracker)
+    if not os.path.exists(USAGE_TRACKER_FILE):
+        save_usage_tracker(load_usage_tracker())
+
+    with open(USAGE_TRACKER_FILE, 'r+') as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        try:
+            try:
+                tracker = json.load(f)
+            except json.JSONDecodeError:
+                tracker = load_usage_tracker() # Fallback to default if corrupted
+
+            # Update stats
+            tracker['total_requests'] += 1
+            tracker['total_tokens'] += (prompt_tokens + completion_tokens)
+            tracker['prompt_tokens'] += prompt_tokens
+            tracker['completion_tokens'] += completion_tokens
+            
+            cost = (prompt_tokens / 1000 * COST_PER_1K_PROMPT_TOKENS) + \
+                   (completion_tokens / 1000 * COST_PER_1K_COMPLETION_TOKENS)
+            tracker['total_cost_usd'] += cost
+            tracker['last_updated'] = datetime.now().isoformat()
+            
+            tracker['history'].append({
+                'timestamp': datetime.now().isoformat(),
+                'problem_name': problem_name,
+                'prompt_tokens': prompt_tokens,
+                'completion_tokens': completion_tokens,
+                'total_tokens': prompt_tokens + completion_tokens,
+                'cost_usd': cost
+            })
+            
+            # Write back
+            f.seek(0)
+            json.dump(tracker, f, indent=2)
+            f.truncate()
+            
+        finally:
+            fcntl.flock(f, fcntl.LOCK_UN)
+            
     return tracker
+    
 
 def call_llm_with_tracking(system_prompt, user_prompt, temperature=0.3):
     """Call LLM and extract usage information"""

@@ -906,18 +906,30 @@
                             </div>
 
                             <!-- Generate Button -->
-                            <button id="generate-content-btn"
-                                class="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center space-x-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                </svg>
-                                <span id="generator-button-text">Generate Content</span>
-                                <div id="generator-loader"
-                                    class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 hidden">
-                                </div>
-                            </button>
+                            <!-- Action Buttons -->
+                            <div class="flex gap-4">
+                                <button id="generate-content-btn"
+                                    class="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center space-x-3">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                    <span id="generator-button-text">Generate Content</span>
+                                    <div id="generator-loader"
+                                        class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 hidden">
+                                    </div>
+                                </button>
+                                <button id="clear-content-btn"
+                                    class="px-6 py-4 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white transition-all font-semibold flex items-center justify-center"
+                                    title="Clear all inputs and outputs">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </div>
 
                             <!-- Success Message -->
                             <div id="generator-success-message"
@@ -1041,49 +1053,6 @@
                                     </div>
                                     <div id="followup-output"
                                         class="bg-[var(--bg-secondary)] rounded-lg p-4 theme-text-primary whitespace-pre-wrap border border-[var(--border-color)]">
-                                    </div>
-                                </div>
-                                <button id="copy-generated-content-btn"
-                                    class="w-full theme-button theme-text-primary font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                    </svg>
-                                    <span>Copy All Content</span>
-                                </button>
-
-                                <!-- Usage Statistics -->
-                                <!-- Usage Statistics -->
-                                <div id="usage-stats-display" class="mt-6 theme-card rounded-lg p-6">
-                                    <h3 class="text-lg font-semibold text-[var(--accent-sky)] mb-4 flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                        </svg>
-                                        API Usage Statistics
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div class="bg-[var(--bg-tertiary)] rounded-lg p-4">
-                                            <p class="theme-text-secondary text-sm">Total Requests</p>
-                                            <p id="total-requests" class="text-2xl font-bold theme-text-primary mt-1">0
-                                            </p>
-                                        </div>
-                                        <div class="bg-[var(--bg-tertiary)] rounded-lg p-4">
-                                            <p class="theme-text-secondary text-sm">Total Tokens</p>
-                                            <p id="total-tokens" class="text-2xl font-bold theme-text-primary mt-1">0
-                                            </p>
-                                        </div>
-                                        <div class="bg-[var(--bg-tertiary)] rounded-lg p-4">
-                                            <p class="theme-text-secondary text-sm">Total Cost</p>
-                                            <p id="total-cost"
-                                                class="text-2xl font-bold text-[var(--accent-green)] mt-1">
-                                                $0.00</p>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4 text-xs theme-text-secondary text-center">
-                                        Last updated: <span id="last-updated">Never</span>
                                     </div>
                                 </div>
                             </div>
@@ -1426,10 +1395,10 @@
                                         d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                 </svg>
                             </div>
-                            <h1 class="text-4xl md:text-5xl font-bold theme-text-primary tracking-tight">API Usage
-                                Tracker</h1>
-                            <p class="mt-3 text-lg theme-text-secondary">OpenAI (GPT-4o), Monitor costs, tokens, and
-                                conversion rates.
+                            <h1 class="text-4xl md:text-5xl font-bold theme-text-primary tracking-tight">Global System
+                                Usage</h1>
+                            <p class="mt-3 text-lg theme-text-secondary">Track live OpenAI usage across all users. Data
+                                updates automatically every 30s.
                             </p>
                         </header>
 
@@ -1448,9 +1417,7 @@
                                 </p>
                                 <p id="usage-total-tokens" class="text-3xl font-bold text-sky-400 mt-1">0</p>
                                 <div class="mt-2 text-xs flex justify-between text-slate-500">
-                                    <span>Prompt: <span id="usage-prompt-tokens" class="text-slate-300">0</span></span>
-                                    <span>Compl: <span id="usage-completion-tokens"
-                                            class="text-slate-300">0</span></span>
+
                                 </div>
                             </div>
                             <!-- Cost USD -->
@@ -1472,7 +1439,10 @@
                             <div
                                 class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 flex justify-between items-center">
                                 <span class="text-slate-400">Exchange Rate used:</span>
-                                <span id="usage-exchange-rate" class="text-white font-mono">1 USD = ₹--</span>
+                                <div class="text-right">
+                                    <div id="usage-exchange-rate" class="text-white font-mono">1 USD = ₹--</div>
+                                    <div id="usage-exchange-rate-time" class="text-[10px] text-slate-500 mt-1"></div>
+                                </div>
                             </div>
                             <div
                                 class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 flex justify-between items-center">
@@ -1485,41 +1455,30 @@
                         <div class="mt-8 text-center bg-slate-800/20 p-6 rounded-2xl border border-slate-800">
                             <button id="refresh-usage-btn"
                                 class="theme-button px-6 py-3 rounded-lg flex items-center justify-center space-x-2 mx-auto hover:bg-slate-700 transition-colors">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
-                                </svg>
-                                <span>Refresh Data</span>
+                                <span id="refresh-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
+                                    </svg>
+                                </span>
+                                <span id="refresh-loader" class="hidden">
+                                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <span id="refresh-text">Refresh Data</span>
                             </button>
                             <p class="text-xs text-slate-500 mt-3">Last updated: <span
                                     id="usage-last-updated">Never</span></p>
                         </div>
 
-                        <!-- History Table -->
-                        <div class="mt-12 glass-card rounded-xl border border-slate-700/50 overflow-hidden">
-                            <div class="p-6 border-b border-slate-700/50">
-                                <h3 class="text-xl font-bold theme-text-primary">Recent Activity</h3>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-left text-sm theme-text-secondary">
-                                    <thead class="bg-slate-900/50 uppercase text-xs font-semibold theme-text-primary">
-                                        <tr>
-                                            <th class="px-6 py-4">Timestamp</th>
-                                            <th class="px-6 py-4">Action / Problem</th>
-                                            <th class="px-6 py-4">Tokens</th>
-                                            <th class="px-6 py-4 text-right">Cost</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="usage-history-body" class="divide-y divide-slate-800">
-                                        <tr>
-                                            <td colspan="4" class="px-6 py-8 text-center italic text-slate-600">No
-                                                history available</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -1748,29 +1707,51 @@
                             // Global state for question type
                             let currentQuestionType = 'standard';
 
-                            function switchTab(tabName) {
+                            function switchTab(tabName, updateHash = true) {
                                 navTabs.forEach(tab => tab.classList.remove('active'));
                                 tabContents.forEach(content => content.classList.remove('active'));
 
-                                const selectedTab = document.querySelector(`[data-tab="${tabName}"]`);
+                                // Special case for Guides (not a regular tab content in the main list)
+                                if (tabName === 'guides') {
+                                    document.getElementById('guides-tab').classList.add('active');
+                                    if (updateHash) window.location.hash = 'guides';
+                                    return;
+                                }
+
+                                const selectedTab = document.querySelector(`.nav-tab[data-tab="${tabName}"]`);
                                 const selectedContent = document.getElementById(`${tabName}-tab`);
 
                                 if (selectedTab) selectedTab.classList.add('active');
                                 if (selectedContent) selectedContent.classList.add('active');
 
+                                if (updateHash) window.location.hash = tabName;
+
                                 // Update current question type based on tab
                                 if (tabName === 'standard' || tabName === 'node') {
                                     currentQuestionType = tabName;
-                                    console.log(`Switched to question type: ${currentQuestionType}`);
+                                }
+
+                                // Fetch stats if usage tab
+                                if (tabName === 'usage') {
+                                    fetchUsageStats();
                                 }
                             }
 
                             navTabs.forEach(tab => {
                                 tab.addEventListener('click', function () {
                                     const tabName = this.dataset.tab;
-                                    switchTab(tabName);
+                                    switchTab(tabName, true);
                                 });
                             });
+
+                            // Guides Link
+                            const guideBtn = document.getElementById('show-guides-btn');
+                            if (guideBtn) {
+                                guideBtn.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    switchTab('guides', true);
+                                });
+                            }
 
                             // ===== STATE MANAGEMENT =====
                             // ===== STATE MANAGEMENT =====
@@ -2451,8 +2432,18 @@
 
                             // ===== USAGE STATS LOGIC =====
                             const fetchUsageStats = async () => {
+                                const refreshIcon = document.getElementById('refresh-icon');
+                                const refreshLoader = document.getElementById('refresh-loader');
+                                const refreshText = document.getElementById('refresh-text');
+
+                                if (refreshIcon) {
+                                    refreshIcon.classList.add('hidden');
+                                    refreshLoader.classList.remove('hidden');
+                                    refreshText.textContent = "Refreshing...";
+                                }
+
                                 try {
-                                    const response = await fetch(`${API_CONFIG.getBaseUrl()}/usage-stats`);
+                                    const response = await fetch(`${API_CONFIG.getBaseUrl()}/usage-stats?t=${Date.now()}`);
                                     if (!response.ok) return;
                                     const data = await response.json();
 
@@ -2466,11 +2457,24 @@
                                     setSafeText('usage-cost-usd', `$${data.total_cost_usd.toFixed(4)}`);
                                     setSafeText('usage-cost-inr', `₹${data.total_cost_inr.toFixed(2)}`);
                                     setSafeText('usage-exchange-rate', `1 USD = ₹${data.exchange_rate}`);
+                                    setSafeText('usage-exchange-rate-time', new Date().toLocaleString(undefined, {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        second: '2-digit',
+                                        day: 'numeric',
+                                        month: 'short'
+                                    }));
                                     setSafeText('usage-avg-cost', `$${data.avg_cost_usd}`);
-                                    setSafeText('usage-last-updated', new Date(data.last_updated).toLocaleString());
+                                    setSafeText('usage-last-updated', new Date().toLocaleString());
 
                                 } catch (e) {
                                     console.error("Failed to fetch usage stats", e);
+                                } finally {
+                                    if (refreshIcon) {
+                                        refreshIcon.classList.remove('hidden');
+                                        refreshLoader.classList.add('hidden');
+                                        refreshText.textContent = "Refresh Data";
+                                    }
                                 }
                             };
 
@@ -2516,30 +2520,62 @@
                                 }
                             }
 
+                            function clearContentGeneratorForm() {
+                                if (!confirm("Are you sure you want to clear all content?")) return;
+
+                                // Clear inputs
+                                document.getElementById('problem-name-input').value = "";
+                                document.getElementById('problem-description-input').value = "";
+                                document.getElementById('solution-code-input').value = "";
+
+                                // Hide output
+                                document.getElementById('generated-content-display').classList.add('hidden');
+                                document.getElementById('hints-output').textContent = "";
+                                document.getElementById('reallife-output').textContent = "";
+                                document.getElementById('followup-output').textContent = "";
+
+                                // Hide messages
+                                document.getElementById('generator-success-message').classList.add('hidden');
+                                document.getElementById('generator-error-message').classList.add('hidden');
+
+                                // Clear session storage
+                                sessionStorage.removeItem('contentGeneratorForm');
+                            }
+
+                            document.getElementById('clear-content-btn').addEventListener('click', clearContentGeneratorForm);
+
                             document.getElementById('problem-name-input').addEventListener('input', saveContentGeneratorForm);
                             document.getElementById('problem-description-input').addEventListener('input', saveContentGeneratorForm);
                             document.getElementById('solution-code-input').addEventListener('input', saveContentGeneratorForm);
 
                             // Copy buttons
-                            document.getElementById('copy-generated-content-btn').addEventListener('click', () => {
-                                const h = document.getElementById('hints-output').textContent;
-                                const r = document.getElementById('reallife-output').textContent;
-                                const f = document.getElementById('followup-output').textContent;
-                                navigator.clipboard.writeText(`HINTS:\n${h}\n\nREAL-LIFE EXAMPLES:\n${r}\n\nFOLLOW-UP QUESTIONS:\n${f}`);
-                            });
+                            // Copy buttons
                             document.getElementById('copy-hints-btn').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('hints-output').textContent));
                             document.getElementById('copy-reallife-btn').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('reallife-output').textContent));
                             document.getElementById('copy-followup-btn').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('followup-output').textContent));
 
-                            if (window.location.hash === '#contentGenerator') restoreContentGeneratorForm();
+                            // Restore Generator Form on load (regardless of hash/tab, in case user navigates there)
+                            restoreContentGeneratorForm();
 
-                            // Hook into tab switching for usage stats
-                            const navTabsUsage = document.querySelectorAll('.nav-tab');
-                            navTabsUsage.forEach(tab => {
-                                tab.addEventListener('click', function () {
-                                    if (this.dataset.tab === 'usage') fetchUsageStats();
-                                });
-                            });
+                            // Hook into tab switching and Handle Hash Routing
+
+                            // 2. Handle Initial Load / Hash Change
+                            function handleHashRouting() {
+                                const hash = window.location.hash.substring(1); // remove '#'
+                                if (hash) {
+                                    // Use switchTab but don't update hash (it's already there)
+                                    // Verify valid tabs before switching to avoid errors on bad hashes
+                                    const validTabs = ['standard', 'node', 'generator', 'usage', 'guides'];
+                                    if (validTabs.includes(hash)) {
+                                        switchTab(hash, false);
+                                    }
+                                }
+                            }
+
+                            // Run on load
+                            handleHashRouting();
+                            // Optional: Run on hashchange if user uses back button
+                            window.addEventListener('hashchange', handleHashRouting);
 
                             // ===== RESTORE UI STATE =====
                             const restoreUI = (type) => {
@@ -2569,6 +2605,9 @@
                             restoreUI('node');
                             // Initial fetch
                             fetchUsageStats();
+
+                            // Auto-refresh Usage Stats every 30 seconds
+                            setInterval(fetchUsageStats, 30000);
                         </script>
 </body>
 
