@@ -618,6 +618,16 @@
                 </div>
                 <span>Content Generator</span>
             </button>
+            <button class="nav-tab" data-tab="usage">
+                <div class="nav-tab-icon icon-red">
+                    <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <span>Usage Statistics</span>
+            </button>
         </nav>
 
         <div class="sidebar-footer">
@@ -857,7 +867,8 @@
                             <h1 class="text-4xl md:text-5xl font-bold theme-text-primary tracking-tight">Content
                                 Generator
                             </h1>
-                            <p class="mt-3 text-lg theme-text-secondary">Generate hints and real-life examples using AI
+                            <p class="mt-3 text-lg theme-text-secondary">Generate hints, followup questions and
+                                real-life examples using AI
                             </p>
                         </header>
                         <div class="space-y-6">
@@ -930,40 +941,105 @@
 
                             <!-- Generated Content Display -->
                             <div id="generated-content-display" class="hidden mt-8 space-y-6">
+
+                                <!-- Hints Section -->
                                 <div class="theme-card rounded-lg p-6">
                                     <div class="flex items-center justify-between mb-4">
                                         <h3 class="text-xl font-semibold text-[var(--accent-purple)]">Generated Hints
                                         </h3>
-                                        <button id="copy-hints-btn"
-                                            class="theme-button flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                            </svg>
-                                            <span>Copy</span>
-                                        </button>
+                                        <div class="flex space-x-2">
+                                            <button id="regenerate-hints-btn"
+                                                class="theme-button flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm hover:text-sky-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
+                                                </svg>
+                                                <span>Regenerate</span>
+                                                <div
+                                                    class="loader w-3 h-3 border-2 border-current border-t-transparent rounded-full hidden ml-2">
+                                                </div>
+                                            </button>
+                                            <button id="copy-hints-btn"
+                                                class="theme-button flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                <span>Copy</span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div id="hints-output"
                                         class="bg-[var(--bg-secondary)] rounded-lg p-4 theme-text-primary whitespace-pre-wrap font-mono text-sm border border-[var(--border-color)]">
                                     </div>
                                 </div>
+
+                                <!-- Real-Life Examples Section -->
                                 <div class="theme-card rounded-lg p-6">
                                     <div class="flex items-center justify-between mb-4">
                                         <h3 class="text-xl font-semibold text-[var(--accent-purple)]">Generated
-                                            Real-Life
-                                            Examples</h3>
-                                        <button id="copy-reallife-btn"
-                                            class="theme-button flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                            </svg>
-                                            <span>Copy Stringified</span>
-                                        </button>
+                                            Real-Life Examples</h3>
+                                        <div class="flex space-x-2">
+                                            <button id="regenerate-reallife-btn"
+                                                class="theme-button flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm hover:text-sky-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
+                                                </svg>
+                                                <span>Regenerate</span>
+                                                <div
+                                                    class="loader w-3 h-3 border-2 border-current border-t-transparent rounded-full hidden ml-2">
+                                                </div>
+                                            </button>
+                                            <button id="copy-reallife-btn"
+                                                class="theme-button flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                <span>Copy Stringified</span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div id="reallife-output"
+                                        class="bg-[var(--bg-secondary)] rounded-lg p-4 theme-text-primary whitespace-pre-wrap border border-[var(--border-color)]">
+                                    </div>
+                                </div>
+
+                                <!-- Follow-up Questions Section -->
+                                <div class="theme-card rounded-lg p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h3 class="text-xl font-semibold text-[var(--accent-purple)]">Generated
+                                            Follow-up Questions</h3>
+                                        <div class="flex space-x-2">
+                                            <button id="regenerate-followup-btn"
+                                                class="theme-button flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm hover:text-sky-400">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
+                                                </svg>
+                                                <span>Regenerate</span>
+                                                <div
+                                                    class="loader w-3 h-3 border-2 border-current border-t-transparent rounded-full hidden ml-2">
+                                                </div>
+                                            </button>
+                                            <button id="copy-followup-btn"
+                                                class="theme-button flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                                </svg>
+                                                <span>Copy</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="followup-output"
                                         class="bg-[var(--bg-secondary)] rounded-lg p-4 theme-text-primary whitespace-pre-wrap border border-[var(--border-color)]">
                                     </div>
                                 </div>
@@ -1040,7 +1116,7 @@
                     </div>
 
                     <!-- Quick Nav Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                         <a href="#guide-workflow"
                             class="glass-card hover:bg-slate-800/50 p-6 rounded-xl border border-slate-700/50 hover:border-sky-500/50 transition-all group">
                             <div
@@ -1070,19 +1146,21 @@
                                 questions.</p>
                         </a>
 
-                        <a href="#guide-specs"
-                            class="glass-card hover:bg-slate-800/50 p-6 rounded-xl border border-slate-700/50 hover:border-purple-500/50 transition-all group">
+
+
+                        <a href="#guide-features"
+                            class="glass-card hover:bg-slate-800/50 p-6 rounded-xl border border-slate-700/50 hover:border-pink-500/50 transition-all group">
                             <div
-                                class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                <svg class="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24"
+                                class="w-12 h-12 rounded-lg bg-pink-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-pink-400" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
-                            <h3 class="text-lg font-semibold theme-text-primary mb-1">Tech Specs</h3>
-                            <p class="text-sm theme-text-secondary">Detailed configuration for hints, solutions, and
-                                IDs.</p>
+                            <h3 class="text-lg font-semibold theme-text-primary mb-1">AI Features</h3>
+                            <p class="text-sm theme-text-secondary">Content generation, follow-ups, and usage tracking.
+                            </p>
                         </a>
                     </div>
 
@@ -1264,150 +1342,184 @@
                             </div>
                         </section>
 
-                        <!-- Tech Specs Section -->
-                        <section id="guide-specs" class="scroll-mt-24">
+
+
+                        <!-- AI Features Section -->
+                        <section id="guide-features" class="scroll-mt-24">
                             <div class="flex items-center gap-4 mb-8">
-                                <div class="h-10 w-1.5 bg-purple-500 rounded-full"></div>
-                                <h2 class="text-3xl font-bold theme-text-primary tracking-tight">Technical
-                                    Specifications</h2>
+                                <div class="h-10 w-1.5 bg-pink-500 rounded-full"></div>
+                                <h2 class="text-3xl font-bold theme-text-primary tracking-tight">AI & Usage Features
+                                </h2>
                             </div>
 
-                            <div class="space-y-8">
-                                <div
-                                    class="glass-card p-8 rounded-3xl border border-slate-700/50 shadow-2xl relative overflow-hidden group">
-                                    <div
-                                        class="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl -mr-32 -mt-32 transition-colors group-hover:bg-purple-500/10">
-                                    </div>
-                                    <div class="flex flex-col lg:flex-row gap-10 relative z-10">
-                                        <div class="flex-1">
-                                            <h3
-                                                class="text-xl font-bold theme-text-primary mb-6 flex items-center gap-2">
-                                                <svg class="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24"
+                            <div class="glass-card p-8 rounded-3xl border border-slate-700/50">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                    <div>
+                                        <h3 class="text-xl font-bold theme-text-primary mb-4 flex items-center gap-2">
+                                            <span class="p-1.5 rounded-lg bg-pink-500/20 text-pink-400">
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24"
                                                     stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
                                                 </svg>
-                                                Engine Logic & Ingestion
-                                            </h3>
-                                            <div class="space-y-4">
-                                                <div
-                                                    class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-800/30 transition-colors">
-                                                    <div class="w-1.5 h-1.5 rounded-full bg-sky-500 mt-2"></div>
-                                                    <p class="text-sm theme-text-secondary"><strong>Difficulty
-                                                            validation:</strong> Mandatory enforcement of
-                                                        <code>EASY</code>, <code>MEDIUM</code>, or <code>HARD</code>
-                                                        tiers.
-                                                    </p>
-                                                </div>
-                                                <div
-                                                    class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-800/30 transition-colors">
-                                                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2"></div>
-                                                    <p class="text-sm theme-text-secondary"><strong>ID
-                                                            Architecture:</strong> High-entropy RFC 4122 UUID generation
-                                                        for all schema entities.</p>
-                                                </div>
-                                                <div
-                                                    class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-800/30 transition-colors">
-                                                    <div class="w-1.5 h-1.5 rounded-full bg-purple-500 mt-2"></div>
-                                                    <p class="text-sm theme-text-secondary"><strong>Precision
-                                                            Limits:</strong> Strict float-point serialization for time
-                                                        complexities (e.g., <code>1.0</code>).</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex-1 space-y-6">
-                                            <h3
-                                                class="text-xl font-bold theme-text-primary mb-6 flex items-center gap-2">
-                                                <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24"
-                                                    stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2"
-                                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                Visibility Standards
-                                            </h3>
-                                            <div
-                                                class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-inner">
-                                                <h4
-                                                    class="text-[10px] font-black uppercase tracking-[0.2em] theme-text-secondary mb-4">
-                                                    Test Case Classification</h4>
-                                                <div class="flex gap-4">
-                                                    <div
-                                                        class="flex-1 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 text-center">
-                                                        <div
-                                                            class="text-[10px] uppercase font-bold text-emerald-400 mb-1">
-                                                            Index 0-1</div>
-                                                        <div class="text-sm font-bold theme-text-primary">PUBLIC</div>
-                                                    </div>
-                                                    <div
-                                                        class="flex-1 p-4 rounded-xl bg-red-500/5 border border-red-500/10 text-center">
-                                                        <div class="text-[10px] uppercase font-bold text-red-400 mb-1">
-                                                            Index 2+</div>
-                                                        <div class="text-sm font-bold theme-text-primary">HIDDEN</div>
-                                                    </div>
-                                                </div>
-                                                <p class="mt-4 text-[11px] theme-text-secondary text-center italic">
-                                                    Total score is dynamically derived from aggregate weightage.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                    <div class="glass-card p-6 rounded-2xl border border-slate-700/50 flex flex-col">
-                                        <h3
-                                            class="text-lg font-bold theme-text-primary mb-4 flex items-center justify-between">
-                                            <span>Hints Protocol</span>
-                                            <span
-                                                class="text-[10px] bg-sky-500/10 text-sky-400 px-2 py-1 rounded">V2.4</span>
+                                            </span>
+                                            Content Generation
                                         </h3>
-                                        <pre
-                                            class="bg-slate-950/90 p-5 rounded-xl border border-slate-800 text-[10px] leading-6 text-sky-300 font-mono overflow-x-auto shadow-2xl">----------HINTS_START----------
-----------HINTS_START_1----------
-Description supports **Markdown**.
-----------HINTS_END_1----------
-----------HINTS_END----------</pre>
-                                        <div
-                                            class="mt-auto pt-6 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest border-t border-slate-800/50">
-                                            <span class="theme-text-secondary">Sync Duration</span>
-                                            <span class="text-emerald-400">0 Seconds</span>
-                                        </div>
+                                        <ul class="space-y-4 theme-text-secondary text-sm leading-relaxed">
+                                            <li class="flex gap-2">
+                                                <div class="w-1 h-1 rounded-full bg-pink-500 mt-2 flex-shrink-0"></div>
+                                                <span><strong>Follow-up Questions:</strong> Automatically generates
+                                                    interview follow-up questions based on the provided solution.</span>
+                                            </li>
+                                            <li class="flex gap-2">
+                                                <div class="w-1 h-1 rounded-full bg-pink-500 mt-2 flex-shrink-0"></div>
+                                                <span><strong>Granular Regeneration:</strong> Use the "Regenerate"
+                                                    buttons to refresh specific sections (Hints, Real-life Examples, or
+                                                    Follow-ups) without re-running the entire prompt.</span>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <div class="glass-card p-6 rounded-2xl border border-slate-700/50 flex flex-col">
-                                        <h3 class="text-lg font-bold theme-text-primary mb-4">Ingestion Priority</h3>
-                                        <div class="space-y-4">
-                                            <div
-                                                class="flex items-center justify-between p-4 rounded-xl bg-slate-900/40 border border-slate-800">
-                                                <div class="flex items-center gap-3">
-                                                    <div
-                                                        class="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400 font-bold text-xs">
-                                                        C++</div>
-                                                    <span class="text-xs font-semibold theme-text-primary">Production
-                                                        Key</span>
-                                                </div>
-                                                <span
-                                                    class="text-[9px] px-2 py-1 rounded bg-sky-500/20 text-sky-400 font-black uppercase tracking-widest">Master</span>
-                                            </div>
-                                            <div
-                                                class="flex items-center justify-between p-4 rounded-xl bg-slate-900/40 border border-slate-800">
-                                                <div class="flex items-center gap-3">
-                                                    <div
-                                                        class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 font-bold text-xs">
-                                                        ML</div>
-                                                    <span class="text-xs font-semibold theme-text-primary">Py / Java /
-                                                        Node</span>
-                                                </div>
-                                                <span
-                                                    class="text-[9px] px-2 py-1 rounded bg-slate-700 text-slate-400 font-black uppercase tracking-widest">Secondary</span>
-                                            </div>
-                                            <p class="text-[10px] theme-text-secondary px-2 leading-relaxed italic">
-                                                Sanitization: Blocks with null content are automatically pruned during
-                                                generation.</p>
-                                        </div>
+
+                                    <div>
+                                        <h3 class="text-xl font-bold theme-text-primary mb-4 flex items-center gap-2">
+                                            <span class="p-1.5 rounded-lg bg-red-500/20 text-red-400">
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                                </svg>
+                                            </span>
+                                            Usage Tracking
+                                        </h3>
+                                        <ul class="space-y-4 theme-text-secondary text-sm leading-relaxed">
+                                            <li class="flex gap-2">
+                                                <div class="w-1 h-1 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
+                                                <span><strong>Dynamic Currency:</strong> Real-time USD to INR conversion
+                                                    for accurate cost tracking using live exchange rates.</span>
+                                            </li>
+                                            <li class="flex gap-2">
+                                                <div class="w-1 h-1 rounded-full bg-red-500 mt-2 flex-shrink-0"></div>
+                                                <span><strong>Stats:</strong> Monitor total requests, token usage, and
+                                                    average cost per request in the dedicated Usage Statistics
+                                                    tab.</span>
+                                            </li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Usage Statistics Tab -->
+        <div class="tab-content" id="usage-tab">
+            <div class="content-container">
+                <div id="usage-stats-page">
+                    <div class="glass-card rounded-2xl shadow-2xl p-8 md:p-12 mb-8">
+                        <header class="text-center mb-8">
+                            <div
+                                class="inline-flex items-center justify-center bg-red-900/30 text-red-400 rounded-full p-3 mb-4 shadow-sm border border-red-800/50">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <h1 class="text-4xl md:text-5xl font-bold theme-text-primary tracking-tight">API Usage
+                                Tracker</h1>
+                            <p class="mt-3 text-lg theme-text-secondary">OpenAI (GPT-4o), Monitor costs, tokens, and
+                                conversion rates.
+                            </p>
+                        </header>
+
+                        <!-- Stats Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <!-- Total Requests -->
+                            <div
+                                class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-lg">
+                                <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Requests</p>
+                                <p id="usage-total-requests" class="text-3xl font-bold text-white mt-1">0</p>
+                            </div>
+                            <!-- Tokens -->
+                            <div
+                                class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-lg">
+                                <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Total Tokens
+                                </p>
+                                <p id="usage-total-tokens" class="text-3xl font-bold text-sky-400 mt-1">0</p>
+                                <div class="mt-2 text-xs flex justify-between text-slate-500">
+                                    <span>Prompt: <span id="usage-prompt-tokens" class="text-slate-300">0</span></span>
+                                    <span>Compl: <span id="usage-completion-tokens"
+                                            class="text-slate-300">0</span></span>
+                                </div>
+                            </div>
+                            <!-- Cost USD -->
+                            <div
+                                class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-lg">
+                                <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Cost (USD)</p>
+                                <p id="usage-cost-usd" class="text-3xl font-bold text-emerald-400 mt-1">$0.00</p>
+                            </div>
+                            <!-- Cost INR -->
+                            <div
+                                class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl p-6 border border-slate-700 shadow-lg">
+                                <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Cost (INR)</p>
+                                <p id="usage-cost-inr" class="text-3xl font-bold text-orange-400 mt-1">₹0.00</p>
+                            </div>
+                        </div>
+
+                        <!-- Additional Info -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div
+                                class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 flex justify-between items-center">
+                                <span class="text-slate-400">Exchange Rate used:</span>
+                                <span id="usage-exchange-rate" class="text-white font-mono">1 USD = ₹--</span>
+                            </div>
+                            <div
+                                class="bg-slate-800/50 rounded-xl p-4 border border-slate-700 flex justify-between items-center">
+                                <span class="text-slate-400">Average Cost / Request:</span>
+                                <span id="usage-avg-cost" class="text-white font-mono">$0.000000</span>
+                            </div>
+                        </div>
+
+                        <!-- Refresh Button -->
+                        <div class="mt-8 text-center bg-slate-800/20 p-6 rounded-2xl border border-slate-800">
+                            <button id="refresh-usage-btn"
+                                class="theme-button px-6 py-3 rounded-lg flex items-center justify-center space-x-2 mx-auto hover:bg-slate-700 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
+                                </svg>
+                                <span>Refresh Data</span>
+                            </button>
+                            <p class="text-xs text-slate-500 mt-3">Last updated: <span
+                                    id="usage-last-updated">Never</span></p>
+                        </div>
+
+                        <!-- History Table -->
+                        <div class="mt-12 glass-card rounded-xl border border-slate-700/50 overflow-hidden">
+                            <div class="p-6 border-b border-slate-700/50">
+                                <h3 class="text-xl font-bold theme-text-primary">Recent Activity</h3>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm theme-text-secondary">
+                                    <thead class="bg-slate-900/50 uppercase text-xs font-semibold theme-text-primary">
+                                        <tr>
+                                            <th class="px-6 py-4">Timestamp</th>
+                                            <th class="px-6 py-4">Action / Problem</th>
+                                            <th class="px-6 py-4">Tokens</th>
+                                            <th class="px-6 py-4 text-right">Cost</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usage-history-body" class="divide-y divide-slate-800">
+                                        <tr>
+                                            <td colspan="4" class="px-6 py-8 text-center italic text-slate-600">No
+                                                history available</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2260,6 +2372,7 @@ Description supports **Markdown**.
 
                                 document.getElementById('generator-loader').classList.remove('hidden');
                                 document.getElementById('generate-content-btn').disabled = true;
+                                document.getElementById('generator-button-text').textContent = "Generating...";
 
                                 try {
                                     const response = await fetch(`${API_CONFIG.getBaseUrl()}/generate-content`, {
@@ -2272,12 +2385,15 @@ Description supports **Markdown**.
                                     if (data.success) {
                                         document.getElementById('hints-output').textContent = data.hints;
                                         document.getElementById('reallife-output').textContent = data.real_life_examples;
+                                        document.getElementById('followup-output').textContent = data.followup_questions || "No follow-up questions generated.";
+
                                         document.getElementById('generated-content-display').classList.remove('hidden');
 
                                         const successMsg = document.getElementById('generator-success-message');
                                         successMsg.querySelector('span').textContent = 'Content generated successfully!';
                                         successMsg.classList.remove('hidden'); successMsg.classList.add('flex');
                                         saveContentGeneratorForm();
+                                        fetchUsageStats(); // Refresh stats
                                     } else {
                                         throw new Error(data.error || 'Failed');
                                     }
@@ -2287,10 +2403,87 @@ Description supports **Markdown**.
                                 } finally {
                                     document.getElementById('generator-loader').classList.add('hidden');
                                     document.getElementById('generate-content-btn').disabled = false;
+                                    document.getElementById('generator-button-text').textContent = "Generate Content";
+                                }
+                            };
+
+                            const regenerateSection = async (type) => {
+                                const problemName = document.getElementById('problem-name-input').value.trim();
+                                const problemDescription = document.getElementById('problem-description-input').value.trim();
+                                const solutionCode = document.getElementById('solution-code-input').value.trim();
+
+                                if (!problemName || !problemDescription || !solutionCode) {
+                                    alert('Please ensure problem details are filled out.');
+                                    return;
+                                }
+
+                                const btn = document.getElementById(`regenerate-${type}-btn`);
+                                const loader = btn.querySelector('.loader');
+                                btn.disabled = true;
+                                loader.classList.remove('hidden');
+
+                                try {
+                                    const response = await fetch(`${API_CONFIG.getBaseUrl()}/generate-section`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                            problem_name: problemName,
+                                            problem_description: problemDescription,
+                                            solution_code: solutionCode,
+                                            type: type
+                                        })
+                                    });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        document.getElementById(`${type}-output`).textContent = data.content;
+                                        saveContentGeneratorForm();
+                                        fetchUsageStats();
+                                    } else {
+                                        throw new Error(data.error);
+                                    }
+                                } catch (err) {
+                                    alert(`Regeneration failed: ${err.message}`);
+                                } finally {
+                                    btn.disabled = false;
+                                    loader.classList.add('hidden');
+                                }
+                            };
+
+                            // ===== USAGE STATS LOGIC =====
+                            const fetchUsageStats = async () => {
+                                try {
+                                    const response = await fetch(`${API_CONFIG.getBaseUrl()}/usage-stats`);
+                                    if (!response.ok) return;
+                                    const data = await response.json();
+
+                                    const setSafeText = (id, text) => {
+                                        const el = document.getElementById(id);
+                                        if (el) el.textContent = text;
+                                    };
+
+                                    setSafeText('usage-total-requests', data.total_requests);
+                                    setSafeText('usage-total-tokens', data.total_tokens.toLocaleString());
+                                    setSafeText('usage-cost-usd', `$${data.total_cost_usd.toFixed(4)}`);
+                                    setSafeText('usage-cost-inr', `₹${data.total_cost_inr.toFixed(2)}`);
+                                    setSafeText('usage-exchange-rate', `1 USD = ₹${data.exchange_rate}`);
+                                    setSafeText('usage-avg-cost', `$${data.avg_cost_usd}`);
+                                    setSafeText('usage-last-updated', new Date(data.last_updated).toLocaleString());
+
+                                } catch (e) {
+                                    console.error("Failed to fetch usage stats", e);
                                 }
                             };
 
                             document.getElementById('generate-content-btn').addEventListener('click', runContentGenerator);
+
+                            // Regenerate Listeners
+                            document.getElementById('regenerate-hints-btn').addEventListener('click', () => regenerateSection('hints'));
+                            document.getElementById('regenerate-reallife-btn').addEventListener('click', () => regenerateSection('reallife'));
+                            document.getElementById('regenerate-followup-btn').addEventListener('click', () => regenerateSection('followup'));
+
+                            // Refresh Usage Btn
+                            const refreshBtn = document.getElementById('refresh-usage-btn');
+                            if (refreshBtn) refreshBtn.addEventListener('click', fetchUsageStats);
 
                             // Helpers
                             function saveContentGeneratorForm() {
@@ -2301,7 +2494,8 @@ Description supports **Markdown**.
                                     solutionCode: document.getElementById('solution-code-input').value,
                                     hasGeneratedContent: isVisible,
                                     hints: isVisible ? document.getElementById('hints-output').textContent : '',
-                                    realLifeExamples: isVisible ? document.getElementById('reallife-output').textContent : ''
+                                    realLifeExamples: isVisible ? document.getElementById('reallife-output').textContent : '',
+                                    followup: isVisible ? document.getElementById('followup-output').textContent : ''
                                 };
                                 sessionStorage.setItem('contentGeneratorForm', JSON.stringify(data));
                             }
@@ -2316,6 +2510,7 @@ Description supports **Markdown**.
                                     if (data.hasGeneratedContent) {
                                         document.getElementById('hints-output').textContent = data.hints;
                                         document.getElementById('reallife-output').textContent = data.realLifeExamples;
+                                        document.getElementById('followup-output').textContent = data.followup || '';
                                         document.getElementById('generated-content-display').classList.remove('hidden');
                                     }
                                 }
@@ -2329,12 +2524,22 @@ Description supports **Markdown**.
                             document.getElementById('copy-generated-content-btn').addEventListener('click', () => {
                                 const h = document.getElementById('hints-output').textContent;
                                 const r = document.getElementById('reallife-output').textContent;
-                                navigator.clipboard.writeText(`HINTS:\n${h}\n\nREAL-LIFE EXAMPLES:\n${r}`);
+                                const f = document.getElementById('followup-output').textContent;
+                                navigator.clipboard.writeText(`HINTS:\n${h}\n\nREAL-LIFE EXAMPLES:\n${r}\n\nFOLLOW-UP QUESTIONS:\n${f}`);
                             });
                             document.getElementById('copy-hints-btn').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('hints-output').textContent));
                             document.getElementById('copy-reallife-btn').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('reallife-output').textContent));
+                            document.getElementById('copy-followup-btn').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('followup-output').textContent));
 
                             if (window.location.hash === '#contentGenerator') restoreContentGeneratorForm();
+
+                            // Hook into tab switching for usage stats
+                            const navTabsUsage = document.querySelectorAll('.nav-tab');
+                            navTabsUsage.forEach(tab => {
+                                tab.addEventListener('click', function () {
+                                    if (this.dataset.tab === 'usage') fetchUsageStats();
+                                });
+                            });
 
                             // ===== RESTORE UI STATE =====
                             const restoreUI = (type) => {
@@ -2362,6 +2567,8 @@ Description supports **Markdown**.
 
                             restoreUI('standard');
                             restoreUI('node');
+                            // Initial fetch
+                            fetchUsageStats();
                         </script>
 </body>
 

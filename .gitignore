@@ -43,7 +43,7 @@ Thumbs.db
 *.log
 
 # Backend - Usage tracker (optional - comment out if you want to track in git)
-backend/usage_tracker.json
+# backend/usage_tracker.json
 
 # Virtual environment
 path/
