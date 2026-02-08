@@ -19,7 +19,7 @@ import requests
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
-USAGE_TRACKER_FILE = 'usage_tracker.json'
+USAGE_TRACKER_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'usage_tracker.json')
 
 # GPT-4o pricing (as of 2024)
 COST_PER_1K_PROMPT_TOKENS = 0.0025  # $2.50 per 1M tokens = $0.0025 per 1K
@@ -168,6 +168,11 @@ def generate_content():
         problem_description = data.get('problem_description', '')
         solution_code = data.get('solution_code', '')
         
+        # Generation flags (default to True for backward compatibility or "Generate All")
+        include_hints = data.get('include_hints', True)
+        include_reallife = data.get('include_reallife', True)
+        include_followup = data.get('include_followup', True)
+        
         if not problem_name or not problem_description or not solution_code:
             return jsonify({
                 'success': False,
@@ -185,28 +190,52 @@ Solution Code:
 {solution_code}
 """
         
+        hints_response = None
+        reallife_response = None
+        followup_response = None
+        
+        hints_prompt_tokens = 0
+        hints_completion_tokens = 0
+        reallife_prompt_tokens = 0
+        reallife_completion_tokens = 0
+        followup_prompt_tokens = 0
+        followup_completion_tokens = 0
+
         # Generate hints with tracking
-        print(f"Generating hints for: {problem_name}")
-        hints_response, hints_prompt_tokens, hints_completion_tokens = call_llm_with_tracking(HINTS_PROMPT, base_problem)
+        if include_hints:
+            print(f"Generating hints for: {problem_name}")
+            hints_response, hints_prompt_tokens, hints_completion_tokens = call_llm_with_tracking(HINTS_PROMPT, base_problem)
         
         # Generate real-life examples with tracking
-        print(f"Generating real-life examples for: {problem_name}")
-        reallife_response, reallife_prompt_tokens, reallife_completion_tokens = call_llm_with_tracking(REAL_LIFE_PROMPT, base_problem)
+        if include_reallife:
+            print(f"Generating real-life examples for: {problem_name}")
+            reallife_response, reallife_prompt_tokens, reallife_completion_tokens = call_llm_with_tracking(REAL_LIFE_PROMPT, base_problem)
 
         # Generate follow-up questions with tracking
-        print(f"Generating follow-up questions for: {problem_name}")
-        followup_response, followup_prompt_tokens, followup_completion_tokens = call_llm_with_tracking(FOLLOWUP_PROMPT_NEW, base_problem)
+        if include_followup:
+            print(f"Generating follow-up questions for: {problem_name}")
+            followup_response, followup_prompt_tokens, followup_completion_tokens = call_llm_with_tracking(FOLLOWUP_PROMPT_NEW, base_problem)
         
         # Update usage tracker
         total_prompt_tokens = hints_prompt_tokens + reallife_prompt_tokens + followup_prompt_tokens
         total_completion_tokens = hints_completion_tokens + reallife_completion_tokens + followup_completion_tokens
-        tracker = update_usage(total_prompt_tokens, total_completion_tokens, problem_name)
         
-        return jsonify({
+        # Construct specific log name
+        gen_types = []
+        if include_hints: gen_types.append("Hints")
+        if include_reallife: gen_types.append("RealLife")
+        if include_followup: gen_types.append("FollowUp")
+        
+        usage_name = problem_name
+        if len(gen_types) < 3: # If not all, specify which ones
+            usage_name = f"{problem_name} [{', '.join(gen_types)}]"
+        elif len(gen_types) == 3:
+            usage_name = f"{problem_name} [All]"
+
+        tracker = update_usage(total_prompt_tokens, total_completion_tokens, usage_name)
+        
+        response_data = {
             'success': True,
-            'hints': hints_response.strip(),
-            'real_life_examples': reallife_response.strip(),
-            'followup_questions': followup_response.strip(),
             'usage': {
                 'prompt_tokens': total_prompt_tokens,
                 'completion_tokens': total_completion_tokens,
@@ -220,7 +249,18 @@ Solution Code:
                 'total_cost_usd': round(tracker['total_cost_usd'], 6),
                 'last_updated': tracker['last_updated']
             }
-        })
+        }
+        
+        if hints_response is not None:
+            response_data['hints'] = hints_response.strip()
+            
+        if reallife_response is not None:
+            response_data['real_life_examples'] = reallife_response.strip()
+            
+        if followup_response is not None:
+            response_data['followup_questions'] = followup_response.strip()
+
+        return jsonify(response_data)
         
     except Exception as e:
         print(f"Error: {str(e)}")

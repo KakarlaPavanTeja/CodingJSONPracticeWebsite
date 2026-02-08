@@ -972,27 +972,70 @@
 
                             <!-- Generate Button -->
                             <!-- Action Buttons -->
-                            <div class="flex gap-4">
-                                <button id="generate-content-btn"
-                                    class="flex-1 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center space-x-3">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <button id="btn-gen-hints"
+                                    class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center space-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
-                                    <span id="generator-button-text">Generate Content</span>
-                                    <div id="generator-loader"
-                                        class="loader ease-linear rounded-full border-2 border-t-2 border-gray-200 h-6 w-6 hidden">
+                                    <span>Generate Hints</span>
+                                    <div
+                                        class="loader-hints loader w-4 h-4 border-2 border-white border-t-transparent rounded-full hidden">
                                     </div>
                                 </button>
+
+                                <button id="btn-gen-reallife"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center space-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+                                    </svg>
+                                    <span>Generate Real-Life Examples</span>
+                                    <div
+                                        class="loader-reallife loader w-4 h-4 border-2 border-white border-t-transparent rounded-full hidden">
+                                    </div>
+                                </button>
+
+                                <button id="btn-gen-followup"
+                                    class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center space-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span>Generate Follow-up Questions</span>
+                                    <div
+                                        class="loader-followup loader w-4 h-4 border-2 border-white border-t-transparent rounded-full hidden">
+                                    </div>
+                                </button>
+
+                                <button id="btn-gen-all"
+                                    class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-200 flex items-center justify-center space-x-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                    </svg>
+                                    <span>Generate All</span>
+                                    <div
+                                        class="loader-all loader w-4 h-4 border-2 border-white border-t-transparent rounded-full hidden">
+                                    </div>
+                                </button>
+                            </div>
+
+                            <div class="flex justify-end mb-4">
                                 <button id="clear-content-btn"
-                                    class="px-6 py-4 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white transition-all font-semibold flex items-center justify-center"
+                                    class="px-6 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white transition-all font-semibold flex items-center justify-center text-sm"
                                     title="Clear all inputs and outputs">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                     </svg>
+                                    Clear Form
                                 </button>
                             </div>
 
@@ -2459,7 +2502,7 @@
                             document.getElementById('btn-node-regenerate').addEventListener('click', () => handleRegenerateIds('node'));
 
                             // ===== CONTENT GENERATOR LOGIC =====
-                            const runContentGenerator = async () => {
+                            const handleContentGeneration = async (type) => {
                                 const problemName = document.getElementById('problem-name-input').value.trim();
                                 const problemDescription = document.getElementById('problem-description-input').value.trim();
                                 const solutionCode = document.getElementById('solution-code-input').value.trim();
@@ -2474,66 +2517,82 @@
                                     return;
                                 }
 
-                                document.getElementById('generator-loader').classList.remove('hidden');
-                                document.getElementById('generate-content-btn').disabled = true;
-                                document.getElementById('generator-button-text').textContent = "Generating...";
+                                // Toggle Loader
+                                const btnId = `btn-gen-${type}`;
+                                const loaderSelector = `.loader-${type}`;
+                                const btn = document.getElementById(btnId);
+                                const loader = btn ? btn.querySelector(loaderSelector) : null;
+
+                                if (btn) btn.disabled = true;
+                                if (loader) loader.classList.remove('hidden');
 
                                 try {
+                                    // Prepare Payload
+                                    const payload = {
+                                        problem_name: problemName,
+                                        problem_description: problemDescription,
+                                        solution_code: solutionCode,
+                                        include_hints: type === 'all' || type === 'hints',
+                                        include_reallife: type === 'all' || type === 'reallife',
+                                        include_followup: type === 'all' || type === 'followup'
+                                    };
+
                                     const response = await fetch(`${API_CONFIG.getBaseUrl()}/generate-content`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ problem_name: problemName, problem_description: problemDescription, solution_code: solutionCode })
+                                        body: JSON.stringify(payload)
                                     });
 
                                     const data = await response.json();
                                     if (data.success) {
-                                        // --- HINTS HANDLING ---
-                                        const hintsContainer = document.getElementById('hints-output');
-                                        hintsContainer.innerHTML = ''; // Clear previous
-                                        const hintsData = safeParseJSON(data.hints);
+                                        document.getElementById('generated-content-display').classList.remove('hidden');
 
-                                        if (hintsData) {
-                                            const items = Object.keys(hintsData).map(key => ({
-                                                title: key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()), // "hint_1" -> "Hint 1"
-                                                content: hintsData[key]
-                                            }));
-                                            hintsContainer.appendChild(createAccordion(items));
-                                            hintsContainer.dataset.raw = data.hints; // Store raw for copy
-                                        } else {
-                                            // Fallback to text
-                                            hintsContainer.textContent = data.hints;
+                                        // Update Hints
+                                        if (payload.include_hints && data.hints) {
+                                            const hintsContainer = document.getElementById('hints-output');
+                                            hintsContainer.innerHTML = '';
+                                            const hintsData = safeParseJSON(data.hints);
+                                            if (hintsData) {
+                                                const items = Object.keys(hintsData).map(key => ({
+                                                    title: key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                                                    content: hintsData[key]
+                                                }));
+                                                hintsContainer.appendChild(createAccordion(items));
+                                            } else {
+                                                hintsContainer.textContent = data.hints;
+                                            }
                                             hintsContainer.dataset.raw = data.hints;
                                         }
 
-                                        // --- REAL LIFE EXAMPLES HANDLING ---
-                                        document.getElementById('reallife-output').textContent = data.real_life_examples;
-                                        document.getElementById('reallife-output').dataset.raw = data.real_life_examples;
-
-                                        // --- FOLLOW-UP HANDLING ---
-                                        const followupContainer = document.getElementById('followup-output');
-                                        followupContainer.innerHTML = '';
-                                        const followupData = safeParseJSON(data.followup_questions);
-
-                                        if (followupData && Array.isArray(followupData)) {
-                                            const items = followupData.map(q => ({
-                                                title: q.question,
-                                                content: q.answer
-                                            }));
-                                            followupContainer.appendChild(createAccordion(items));
-                                            followupContainer.dataset.raw = data.followup_questions;
-                                        } else {
-                                            // Fallback
-                                            followupContainer.textContent = data.followup_questions || "No follow-up questions generated.";
-                                            followupContainer.dataset.raw = data.followup_questions || "";
+                                        // Update Real Life
+                                        if (payload.include_reallife && data.real_life_examples) {
+                                            const container = document.getElementById('reallife-output');
+                                            container.textContent = data.real_life_examples;
+                                            container.dataset.raw = data.real_life_examples;
                                         }
 
-                                        document.getElementById('generated-content-display').classList.remove('hidden');
+                                        // Update Follow-up
+                                        if (payload.include_followup && data.followup_questions) {
+                                            const container = document.getElementById('followup-output');
+                                            container.innerHTML = '';
+                                            const followupData = safeParseJSON(data.followup_questions);
+                                            if (followupData && Array.isArray(followupData)) {
+                                                const items = followupData.map(q => ({
+                                                    title: q.question,
+                                                    content: q.answer
+                                                }));
+                                                container.appendChild(createAccordion(items));
+                                            } else {
+                                                container.textContent = data.followup_questions || "No follow-up questions generated.";
+                                            }
+                                            container.dataset.raw = data.followup_questions || "";
+                                        }
 
                                         const successMsg = document.getElementById('generator-success-message');
                                         successMsg.querySelector('span').textContent = 'Content generated successfully!';
                                         successMsg.classList.remove('hidden'); successMsg.classList.add('flex');
                                         saveContentGeneratorForm();
-                                        fetchUsageStats(); // Refresh stats
+                                        fetchUsageStats();
                                     } else {
                                         throw new Error(data.error || 'Failed');
                                     }
@@ -2541,9 +2600,8 @@
                                     errorMsg.querySelector('span').textContent = `Error: ${err.message}`;
                                     errorMsg.classList.remove('hidden'); errorMsg.classList.add('flex');
                                 } finally {
-                                    document.getElementById('generator-loader').classList.add('hidden');
-                                    document.getElementById('generate-content-btn').disabled = false;
-                                    document.getElementById('generator-button-text').textContent = "Generate Content";
+                                    if (btn) btn.disabled = false;
+                                    if (loader) loader.classList.add('hidden');
                                 }
                             };
 
@@ -2683,7 +2741,10 @@
                                 }
                             };
 
-                            document.getElementById('generate-content-btn').addEventListener('click', runContentGenerator);
+                            document.getElementById('btn-gen-hints').addEventListener('click', () => handleContentGeneration('hints'));
+                            document.getElementById('btn-gen-reallife').addEventListener('click', () => handleContentGeneration('reallife'));
+                            document.getElementById('btn-gen-followup').addEventListener('click', () => handleContentGeneration('followup'));
+                            document.getElementById('btn-gen-all').addEventListener('click', () => handleContentGeneration('all'));
 
                             // Regenerate Listeners
                             document.getElementById('regenerate-hints-btn').addEventListener('click', () => regenerateSection('hints'));

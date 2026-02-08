@@ -1,10 +1,10 @@
 {
-  "total_requests": 24,
-  "total_tokens": 45329,
-  "total_cost_usd": 0.15388249999999998,
-  "prompt_tokens": 39921,
-  "completion_tokens": 5408,
-  "last_updated": "2026-02-01T21:55:43.873808",
+  "total_requests": 28,
+  "total_tokens": 50448,
+  "total_cost_usd": 0.17310749999999997,
+  "prompt_tokens": 44183,
+  "completion_tokens": 6265,
+  "last_updated": "2026-02-08T19:14:40.780013",
   "history": [
     {
       "timestamp": "2026-01-31T12:22:06.189656",
@@ -197,6 +197,38 @@
       "completion_tokens": 387,
       "total_tokens": 2629,
       "cost_usd": 0.009475
+    },
+    {
+      "timestamp": "2026-02-08T19:13:40.047517",
+      "problem_name": "Two Sum [Hints]",
+      "prompt_tokens": 651,
+      "completion_tokens": 80,
+      "total_tokens": 731,
+      "cost_usd": 0.0024275
+    },
+    {
+      "timestamp": "2026-02-08T19:13:44.844872",
+      "problem_name": "Two Sum [RealLife]",
+      "prompt_tokens": 499,
+      "completion_tokens": 52,
+      "total_tokens": 551,
+      "cost_usd": 0.0017675
+    },
+    {
+      "timestamp": "2026-02-08T19:13:59.897605",
+      "problem_name": "Two Sum [FollowUp]",
+      "prompt_tokens": 981,
+      "completion_tokens": 285,
+      "total_tokens": 1266,
+      "cost_usd": 0.0053025
+    },
+    {
+      "timestamp": "2026-02-08T19:14:40.780042",
+      "problem_name": "Two Sum [All]",
+      "prompt_tokens": 2131,
+      "completion_tokens": 440,
+      "total_tokens": 2571,
+      "cost_usd": 0.0097275
     }
   ]
 }
