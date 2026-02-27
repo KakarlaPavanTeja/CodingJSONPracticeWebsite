@@ -2085,6 +2085,14 @@
                                 return (sIdx < start.length || eIdx < 0) ? "" : content.substring(sIdx, eIdx).trim();
                             };
                             const parseTags = s => s ? s.split(',').map(t => t.trim()).filter(Boolean) : [];
+                            const formatCodingQuestionDetails = (d) => ({
+                                code_content: d.code_content,
+                                default_code: d.default_code,
+                                language: d.language,
+                                code_id: d.code_id,
+                                is_function_based: d.is_function_based,
+                                debug_helper_code: d.debug_helper_code
+                            });
                             const formatCompanies = l => l.map(c => ({ "company_name": c.trim().toUpperCase() }));
 
                             const parseHints = c => {
@@ -2266,9 +2274,12 @@
                                         const finalCodeContentId = existingCodeContentId || generateUUID();
                                         const parsedSolutions = parseSolutions(lua, existingSolutionsId);
 
-                                        const buildCodingDetails = (lang, contentKey, snippetKey) => ({
+                                        const buildCodingDetails = (lang, contentKey, snippetKey) => formatCodingQuestionDetails({
                                             code_content: parseSection(lua, contentKey, snippetKey),
-                                            language: lang, code_id: finalCodeContentId, is_function_based: true, default_code: lang === 'CPP',
+                                            default_code: lang === 'CPP',
+                                            language: lang,
+                                            code_id: finalCodeContentId,
+                                            is_function_based: true,
                                             debug_helper_code: lang === 'NODE_JS' ? null : parseDebugHelperCode(lua, lang)
                                         });
 
@@ -2294,7 +2305,7 @@
                                                     buildCodingDetails("CPP", "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"),
                                                     buildCodingDetails("PYTHON", "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"),
                                                     buildCodingDetails("JAVA", "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"),
-                                                    { ...buildCodingDetails("NODE_JS", "----------CODE_CONTENT_NODE_JS_START----------", "----------CODE_CONTENT_NODE_JS_END----------"), default_code: false }
+                                                    buildCodingDetails("NODE_JS", "----------CODE_CONTENT_NODE_JS_START----------", "----------CODE_CONTENT_NODE_JS_END----------")
                                                 ],
                                                 code_repository_details: null,
                                                 language_code_repository_details: [
@@ -2335,12 +2346,13 @@
                                                 advanced_tag_names: parseTags(parseSection(lua, "----------ADVANCED_TOPICS_START----------", "----------ADVANCED_TOPICS_END----------"))
                                             };
 
-                                            q.coding_question_details.forEach(d => {
+                                            q.coding_question_details = q.coding_question_details.map(d => {
                                                 d.code_id = finalCodeContentId;
                                                 if (d.language === 'CPP') { d.code_content = parseSection(lua, "----------CODE_CONTENT_CPP_START----------", "----------CODE_CONTENT_CPP_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'CPP'); }
                                                 if (d.language === 'PYTHON') { d.code_content = parseSection(lua, "----------CODE_CONTENT_PYTHON_START----------", "----------CODE_CONTENT_PYTHON_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'PYTHON'); }
                                                 if (d.language === 'JAVA') { d.code_content = parseSection(lua, "----------CODE_CONTENT_JAVA_START----------", "----------CODE_CONTENT_JAVA_END----------"); d.debug_helper_code = parseDebugHelperCode(lua, 'JAVA'); }
                                                 if (d.language === 'NODE_JS') { d.code_content = parseSection(lua, "----------CODE_CONTENT_NODE_JS_START----------", "----------CODE_CONTENT_NODE_JS_END----------"); d.debug_helper_code = null; }
+                                                return formatCodingQuestionDetails(d);
                                             });
 
                                             q.language_code_repository_details.forEach(r => {
@@ -2370,7 +2382,7 @@
                                         let finalStr = JSON.stringify(finalJson, null, 4);
                                         finalStr = finalStr.replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1');
 
-                                        downloadJson(finalStr, `${state.mode}_${type}_question.json`);
+                                        downloadJson(finalStr, `coding_questions.json`);
                                         showMessage(type, false, "Success! File downloaded.");
                                         resetInputs(type);
 
@@ -2398,7 +2410,10 @@
                                         const newCodeId = generateUUID();
                                         const newSolId = generateUUID();
 
-                                        if (q.coding_question_details) q.coding_question_details.forEach(d => d.code_id = newCodeId);
+                                        if (q.coding_question_details) q.coding_question_details = q.coding_question_details.map(d => {
+                                            d.code_id = newCodeId;
+                                            return formatCodingQuestionDetails(d);
+                                        });
                                         if (q.solutions?.[0]?.code_details) q.solutions[0].code_details.forEach(d => d.code_id = newSolId);
                                         if (q.test_cases) q.test_cases.forEach(tc => tc.id = generateUUID());
 
@@ -2414,7 +2429,7 @@
                                         let finalStr = JSON.stringify(jsonContent, null, 4);
                                         finalStr = finalStr.replace(/"___FLOAT_PLACEHOLDER___(\d+\.\d+)"/g, '$1');
 
-                                        downloadJson(finalStr, `${type}_regenerated_ids.json`);
+                                        downloadJson(finalStr, `coding_questions_new_ids.json`);
                                         showMessage(type, false, "Success! IDs regenerated and downloaded.");
                                         resetInputs(type);
 
