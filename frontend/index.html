@@ -2078,7 +2078,17 @@
 
 
                             // ===== CORE LOGIC (CLIENT SIDE) =====
-                            const generateUUID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => (Math.random() * 16 | 0).toString(16));
+                            // RFC 4122 v4: use crypto.randomUUID when available; fallback enforces variant bits (8,9,a,b) for 4th segment
+                            const generateUUID = () => {
+                                if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+                                    return crypto.randomUUID();
+                                }
+                                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                                    const r = Math.random() * 16 | 0;
+                                    const v = c === 'x' ? r : (0x8 | (r & 0x3)); // variant bits: 8, 9, a, b only
+                                    return v.toString(16);
+                                });
+                            };
                             const parseSection = (content, start, end) => {
                                 const sIdx = content.indexOf(start) + start.length;
                                 const eIdx = content.indexOf(end, sIdx);
