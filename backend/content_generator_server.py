@@ -14,6 +14,7 @@ from flask_cors import CORS
 
 # Import from local files (deployment-ready)
 from prompts import HINTS_PROMPT, REAL_LIFE_PROMPT, FOLLOWUP_PROMPT_NEW
+from llm_client import call_llm
 import requests
 
 app = Flask(__name__)
@@ -21,9 +22,29 @@ CORS(app)  # Enable CORS for all routes
 
 USAGE_TRACKER_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'usage_tracker.json')
 
-# GPT-4o pricing (as of 2024)
-COST_PER_1K_PROMPT_TOKENS = 0.0025  # $2.50 per 1M tokens = $0.0025 per 1K
-COST_PER_1K_COMPLETION_TOKENS = 0.01  # $10 per 1M tokens = $0.01 per 1K
+
+def _tracked_model_label() -> str:
+    """Same resolution order as llm_client (for logs / history)."""
+    return (
+        os.environ.get("OPENAI_MODEL_ENRICHMENT", "").strip()
+        or os.environ.get("OPENAI_MODEL", "").strip()
+        or "gpt-5.4"
+    )
+
+
+def _cost_per_1k_usd() -> tuple[float, float]:
+    """
+    USD per 1K prompt / completion tokens for estimates in usage_tracker.
+    Set on Render to match your model's current list price (per 1K tokens).
+    """
+    p = os.environ.get("OPENAI_COST_PER_1K_PROMPT_USD", "0.0025").strip()
+    c = os.environ.get("OPENAI_COST_PER_1K_COMPLETION_USD", "0.01").strip()
+    return float(p), float(c)
+
+
+def estimate_cost_usd(prompt_tokens: int, completion_tokens: int) -> float:
+    cp, cc = _cost_per_1k_usd()
+    return (prompt_tokens / 1000.0 * cp) + (completion_tokens / 1000.0 * cc)
 
 def get_current_exchange_rate():
     """Fetch current USD to INR exchange rate"""
@@ -59,14 +80,31 @@ def save_usage_tracker(tracker):
         finally:
             fcntl.flock(f, fcntl.LOCK_UN)
 
-def update_usage(prompt_tokens, completion_tokens, problem_name):
-    """Update usage tracker with new API call (Thread-safe read-modify-write)"""
+def update_usage(
+    prompt_tokens,
+    completion_tokens,
+    problem_name,
+    *,
+    total_tokens=None,
+    model=None,
+):
+    """
+    Update usage tracker (thread-safe). Costs use OPENAI_COST_PER_1K_* env vars.
+
+    total_tokens: if provided (e.g. from OpenAI usage), stored on the history row;
+                  otherwise prompt_tokens + completion_tokens.
+    model: optional label for history; defaults to tracked model from env.
+    """
     # We need to lock the file for the entire Read-Modify-Write cycle
     # Since standard open() truncates on 'w', we use 'r+' or a separate lock file.
     # For simplicity with fcntl on the data file itself, we open with 'r+' to lock, read, seek 0, write, truncate.
-    
+
     if not os.path.exists(USAGE_TRACKER_FILE):
         save_usage_tracker(load_usage_tracker())
+
+    model_label = model or _tracked_model_label()
+    row_total = int(total_tokens) if total_tokens is not None else int(prompt_tokens) + int(completion_tokens)
+    cost = estimate_cost_usd(int(prompt_tokens), int(completion_tokens))
 
     with open(USAGE_TRACKER_FILE, 'r+') as f:
         fcntl.flock(f, fcntl.LOCK_EX)
@@ -78,22 +116,21 @@ def update_usage(prompt_tokens, completion_tokens, problem_name):
 
             # Update stats
             tracker['total_requests'] += 1
-            tracker['total_tokens'] += (prompt_tokens + completion_tokens)
+            tracker['total_tokens'] += row_total
             tracker['prompt_tokens'] += prompt_tokens
             tracker['completion_tokens'] += completion_tokens
-            
-            cost = (prompt_tokens / 1000 * COST_PER_1K_PROMPT_TOKENS) + \
-                   (completion_tokens / 1000 * COST_PER_1K_COMPLETION_TOKENS)
+
             tracker['total_cost_usd'] += cost
             tracker['last_updated'] = datetime.now().isoformat()
-            
+
             tracker['history'].append({
                 'timestamp': datetime.now().isoformat(),
                 'problem_name': problem_name,
+                'model': model_label,
                 'prompt_tokens': prompt_tokens,
                 'completion_tokens': completion_tokens,
-                'total_tokens': prompt_tokens + completion_tokens,
-                'cost_usd': cost
+                'total_tokens': row_total,
+                'cost_usd': cost,
             })
             
             # Write back
@@ -108,54 +145,19 @@ def update_usage(prompt_tokens, completion_tokens, problem_name):
     
 
 def call_llm_with_tracking(system_prompt, user_prompt, temperature=0.3):
-    """Call LLM and extract usage information"""
-    API_URL = "http://43.204.71.128:4000/chat/completions"
-    API_KEY = "sk-G-HxdSbYuEiesRDNPCHPQA"
-    
-    HEADERS = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
-    DEFAULT_METADATA = {
-        "project_name": "CCBP_FRONTEND_INTERVIEW_KIT",
-        "feature": "DSA_CONTENT_GENERATION",
-        "step": "CSV_ENRICHMENT",
-        "team": "DSA_CONTENT",
-        "meta": {}
-    }
-    
-    payload = {
-        "model": "gpt-4o",
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        "temperature": temperature,
-        "metadata": DEFAULT_METADATA
-    }
-    
-    response = requests.post(
-        API_URL,
-        headers=HEADERS,
-        json=payload,
-        timeout=300
-    )
-    
-    if response.status_code != 200:
-        raise RuntimeError(
-            f"LLM call failed: {response.status_code} - {response.text}"
-        )
-    
-    data = response.json()
-    content = data["choices"][0]["message"]["content"]
-    
-    # Extract usage information
-    usage = data.get("usage", {})
-    prompt_tokens = usage.get("prompt_tokens", 0)
-    completion_tokens = usage.get("completion_tokens", 0)
-    
-    return content, prompt_tokens, completion_tokens
+    """Call OpenAI via llm_client (OPENAI_API_KEY, optional OPENAI_MODEL_*)."""
+    content, usage = call_llm(system_prompt, user_prompt, temperature=temperature)
+    prompt_tokens = int(usage.get("prompt_tokens") or 0)
+    completion_tokens = int(usage.get("completion_tokens") or 0)
+    total_tokens = usage.get("total_tokens")
+    if total_tokens is not None:
+        try:
+            total_tokens = int(total_tokens)
+        except (TypeError, ValueError):
+            total_tokens = None
+    else:
+        total_tokens = None
+    return content, prompt_tokens, completion_tokens, total_tokens
 
 @app.route('/generate-content', methods=['POST'])
 def generate_content():
@@ -196,25 +198,34 @@ Solution Code:
         
         hints_prompt_tokens = 0
         hints_completion_tokens = 0
+        hints_total_tokens = None
         reallife_prompt_tokens = 0
         reallife_completion_tokens = 0
+        reallife_total_tokens = None
         followup_prompt_tokens = 0
         followup_completion_tokens = 0
+        followup_total_tokens = None
 
         # Generate hints with tracking
         if include_hints:
             print(f"Generating hints for: {problem_name}")
-            hints_response, hints_prompt_tokens, hints_completion_tokens = call_llm_with_tracking(HINTS_PROMPT, base_problem)
-        
+            hints_response, hints_prompt_tokens, hints_completion_tokens, hints_total_tokens = call_llm_with_tracking(
+                HINTS_PROMPT, base_problem
+            )
+
         # Generate real-life examples with tracking
         if include_reallife:
             print(f"Generating real-life examples for: {problem_name}")
-            reallife_response, reallife_prompt_tokens, reallife_completion_tokens = call_llm_with_tracking(REAL_LIFE_PROMPT, base_problem)
+            reallife_response, reallife_prompt_tokens, reallife_completion_tokens, reallife_total_tokens = (
+                call_llm_with_tracking(REAL_LIFE_PROMPT, base_problem)
+            )
 
         # Generate follow-up questions with tracking
         if include_followup:
             print(f"Generating follow-up questions for: {problem_name}")
-            followup_response, followup_prompt_tokens, followup_completion_tokens = call_llm_with_tracking(FOLLOWUP_PROMPT_NEW, base_problem)
+            followup_response, followup_prompt_tokens, followup_completion_tokens, followup_total_tokens = (
+                call_llm_with_tracking(FOLLOWUP_PROMPT_NEW, base_problem)
+            )
         
         # Update usage tracker
         total_prompt_tokens = hints_prompt_tokens + reallife_prompt_tokens + followup_prompt_tokens
@@ -232,16 +243,33 @@ Solution Code:
         elif len(gen_types) == 3:
             usage_name = f"{problem_name} [All]"
 
-        tracker = update_usage(total_prompt_tokens, total_completion_tokens, usage_name)
-        
+        def _api_total_row(p, c, api_t):
+            if api_t is not None:
+                return int(api_t)
+            return int(p) + int(c)
+
+        batch_total_tokens = 0
+        if include_hints:
+            batch_total_tokens += _api_total_row(hints_prompt_tokens, hints_completion_tokens, hints_total_tokens)
+        if include_reallife:
+            batch_total_tokens += _api_total_row(reallife_prompt_tokens, reallife_completion_tokens, reallife_total_tokens)
+        if include_followup:
+            batch_total_tokens += _api_total_row(followup_prompt_tokens, followup_completion_tokens, followup_total_tokens)
+
+        tracker = update_usage(
+            total_prompt_tokens,
+            total_completion_tokens,
+            usage_name,
+            total_tokens=batch_total_tokens,
+        )
+
         response_data = {
             'success': True,
             'usage': {
                 'prompt_tokens': total_prompt_tokens,
                 'completion_tokens': total_completion_tokens,
-                'total_tokens': total_prompt_tokens + total_completion_tokens,
-                'cost_usd': round((total_prompt_tokens / 1000 * COST_PER_1K_PROMPT_TOKENS) + 
-                                 (total_completion_tokens / 1000 * COST_PER_1K_COMPLETION_TOKENS), 6)
+                'total_tokens': batch_total_tokens,
+                'cost_usd': round(estimate_cost_usd(total_prompt_tokens, total_completion_tokens), 6),
             },
             'tracker': {
                 'total_requests': tracker['total_requests'],
@@ -305,8 +333,14 @@ Solution Code:
             return jsonify({'success': False, 'error': 'Invalid section type'}), 400
 
         print(f"Regenerating {section_type} for: {problem_name}")
-        content, p_tokens, c_tokens = call_llm_with_tracking(prompt, base_problem)
-        tracker = update_usage(p_tokens, c_tokens, f"{problem_name} [{section_type}]")
+        content, p_tokens, c_tokens, api_total = call_llm_with_tracking(prompt, base_problem)
+        row_total = int(api_total) if api_total is not None else int(p_tokens) + int(c_tokens)
+        tracker = update_usage(
+            p_tokens,
+            c_tokens,
+            f"{problem_name} [{section_type}]",
+            total_tokens=row_total,
+        )
 
         return jsonify({
             'success': True,
