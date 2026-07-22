@@ -42,10 +42,10 @@ Thumbs.db
 # Logs
 *.log
 
-# Backend - Usage tracker (optional - comment out if you want to track in git)
-# backend/usage_tracker.json
-
-# Virtual environment
+# Local scratch directories
 path/
 
-backend/usage_tracker.json
+# Local working files
+docs/
+
+.vercel

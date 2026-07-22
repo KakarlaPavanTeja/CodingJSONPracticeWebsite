@@ -1,0 +1,25 @@
+{
+  "test_cases": [
+    {
+      "input": "4\n2 2 2 2\n2",
+      "output": "4",
+      "weightage": 5,
+      "order": 1,
+      "tags": ["example", "subtask_1", "size_small"]
+    },
+    {
+      "input": "3\n3 3 3\n2",
+      "output": "4",
+      "weightage": 8,
+      "order": 2,
+      "tags": ["subtask_1", "size_small"]
+    },
+    {
+      "input": "5\n10 10 3 5 7\n3",
+      "output": "11",
+      "weightage": 12,
+      "order": 3,
+      "tags": ["subtask_2", "mixed_values", "size_small"]
+    }
+  ]
+}
