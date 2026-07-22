@@ -39,6 +39,14 @@
         </div>
 
         <nav class="dashboard-nav" aria-label="Dashboard">
+          <a href="#author" data-nav="author">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5.75 19.25h12.5M8 15.5 16.5 7a2.12 2.12 0 0 1 3 3L11 18.5l-3.75.75Z" />
+              </svg>
+            </span>
+            <span>Author Lua</span>
+          </a>
           <a href="#prepare" data-nav="prepare" aria-current="page">
             <span class="nav-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none">
@@ -82,6 +90,555 @@
       </aside>
 
       <main id="main-content">
+        <section data-view="author" aria-labelledby="author-title" hidden>
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Browser draft</p>
+              <h1 id="author-title" tabindex="-1">Author Lua</h1>
+              <p>
+                Edit the full standard or node Lua contract in the browser. Drafts
+                autosave to local storage; push the assembled file into Prepare
+                JSON without downloading first.
+              </p>
+            </div>
+            <aside class="privacy" aria-labelledby="author-privacy-title">
+              <span class="privacy-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="11" rx="2" />
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14.5v2.5" />
+                </svg>
+              </span>
+              <div>
+                <strong id="author-privacy-title">Saved in this browser only</strong>
+                <span class="privacy-copy">
+                  Chrome localStorage · cleared when you clear the draft.
+                </span>
+              </div>
+            </aside>
+          </header>
+
+          <div class="author-toolbar" role="region" aria-label="Draft actions">
+            <p id="author-save-status" class="author-save-status" aria-live="polite">
+              Not saved yet
+            </p>
+            <div class="author-toolbar-actions">
+              <label class="button author-import-label">
+                Import .lua
+                <input
+                  id="author-import-file"
+                  type="file"
+                  accept=".lua,text/plain"
+                  hidden
+                />
+              </label>
+              <button class="button" id="author-clear-button" type="button">
+                Clear draft
+              </button>
+              <button class="button" id="author-download-button" type="button">
+                Download question.lua
+              </button>
+              <button
+                class="button button-primary"
+                id="author-use-prepare-button"
+                type="button"
+              >
+                Use in Prepare JSON
+              </button>
+            </div>
+          </div>
+
+          <form id="author-form" novalidate>
+            <section class="panel" aria-labelledby="author-structure-title">
+              <div class="panel-header">
+                <div>
+                  <span class="panel-index">01 / STRUCTURE</span>
+                  <h2 id="author-structure-title">Question structure</h2>
+                  <p>Choose the outline contract. Node adds NODE_H_CONTENT.</p>
+                </div>
+              </div>
+              <fieldset>
+                <legend class="visually-hidden">Question structure</legend>
+                <div class="segmented">
+                  <label>
+                    <input
+                      type="radio"
+                      name="author-structure"
+                      value="standard"
+                      checked
+                    />
+                    <span>Standard</span>
+                  </label>
+                  <label>
+                    <input type="radio" name="author-structure" value="node" />
+                    <span>Node-based</span>
+                  </label>
+                </div>
+              </fieldset>
+            </section>
+
+            <details class="author-section panel" open>
+              <summary>
+                <span class="panel-index">02 / BASICS</span>
+                <span>Basics</span>
+              </summary>
+              <div class="author-section-body">
+                <p class="field-help">
+                  Statement order: Problem description → Examples → Your task →
+                  Constraints → Input format → Output format.
+                </p>
+                <label class="author-field" for="author-description">
+                  Question description
+                  <textarea
+                    id="author-description"
+                    name="QUESTION_DESCRIPTION"
+                    rows="10"
+                    spellcheck="true"
+                  ></textarea>
+                </label>
+                <div class="author-field-grid">
+                  <label class="author-field" for="author-short-text">
+                    Short text
+                    <input id="author-short-text" name="SHORT_TEXT" type="text" />
+                  </label>
+                  <label class="author-field" for="author-level">
+                    Question level
+                    <input
+                      id="author-level"
+                      name="QUESTION_LEVEL"
+                      type="text"
+                      placeholder="EASY, MEDIUM, or HARD"
+                    />
+                  </label>
+                </div>
+                <label class="author-field" for="author-companies">
+                  Companies
+                  <span class="field-help">One company per line.</span>
+                  <textarea
+                    id="author-companies"
+                    name="COMPANIES"
+                    rows="4"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-default-tags">
+                  Default tags
+                  <textarea
+                    id="author-default-tags"
+                    name="DEFAULT_TAGS"
+                    rows="3"
+                  ></textarea>
+                </label>
+              </div>
+            </details>
+
+            <details class="author-section panel">
+              <summary>
+                <span class="panel-index">03 / TOPICS</span>
+                <span>Topics &amp; enrichment</span>
+              </summary>
+              <div class="author-section-body">
+                <label class="author-field" for="author-beginner-topics">
+                  Beginner topics
+                  <textarea
+                    id="author-beginner-topics"
+                    name="BEGINNER_TOPICS"
+                    rows="3"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-intermediate-topics">
+                  Intermediate topics
+                  <textarea
+                    id="author-intermediate-topics"
+                    name="INTERMEDIATE_TOPICS"
+                    rows="3"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-advanced-topics">
+                  Advanced topics
+                  <textarea
+                    id="author-advanced-topics"
+                    name="ADVANCED_TOPICS"
+                    rows="3"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-real-life">
+                  Real-life examples
+                  <textarea
+                    id="author-real-life"
+                    name="REAL_LIFE_EXAMPLES"
+                    rows="5"
+                  ></textarea>
+                </label>
+                <div id="author-node-h-block" hidden>
+                  <label class="author-field" for="author-node-h">
+                    NODE_H_CONTENT
+                    <span class="field-help">
+                      Required for node-based questions when C++ is enabled.
+                    </span>
+                    <textarea
+                      id="author-node-h"
+                      name="NODE_H_CONTENT"
+                      class="author-code"
+                      rows="8"
+                      spellcheck="false"
+                    ></textarea>
+                  </label>
+                </div>
+              </div>
+            </details>
+
+            <details class="author-section panel">
+              <summary>
+                <span class="panel-index">04 / HINTS</span>
+                <span>Hints</span>
+              </summary>
+              <div class="author-section-body">
+                <div
+                  id="author-hints-list"
+                  class="author-repeat-list"
+                  aria-live="polite"
+                ></div>
+                <button
+                  class="button button-secondary"
+                  id="author-add-hint"
+                  type="button"
+                >
+                  Add hint
+                </button>
+              </div>
+            </details>
+
+            <details class="author-section panel">
+              <summary>
+                <span class="panel-index">05 / FOLLOW-UPS</span>
+                <span>Follow-ups</span>
+              </summary>
+              <div class="author-section-body">
+                <div
+                  id="author-followups-list"
+                  class="author-repeat-list"
+                  aria-live="polite"
+                ></div>
+                <button
+                  class="button button-secondary"
+                  id="author-add-followup"
+                  type="button"
+                >
+                  Add follow-up
+                </button>
+              </div>
+            </details>
+
+            <section class="panel" aria-labelledby="author-languages-title">
+              <div class="panel-header">
+                <div>
+                  <span class="panel-index">06 / LANGUAGES</span>
+                  <h2 id="author-languages-title">Language stubs &amp; harnesses</h2>
+                  <p>
+                    Stub (CODE_CONTENT), harness (CODE_BASE64), solution, and debug
+                    helpers per language.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="author-lang-tabs"
+                role="tablist"
+                aria-label="Languages"
+              >
+                <button
+                  type="button"
+                  class="author-lang-tab"
+                  role="tab"
+                  id="author-tab-CPP"
+                  aria-controls="author-panel-CPP"
+                  aria-selected="true"
+                  data-author-lang="CPP"
+                >
+                  C++
+                </button>
+                <button
+                  type="button"
+                  class="author-lang-tab"
+                  role="tab"
+                  id="author-tab-PYTHON"
+                  aria-controls="author-panel-PYTHON"
+                  aria-selected="false"
+                  data-author-lang="PYTHON"
+                  tabindex="-1"
+                >
+                  Python
+                </button>
+                <button
+                  type="button"
+                  class="author-lang-tab"
+                  role="tab"
+                  id="author-tab-JAVA"
+                  aria-controls="author-panel-JAVA"
+                  aria-selected="false"
+                  data-author-lang="JAVA"
+                  tabindex="-1"
+                >
+                  Java
+                </button>
+                <button
+                  type="button"
+                  class="author-lang-tab"
+                  role="tab"
+                  id="author-tab-NODE_JS"
+                  aria-controls="author-panel-NODE_JS"
+                  aria-selected="false"
+                  data-author-lang="NODE_JS"
+                  tabindex="-1"
+                >
+                  Node.js
+                </button>
+              </div>
+
+              <div
+                class="author-lang-panel"
+                role="tabpanel"
+                id="author-panel-CPP"
+                aria-labelledby="author-tab-CPP"
+                data-author-lang-panel="CPP"
+              >
+                <label class="author-field" for="author-CPP-codeContent">
+                  CODE_CONTENT (stub)
+                  <textarea
+                    id="author-CPP-codeContent"
+                    class="author-code"
+                    data-lang-field="CPP.codeContent"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-CPP-codeBase64">
+                  CODE_BASE64 (harness)
+                  <textarea
+                    id="author-CPP-codeBase64"
+                    class="author-code"
+                    data-lang-field="CPP.codeBase64"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-CPP-solution">
+                  SOLUTIONS
+                  <textarea
+                    id="author-CPP-solution"
+                    class="author-code"
+                    data-lang-field="CPP.solution"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-CPP-debugPre">
+                  Debug PRE_USER_CODE
+                  <textarea
+                    id="author-CPP-debugPre"
+                    class="author-code"
+                    data-lang-field="CPP.debugPre"
+                    rows="4"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-CPP-debugPost">
+                  Debug POST_USER_CODE
+                  <textarea
+                    id="author-CPP-debugPost"
+                    class="author-code"
+                    data-lang-field="CPP.debugPost"
+                    rows="4"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+              </div>
+
+              <div
+                class="author-lang-panel"
+                role="tabpanel"
+                id="author-panel-PYTHON"
+                aria-labelledby="author-tab-PYTHON"
+                data-author-lang-panel="PYTHON"
+                hidden
+              >
+                <label class="author-field" for="author-PYTHON-codeContent">
+                  CODE_CONTENT (stub)
+                  <textarea
+                    id="author-PYTHON-codeContent"
+                    class="author-code"
+                    data-lang-field="PYTHON.codeContent"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-PYTHON-codeBase64">
+                  CODE_BASE64 (harness)
+                  <textarea
+                    id="author-PYTHON-codeBase64"
+                    class="author-code"
+                    data-lang-field="PYTHON.codeBase64"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-PYTHON-solution">
+                  SOLUTIONS
+                  <textarea
+                    id="author-PYTHON-solution"
+                    class="author-code"
+                    data-lang-field="PYTHON.solution"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-PYTHON-debugPre">
+                  Debug PRE_USER_CODE
+                  <textarea
+                    id="author-PYTHON-debugPre"
+                    class="author-code"
+                    data-lang-field="PYTHON.debugPre"
+                    rows="4"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-PYTHON-debugPost">
+                  Debug POST_USER_CODE
+                  <textarea
+                    id="author-PYTHON-debugPost"
+                    class="author-code"
+                    data-lang-field="PYTHON.debugPost"
+                    rows="4"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+              </div>
+
+              <div
+                class="author-lang-panel"
+                role="tabpanel"
+                id="author-panel-JAVA"
+                aria-labelledby="author-tab-JAVA"
+                data-author-lang-panel="JAVA"
+                hidden
+              >
+                <label class="author-field" for="author-JAVA-codeContent">
+                  CODE_CONTENT (stub)
+                  <textarea
+                    id="author-JAVA-codeContent"
+                    class="author-code"
+                    data-lang-field="JAVA.codeContent"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-JAVA-codeBase64">
+                  CODE_BASE64 (harness)
+                  <textarea
+                    id="author-JAVA-codeBase64"
+                    class="author-code"
+                    data-lang-field="JAVA.codeBase64"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-JAVA-solution">
+                  SOLUTIONS
+                  <textarea
+                    id="author-JAVA-solution"
+                    class="author-code"
+                    data-lang-field="JAVA.solution"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-JAVA-debugPre">
+                  Debug PRE_USER_CODE
+                  <textarea
+                    id="author-JAVA-debugPre"
+                    class="author-code"
+                    data-lang-field="JAVA.debugPre"
+                    rows="4"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-JAVA-debugPost">
+                  Debug POST_USER_CODE
+                  <textarea
+                    id="author-JAVA-debugPost"
+                    class="author-code"
+                    data-lang-field="JAVA.debugPost"
+                    rows="4"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+              </div>
+
+              <div
+                class="author-lang-panel"
+                role="tabpanel"
+                id="author-panel-NODE_JS"
+                aria-labelledby="author-tab-NODE_JS"
+                data-author-lang-panel="NODE_JS"
+                hidden
+              >
+                <label class="author-field" for="author-NODE_JS-codeContent">
+                  CODE_CONTENT (stub)
+                  <textarea
+                    id="author-NODE_JS-codeContent"
+                    class="author-code"
+                    data-lang-field="NODE_JS.codeContent"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-NODE_JS-codeBase64">
+                  CODE_BASE64 (harness)
+                  <textarea
+                    id="author-NODE_JS-codeBase64"
+                    class="author-code"
+                    data-lang-field="NODE_JS.codeBase64"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-NODE_JS-solution">
+                  SOLUTIONS
+                  <textarea
+                    id="author-NODE_JS-solution"
+                    class="author-code"
+                    data-lang-field="NODE_JS.solution"
+                    rows="8"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-NODE_JS-debugPre">
+                  Debug PRE_USER_CODE
+                  <span class="field-help">
+                    Not emitted in the standard outline; kept for draft editing.
+                  </span>
+                  <textarea
+                    id="author-NODE_JS-debugPre"
+                    class="author-code"
+                    data-lang-field="NODE_JS.debugPre"
+                    rows="4"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+                <label class="author-field" for="author-NODE_JS-debugPost">
+                  Debug POST_USER_CODE
+                  <textarea
+                    id="author-NODE_JS-debugPost"
+                    class="author-code"
+                    data-lang-field="NODE_JS.debugPost"
+                    rows="4"
+                    spellcheck="false"
+                  ></textarea>
+                </label>
+              </div>
+            </section>
+          </form>
+        </section>
+
         <section data-view="prepare" aria-labelledby="prepare-title">
           <header class="page-header">
             <div>
@@ -518,6 +1075,9 @@
                 </a>
                 <a href="/examples/node-outline.lua" download>
                   Node Lua · outline
+                </a>
+                <a href="/examples/topics-list.txt" download>
+                  Topics · approved list
                 </a>
                 <a href="/examples/testcases-single.json" download>
                   Testcases · single output

@@ -8,10 +8,14 @@ source Lua, testcase JSON, and preparation summary. The internal team performs
 the final review and platform loading.
 
 The application has no backend and makes no network requests. Uploaded files stay
-inside the browser and are discarded when the page is closed.
+inside the browser. Author Lua drafts are saved to `localStorage` until cleared;
+other session uploads are discarded when the page is closed.
 
 ## What it does
 
+- Authors packaged Lua in the browser (Author Lua) with a draft autosaved to
+  Chrome `localStorage`. **Use in Prepare JSON** fills the Lua slot without a
+  re-upload; download `question.lua` remains available.
 - Creates a new practice coding-question JSON from packaged Lua and testcase JSON.
 - Updates an existing coding-question JSON while preserving stable IDs.
 - Supports standard and node-based questions.
@@ -40,6 +44,9 @@ Open:
 http://localhost:8000/frontend/
 ```
 
+Use **Author Lua** (`#author`) to edit the full Lua contract. Drafts persist in
+this browser until you clear them. From Author, choose **Use in Prepare JSON** to
+continue with testcases, or download `question.lua` separately.
 ## Inputs
 
 ### Create
@@ -83,11 +90,6 @@ Every testcase requires:
 V4 tags such as `example`, `subtask_1`, `size_small`, and `stress` are preserved
 and converted into platform tag objects.
 
-## Freelancer documents
-
-- [Simple freelancer guidelines](docs/FREELANCER_GUIDELINES.md)
-- [Freelancer submission checklist](docs/FREELANCER_CHECKLIST.md)
-
 The content policy uses batched `t` input for binary-result problems such as
 Yes/No or True/False. Other output types use one logical case per JSON testcase.
 The statement, all language harnesses, solutions, and testcase inputs must follow
@@ -117,7 +119,7 @@ npm test
 
 The suite covers testcase schema variants, tagged cases, multiple outputs, weight
 validation, stable IDs, create/update behavior, non-function output, node handling,
-and ID regeneration.
+ID regeneration, and Lua draft assemble/parse round-trips.
 
 ## Deployment
 

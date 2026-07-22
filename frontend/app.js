@@ -4,6 +4,18 @@ import {
   serializePracticeJson,
   validatePreparation,
 } from "./json-prep.js";
+import {
+  LANGUAGE_KEYS,
+  assembleLua,
+  clearDraft,
+  createDebouncedSave,
+  emptyDraft,
+  loadDraft,
+  parseLuaToDraft,
+  saveDraft,
+} from "./lua-draft.js";
+
+const VIEW_NAMES = ["author", "prepare", "validation", "ids", "reference"];
 
 const state = {
   luaContent: "",
@@ -11,6 +23,8 @@ const state = {
   existingJson: null,
   idSource: null,
   result: null,
+  authorDraft: emptyDraft("standard"),
+  authorHydrating: false,
 };
 
 const elements = {
@@ -31,6 +45,19 @@ const elements = {
   downloadButton: document.querySelector("#download-button"),
   idButton: document.querySelector("#regenerate-ids-button"),
   idStatus: document.querySelector("#id-status"),
+  luaFile: document.querySelector("#lua-file"),
+  luaFileStatus: document.querySelector("#lua-file-status"),
+  authorForm: document.querySelector("#author-form"),
+  authorSaveStatus: document.querySelector("#author-save-status"),
+  authorNodeBlock: document.querySelector("#author-node-h-block"),
+  authorImportFile: document.querySelector("#author-import-file"),
+  authorClearButton: document.querySelector("#author-clear-button"),
+  authorDownloadButton: document.querySelector("#author-download-button"),
+  authorUsePrepareButton: document.querySelector("#author-use-prepare-button"),
+  authorHintsList: document.querySelector("#author-hints-list"),
+  authorFollowupsList: document.querySelector("#author-followups-list"),
+  authorAddHint: document.querySelector("#author-add-hint"),
+  authorAddFollowup: document.querySelector("#author-add-followup"),
 };
 
 const stateKeyByInputId = {
@@ -41,6 +68,11 @@ const stateKeyByInputId = {
 };
 const readVersions = new Map();
 const activeReadVersions = new Map();
+
+const persistAuthorDraft = createDebouncedSave((draft) => {
+  state.authorDraft = saveDraft(draft);
+  updateAuthorSaveStatus(state.authorDraft.updatedAt);
+});
 
 function syncReadButtons() {
   elements.prepareButton.disabled = activeReadVersions.size > 0;
@@ -215,10 +247,8 @@ function renderResult(result) {
   elements.preview.textContent = serializePracticeJson(result.data);
 }
 
-function downloadJson(data, filename) {
-  const blob = new Blob([serializePracticeJson(data)], {
-    type: "application/json",
-  });
+function downloadText(content, filename, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
@@ -227,6 +257,10 @@ function downloadJson(data, filename) {
   anchor.click();
   anchor.remove();
   URL.revokeObjectURL(url);
+}
+
+function downloadJson(data, filename) {
+  downloadText(serializePracticeJson(data), filename, "application/json");
 }
 
 async function readFile(input, kind) {
@@ -284,6 +318,323 @@ function syncConditionalFields() {
   invalidatePreparationResult();
 }
 
+function formatSavedAt(updatedAt) {
+  if (!updatedAt) return "Not saved yet";
+  try {
+    const date = new Date(updatedAt);
+    if (Number.isNaN(date.getTime())) return "Saved locally";
+    return `Saved locally · ${date.toLocaleString()}`;
+  } catch {
+    return "Saved locally";
+  }
+}
+
+function updateAuthorSaveStatus(updatedAt) {
+  if (!elements.authorSaveStatus) return;
+  elements.authorSaveStatus.textContent = formatSavedAt(updatedAt);
+}
+
+function syncAuthorStructureUi(structure) {
+  const isNode = structure === "node";
+  if (elements.authorNodeBlock) elements.authorNodeBlock.hidden = !isNode;
+  const radio = document.querySelector(
+    `input[name="author-structure"][value="${structure}"]`,
+  );
+  if (radio) radio.checked = true;
+}
+
+function setAuthorLanguageTab(language) {
+  for (const tab of document.querySelectorAll("[data-author-lang]")) {
+    const selected = tab.dataset.authorLang === language;
+    tab.setAttribute("aria-selected", selected ? "true" : "false");
+    tab.tabIndex = selected ? 0 : -1;
+  }
+  for (const panel of document.querySelectorAll("[data-author-lang-panel]")) {
+    panel.hidden = panel.dataset.authorLangPanel !== language;
+  }
+}
+
+function renderHintsList(hints) {
+  const list = elements.authorHintsList;
+  if (!list) return;
+  const values = Array.isArray(hints) && hints.length > 0 ? hints : [""];
+  list.replaceChildren();
+  values.forEach((hint, index) => {
+    const item = document.createElement("div");
+    item.className = "author-repeat-item";
+    item.dataset.hintIndex = String(index);
+
+    const header = document.createElement("div");
+    header.className = "author-repeat-header";
+    const title = document.createElement("strong");
+    title.textContent = `Hint ${index + 1}`;
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "button button-secondary author-remove-item";
+    remove.dataset.removeHint = String(index);
+    remove.textContent = "Remove";
+    remove.disabled = values.length <= 1;
+    header.append(title, remove);
+
+    const field = document.createElement("label");
+    field.className = "author-field";
+    field.htmlFor = `author-hint-${index + 1}`;
+    const textarea = document.createElement("textarea");
+    textarea.id = `author-hint-${index + 1}`;
+    textarea.name = `hint-${index + 1}`;
+    textarea.rows = 3;
+    textarea.value = hint ?? "";
+    field.append(textarea);
+
+    item.append(header, field);
+    list.append(item);
+  });
+}
+
+function renderFollowUpsList(followUps) {
+  const list = elements.authorFollowupsList;
+  if (!list) return;
+  const values =
+    Array.isArray(followUps) && followUps.length > 0
+      ? followUps
+      : [{ question: "", answer: "" }];
+  list.replaceChildren();
+  values.forEach((pair, index) => {
+    const item = document.createElement("fieldset");
+    item.className = "author-followup author-repeat-item";
+    item.dataset.followupIndex = String(index);
+
+    const legend = document.createElement("legend");
+    legend.className = "author-repeat-header";
+    const title = document.createElement("span");
+    title.textContent = `Follow-up ${index + 1}`;
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "button button-secondary author-remove-item";
+    remove.dataset.removeFollowup = String(index);
+    remove.textContent = "Remove";
+    remove.disabled = values.length <= 1;
+    legend.append(title, remove);
+
+    const qLabel = document.createElement("label");
+    qLabel.className = "author-field";
+    qLabel.htmlFor = `author-followup-q-${index + 1}`;
+    qLabel.append("Question");
+    const qArea = document.createElement("textarea");
+    qArea.id = `author-followup-q-${index + 1}`;
+    qArea.name = `followup-q-${index + 1}`;
+    qArea.rows = 2;
+    qArea.value = pair?.question ?? "";
+    qLabel.append(qArea);
+
+    const aLabel = document.createElement("label");
+    aLabel.className = "author-field";
+    aLabel.htmlFor = `author-followup-a-${index + 1}`;
+    aLabel.append("Answer");
+    const aArea = document.createElement("textarea");
+    aArea.id = `author-followup-a-${index + 1}`;
+    aArea.name = `followup-a-${index + 1}`;
+    aArea.rows = 3;
+    aArea.value = pair?.answer ?? "";
+    aLabel.append(aArea);
+
+    item.append(legend, qLabel, aLabel);
+    list.append(item);
+  });
+}
+
+function hydrateAuthorForm(draft) {
+  state.authorHydrating = true;
+  state.authorDraft = draft;
+  syncAuthorStructureUi(draft.structure);
+
+  const setValue = (selector, value) => {
+    const el = document.querySelector(selector);
+    if (el) el.value = value ?? "";
+  };
+
+  setValue("#author-description", draft.QUESTION_DESCRIPTION);
+  setValue("#author-short-text", draft.SHORT_TEXT);
+  setValue("#author-level", draft.QUESTION_LEVEL);
+  setValue("#author-companies", draft.COMPANIES);
+  setValue("#author-default-tags", draft.DEFAULT_TAGS);
+  setValue("#author-beginner-topics", draft.BEGINNER_TOPICS);
+  setValue("#author-intermediate-topics", draft.INTERMEDIATE_TOPICS);
+  setValue("#author-advanced-topics", draft.ADVANCED_TOPICS);
+  setValue("#author-real-life", draft.REAL_LIFE_EXAMPLES);
+  setValue("#author-node-h", draft.NODE_H_CONTENT);
+
+  renderHintsList(draft.hints);
+  renderFollowUpsList(draft.followUps);
+
+  for (const language of LANGUAGE_KEYS) {
+    const lang = draft.languages[language];
+    setValue(`#author-${language}-codeContent`, lang.codeContent);
+    setValue(`#author-${language}-codeBase64`, lang.codeBase64);
+    setValue(`#author-${language}-solution`, lang.solution);
+    setValue(`#author-${language}-debugPre`, lang.debugPre);
+    setValue(`#author-${language}-debugPost`, lang.debugPost);
+  }
+
+  updateAuthorSaveStatus(draft.updatedAt);
+  state.authorHydrating = false;
+}
+
+function readAuthorForm() {
+  const structure =
+    document.querySelector('input[name="author-structure"]:checked')?.value ??
+    "standard";
+  const draft = emptyDraft(structure);
+  draft.QUESTION_DESCRIPTION =
+    document.querySelector("#author-description")?.value ?? "";
+  draft.SHORT_TEXT = document.querySelector("#author-short-text")?.value ?? "";
+  draft.QUESTION_LEVEL = document.querySelector("#author-level")?.value ?? "";
+  draft.COMPANIES = document.querySelector("#author-companies")?.value ?? "";
+  draft.DEFAULT_TAGS =
+    document.querySelector("#author-default-tags")?.value ?? "";
+  draft.BEGINNER_TOPICS =
+    document.querySelector("#author-beginner-topics")?.value ?? "";
+  draft.INTERMEDIATE_TOPICS =
+    document.querySelector("#author-intermediate-topics")?.value ?? "";
+  draft.ADVANCED_TOPICS =
+    document.querySelector("#author-advanced-topics")?.value ?? "";
+  draft.REAL_LIFE_EXAMPLES =
+    document.querySelector("#author-real-life")?.value ?? "";
+  draft.NODE_H_CONTENT = document.querySelector("#author-node-h")?.value ?? "";
+
+  const hintItems = [
+    ...document.querySelectorAll("#author-hints-list [data-hint-index]"),
+  ];
+  draft.hints =
+    hintItems.length > 0
+      ? hintItems.map(
+          (item) => item.querySelector("textarea")?.value ?? "",
+        )
+      : [""];
+
+  const followupItems = [
+    ...document.querySelectorAll("#author-followups-list [data-followup-index]"),
+  ];
+  draft.followUps =
+    followupItems.length > 0
+      ? followupItems.map((item) => {
+          const areas = item.querySelectorAll("textarea");
+          return {
+            question: areas[0]?.value ?? "",
+            answer: areas[1]?.value ?? "",
+          };
+        })
+      : [{ question: "", answer: "" }];
+
+  for (const language of LANGUAGE_KEYS) {
+    draft.languages[language] = {
+      codeContent:
+        document.querySelector(`#author-${language}-codeContent`)?.value ?? "",
+      codeBase64:
+        document.querySelector(`#author-${language}-codeBase64`)?.value ?? "",
+      solution:
+        document.querySelector(`#author-${language}-solution`)?.value ?? "",
+      debugPre:
+        document.querySelector(`#author-${language}-debugPre`)?.value ?? "",
+      debugPost:
+        document.querySelector(`#author-${language}-debugPost`)?.value ?? "",
+    };
+  }
+  draft.updatedAt = state.authorDraft.updatedAt;
+  return draft;
+}
+
+function addAuthorHint() {
+  const draft = readAuthorForm();
+  draft.hints.push("");
+  state.authorHydrating = true;
+  renderHintsList(draft.hints);
+  state.authorHydrating = false;
+  scheduleAuthorSave();
+  document
+    .querySelector(`#author-hint-${draft.hints.length}`)
+    ?.focus();
+}
+
+function removeAuthorHint(index) {
+  const draft = readAuthorForm();
+  if (draft.hints.length <= 1) return;
+  draft.hints.splice(index, 1);
+  state.authorHydrating = true;
+  renderHintsList(draft.hints);
+  state.authorHydrating = false;
+  scheduleAuthorSave();
+}
+
+function addAuthorFollowup() {
+  const draft = readAuthorForm();
+  draft.followUps.push({ question: "", answer: "" });
+  state.authorHydrating = true;
+  renderFollowUpsList(draft.followUps);
+  state.authorHydrating = false;
+  scheduleAuthorSave();
+  document
+    .querySelector(`#author-followup-q-${draft.followUps.length}`)
+    ?.focus();
+}
+
+function removeAuthorFollowup(index) {
+  const draft = readAuthorForm();
+  if (draft.followUps.length <= 1) return;
+  draft.followUps.splice(index, 1);
+  state.authorHydrating = true;
+  renderFollowUpsList(draft.followUps);
+  state.authorHydrating = false;
+  scheduleAuthorSave();
+}
+
+function scheduleAuthorSave() {
+  if (state.authorHydrating) return;
+  const draft = readAuthorForm();
+  state.authorDraft = draft;
+  syncAuthorStructureUi(draft.structure);
+  persistAuthorDraft(draft);
+  elements.authorSaveStatus.textContent = "Saving…";
+}
+
+function flushAuthorSave() {
+  if (state.authorHydrating) return state.authorDraft;
+  const draft = readAuthorForm();
+  state.authorDraft = persistAuthorDraft.flush(draft);
+  updateAuthorSaveStatus(state.authorDraft.updatedAt);
+  return state.authorDraft;
+}
+
+function markLuaCardFromBrowserDraft() {
+  const card = elements.luaFile?.closest(".file-card");
+  if (elements.luaFile) {
+    elements.luaFile.value = "";
+    elements.luaFile.removeAttribute("aria-invalid");
+    elements.luaFile.removeAttribute("required");
+  }
+  if (card) card.dataset.state = "ready";
+  if (elements.luaFileStatus) {
+    elements.luaFileStatus.textContent = "Browser draft · saved locally";
+  }
+}
+
+function applyDraftToPrepare(draft) {
+  const assembled = assembleLua(draft);
+  state.luaContent = assembled;
+  invalidatePreparationResult();
+
+  const structureRadio = document.querySelector(
+    `input[name="structure"][value="${draft.structure}"]`,
+  );
+  if (structureRadio) {
+    structureRadio.checked = true;
+    syncConditionalFields();
+  }
+
+  markLuaCardFromBrowserDraft();
+  return assembled;
+}
+
 for (const link of elements.navLinks) {
   link.addEventListener("click", (event) => {
     event.preventDefault();
@@ -291,7 +642,9 @@ for (const link of elements.navLinks) {
   });
 }
 
-for (const input of document.querySelectorAll('input[type="radio"]')) {
+for (const input of document.querySelectorAll(
+  '#preparation-form input[type="radio"]',
+)) {
   input.addEventListener("change", syncConditionalFields);
 }
 
@@ -306,7 +659,11 @@ for (const [selector, kind] of [
   ["#id-file", "json"],
 ]) {
   document.querySelector(selector).addEventListener("change", (event) => {
-    readFile(event.currentTarget, kind);
+    const input = event.currentTarget;
+    if (input.id === "lua-file") {
+      input.required = true;
+    }
+    readFile(input, kind);
   });
 }
 
@@ -366,18 +723,95 @@ document.querySelector("#back-to-prepare").addEventListener("click", () => {
   switchView("prepare");
 });
 
+if (elements.authorForm) {
+  elements.authorForm.addEventListener("input", scheduleAuthorSave);
+  elements.authorForm.addEventListener("change", scheduleAuthorSave);
+
+  elements.authorForm.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.dataset.removeHint != null) {
+      event.preventDefault();
+      removeAuthorHint(Number(target.dataset.removeHint));
+      return;
+    }
+    if (target.dataset.removeFollowup != null) {
+      event.preventDefault();
+      removeAuthorFollowup(Number(target.dataset.removeFollowup));
+    }
+  });
+
+  elements.authorAddHint?.addEventListener("click", (event) => {
+    event.preventDefault();
+    addAuthorHint();
+  });
+  elements.authorAddFollowup?.addEventListener("click", (event) => {
+    event.preventDefault();
+    addAuthorFollowup();
+  });
+
+  for (const tab of document.querySelectorAll("[data-author-lang]")) {
+    tab.addEventListener("click", () => {
+      setAuthorLanguageTab(tab.dataset.authorLang);
+    });
+  }
+
+  elements.authorImportFile?.addEventListener("change", async (event) => {
+    const file = event.currentTarget.files?.[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const draft = parseLuaToDraft(text);
+      const saved = saveDraft(draft);
+      hydrateAuthorForm(saved);
+      setStatus(`${file.name} imported into Author Lua draft.`);
+    } catch (error) {
+      setStatus(`Could not import Lua: ${error.message}`);
+    } finally {
+      event.currentTarget.value = "";
+    }
+  });
+
+  elements.authorClearButton?.addEventListener("click", () => {
+    persistAuthorDraft.cancel();
+    const draft = clearDraft();
+    hydrateAuthorForm(draft);
+    setStatus("Author Lua draft cleared.");
+  });
+
+  elements.authorDownloadButton?.addEventListener("click", () => {
+    const draft = flushAuthorSave();
+    downloadText(assembleLua(draft), "question.lua", "text/plain");
+    setStatus("question.lua downloaded.");
+  });
+
+  elements.authorUsePrepareButton?.addEventListener("click", () => {
+    const draft = flushAuthorSave();
+    applyDraftToPrepare(draft);
+    switchView("prepare");
+    setStatus("Browser Lua draft loaded into Prepare JSON.");
+  });
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") flushAuthorSave();
+});
+
+window.addEventListener("beforeunload", () => {
+  flushAuthorSave();
+});
+
 window.addEventListener("hashchange", () => {
   const name = window.location.hash.slice(1);
-  if (["prepare", "validation", "ids", "reference"].includes(name)) {
+  if (VIEW_NAMES.includes(name)) {
     switchView(name, { focus: false });
   }
 });
 
+hydrateAuthorForm(loadDraft());
+setAuthorLanguageTab("CPP");
 syncConditionalFields();
 const initialView = window.location.hash.slice(1);
-switchView(
-  ["prepare", "validation", "ids", "reference"].includes(initialView)
-    ? initialView
-    : "prepare",
-  { focus: false },
-);
+switchView(VIEW_NAMES.includes(initialView) ? initialView : "prepare", {
+  focus: false,
+});
