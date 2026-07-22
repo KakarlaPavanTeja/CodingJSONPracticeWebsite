@@ -176,6 +176,38 @@
               </fieldset>
             </section>
 
+            <section
+              id="author-node-h-block"
+              class="panel"
+              aria-labelledby="author-node-h-title"
+              hidden
+            >
+              <div class="panel-header">
+                <div>
+                  <span class="panel-index">NODE / HEADER</span>
+                  <h2 id="author-node-h-title">Node header</h2>
+                  <p>
+                    Enter the exact <code>node.h</code> definition for this
+                    question. The content differs for a Linked List and a Binary
+                    Tree.
+                  </p>
+                </div>
+              </div>
+              <label class="author-field" for="author-node-h">
+                NODE_H_CONTENT
+                <span class="field-help">
+                  Required for node-based questions when C++ is enabled.
+                </span>
+                <textarea
+                  id="author-node-h"
+                  name="NODE_H_CONTENT"
+                  class="author-code"
+                  rows="10"
+                  spellcheck="false"
+                ></textarea>
+              </label>
+            </section>
+
             <details class="author-section panel" open>
               <summary>
                 <span class="panel-index">02 / BASICS</span>
@@ -268,21 +300,6 @@
                     rows="5"
                   ></textarea>
                 </label>
-                <div id="author-node-h-block" hidden>
-                  <label class="author-field" for="author-node-h">
-                    NODE_H_CONTENT
-                    <span class="field-help">
-                      Required for node-based questions when C++ is enabled.
-                    </span>
-                    <textarea
-                      id="author-node-h"
-                      name="NODE_H_CONTENT"
-                      class="author-code"
-                      rows="8"
-                      spellcheck="false"
-                    ></textarea>
-                  </label>
-                </div>
               </div>
             </details>
 

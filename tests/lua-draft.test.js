@@ -173,3 +173,27 @@ test("emptyDraft defaults to standard with four languages", () => {
   assert.ok(draft.languages.CPP);
   assert.ok(draft.languages.NODE_JS);
 });
+
+test("Author Lua exposes a dedicated node.h editor for node-based questions", () => {
+  const html = readFileSync(
+    new URL("../frontend/index.html", import.meta.url),
+    "utf8",
+  );
+  const nodePanel = html.match(
+    /<section\b[^>]*id="author-node-h-block"[^>]*>[\s\S]*?<\/section>/,
+  )?.[0];
+  const nodePanelIndex = html.indexOf('id="author-node-h-block"');
+  const firstCollapsedSectionIndex = html.indexOf(
+    '<details class="author-section panel"',
+  );
+
+  assert.ok(nodePanel, "NODE_H_CONTENT should have its own authoring panel");
+  assert.ok(
+    nodePanelIndex < firstCollapsedSectionIndex,
+    "NODE_H_CONTENT should be visible before the collapsible author sections",
+  );
+  assert.match(nodePanel, /\bhidden\b/);
+  assert.match(nodePanel, /<textarea\b[^>]*id="author-node-h"/);
+  assert.match(nodePanel, /Linked\s+List/);
+  assert.match(nodePanel, /Binary\s+Tree/);
+});
