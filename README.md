@@ -1,21 +1,28 @@
 # Coding JSON Preparation
 
-A browser-only dashboard for creating, updating, validating, and previewing
-platform-ready `coding_questions.json` files.
+A browser dashboard for authoring Lua, optionally executing C++/Python/Java
+reference solutions against session-uploaded testcases, then creating and
+validating platform-ready `coding_questions.json` files.
 
 Freelancers use the dashboard to prepare the final JSON and share it with the
 source Lua, testcase JSON, and preparation summary. The internal team performs
 the final review and platform loading.
 
-The application has no backend and makes no network requests. Uploaded files stay
-inside the browser. Author Lua drafts are saved to `localStorage` until cleared;
-other session uploads are discarded when the page is closed.
+Author Lua drafts are saved to `localStorage`. Execute testcases are
+**session-only** (re-upload after refresh). Prepare uploads stay in the browser
+until the page is closed. Compiler credentials never ship in the frontend; runs
+go through same-origin API routes.
 
 ## What it does
 
 - Authors packaged Lua in the browser (Author Lua) with a draft autosaved to
   Chrome `localStorage`. **Use in Prepare JSON** fills the Lua slot without a
   re-upload; download `question.lua` remains available.
+- **Execute** (C++ / Python / Java): upload `testcases.json` for the session,
+  run the reference solution from the Lua draft, inspect pass/fail and errors,
+  edit code, **Save to Lua draft**, and re-run. **Node.js execution is not
+  supported in this tool** — verify Node.js on the platform after the question
+  is loaded.
 - Creates a new practice coding-question JSON from packaged Lua and testcase JSON.
 - Updates an existing coding-question JSON while preserving stable IDs.
 - Supports standard and node-based questions.
@@ -32,21 +39,34 @@ are still packaged into the final JSON.
 
 ## Run locally
 
-Because the application uses browser ES modules, serve the repository over HTTP:
+Static UI only:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Open:
+Open `http://localhost:8000/frontend/`.
 
-```text
-http://localhost:8000/frontend/
+For Execute (API routes + env), use Vercel:
+
+```bash
+cp .env.example .env
+# fill COMPILER_BASE_URL and AWS_* in .env (never commit)
+npm install
+npx vercel dev
 ```
 
+Then open the printed local URL and use **Author → Execute → Prepare**.
+
 Use **Author Lua** (`#author`) to edit the full Lua contract. Drafts persist in
-this browser until you clear them. From Author, choose **Use in Prepare JSON** to
-continue with testcases, or download `question.lua` separately.
+this browser until you clear them. Use **Execute** (`#execute`) after the Lua
+draft and a session testcase upload are ready.
+
+Set these on Vercel (Production / Preview) or in `.env` for `vercel dev`:
+`COMPILER_BASE_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,
+`AWS_REGION`, `S3_BUCKET`, optional `S3_PREFIX`. Do not commit real secrets.
+If AWS keys were ever shared in chat, rotate them after configuring Vercel.
+
 ## Inputs
 
 ### Create

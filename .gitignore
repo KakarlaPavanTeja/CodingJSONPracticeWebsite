@@ -23,6 +23,9 @@ wheels/
 .installed.cfg
 *.egg
 
+# Node
+node_modules/
+
 # Environment variables
 .env
 .env.local

@@ -14,8 +14,24 @@ import {
   parseLuaToDraft,
   saveDraft,
 } from "./lua-draft.js";
+import {
+  DEFAULT_TIME_LIMITS,
+  EXECUTABLE_LANGUAGES,
+  applyBuffersToDraft,
+  buffersFromDraft,
+  extractTestCases,
+  runLanguageBatch,
+} from "./execute-runner.js";
 
-const VIEW_NAMES = ["author", "prepare", "validation", "ids", "reference"];
+const VIEW_NAMES = [
+  "home",
+  "author",
+  "execute",
+  "prepare",
+  "validation",
+  "ids",
+  "reference",
+];
 
 const state = {
   luaContent: "",
@@ -25,6 +41,14 @@ const state = {
   result: null,
   authorDraft: emptyDraft("standard"),
   authorHydrating: false,
+  execute: {
+    testcases: null,
+    testcasesLabel: "",
+    buffers: {},
+    timeLimits: { ...DEFAULT_TIME_LIMITS },
+    results: {},
+    running: null,
+  },
 };
 
 const elements = {
@@ -54,10 +78,19 @@ const elements = {
   authorClearButton: document.querySelector("#author-clear-button"),
   authorDownloadButton: document.querySelector("#author-download-button"),
   authorUsePrepareButton: document.querySelector("#author-use-prepare-button"),
+  authorUseExecuteButton: document.querySelector("#author-use-execute-button"),
   authorHintsList: document.querySelector("#author-hints-list"),
   authorFollowupsList: document.querySelector("#author-followups-list"),
   authorAddHint: document.querySelector("#author-add-hint"),
   authorAddFollowup: document.querySelector("#author-add-followup"),
+  executeTestcasesFile: document.querySelector("#execute-testcases-file"),
+  executeTestcasesStatus: document.querySelector("#execute-testcases-status"),
+  executeSummary: document.querySelector("#execute-summary"),
+  executeLangPanels: document.querySelector("#execute-lang-panels"),
+  executeRunAll: document.querySelector("#execute-run-all"),
+  executeToPrepare: document.querySelector("#execute-to-prepare"),
+  executeOverallStatus: document.querySelector("#execute-overall-status"),
+  resetWorkspace: document.querySelector("#reset-workspace"),
 };
 
 const stateKeyByInputId = {
@@ -72,6 +105,7 @@ const activeReadVersions = new Map();
 const persistAuthorDraft = createDebouncedSave((draft) => {
   state.authorDraft = saveDraft(draft);
   updateAuthorSaveStatus(state.authorDraft.updatedAt);
+  return state.authorDraft;
 });
 
 function syncReadButtons() {
@@ -123,6 +157,19 @@ function switchView(name, { focus = true } = {}) {
     } else {
       link.removeAttribute("aria-current");
     }
+  }
+  document.body.classList.toggle("is-landing", name === "home");
+  if (name === "execute") {
+    state.authorDraft = loadDraft();
+    for (const language of EXECUTABLE_LANGUAGES) {
+      if (!state.execute.results[language]) {
+        state.execute.buffers[language] = buffersFromDraft(
+          state.authorDraft,
+          language,
+        );
+      }
+    }
+    renderExecuteLangPanels();
   }
   if (window.location.hash !== `#${name}`) window.location.hash = name;
   if (focus) target.querySelector("h1")?.focus();
@@ -308,6 +355,92 @@ async function readFile(input, kind) {
     }
     syncReadButtons();
   }
+}
+
+function clearPrepareFileCard(inputId, emptyLabel = "No file selected") {
+  const input = document.querySelector(`#${inputId}`);
+  const status = document.querySelector(`#${inputId}-status`);
+  const card = input?.closest(".file-card");
+  if (input) {
+    input.value = "";
+    input.removeAttribute("aria-invalid");
+  }
+  if (status) status.textContent = emptyLabel;
+  if (card) delete card.dataset.state;
+}
+
+function resetWorkspace() {
+  const confirmed = window.confirm(
+    "Reset the whole workspace?\n\nThis clears the Author Lua draft (localStorage), Execute session testcases/results, Prepare uploads, and validation output. This cannot be undone.",
+  );
+  if (!confirmed) return;
+
+  persistAuthorDraft.cancel();
+
+  state.luaContent = "";
+  state.testcasesData = null;
+  state.existingJson = null;
+  state.idSource = null;
+  state.result = null;
+  state.execute = {
+    testcases: null,
+    testcasesLabel: "",
+    buffers: {},
+    timeLimits: { ...DEFAULT_TIME_LIMITS },
+    results: {},
+    running: null,
+  };
+
+  const draft = clearDraft();
+  hydrateAuthorForm(draft);
+
+  clearPrepareFileCard("lua-file");
+  clearPrepareFileCard("testcases-file");
+  clearPrepareFileCard("existing-file");
+  clearPrepareFileCard("id-file");
+  if (elements.idStatus) {
+    elements.idStatus.textContent =
+      "Internal authorization required. Content remains unchanged; all UUID fields are replaced.";
+  }
+
+  if (elements.executeTestcasesFile) elements.executeTestcasesFile.value = "";
+  if (elements.executeTestcasesStatus) {
+    elements.executeTestcasesStatus.textContent =
+      "No file selected · cleared on refresh";
+  }
+  const executeCard = elements.executeTestcasesFile?.closest(".file-card");
+  if (executeCard) delete executeCard.dataset.state;
+  if (elements.executeSummary) {
+    elements.executeSummary.hidden = true;
+    elements.executeSummary.textContent = "";
+  }
+  renderExecuteLangPanels();
+  updateExecuteOverallStatus();
+  setExecuteControlsBusy(false);
+
+  const modeCreate = document.querySelector('input[name="mode"][value="create"]');
+  if (modeCreate) modeCreate.checked = true;
+  const structureStandard = document.querySelector(
+    'input[name="structure"][value="standard"]',
+  );
+  if (structureStandard) structureStandard.checked = true;
+  const kindFunction = document.querySelector(
+    'input[name="question-kind"][value="function"]',
+  );
+  if (kindFunction) kindFunction.checked = true;
+  const executeKindFunction = document.querySelector(
+    'input[name="execute-kind"][value="function"]',
+  );
+  if (executeKindFunction) executeKindFunction.checked = true;
+  for (const input of document.querySelectorAll('input[name="languages"]')) {
+    input.checked = true;
+  }
+
+  syncConditionalFields();
+  invalidatePreparationResult();
+  elements.downloadButton.disabled = true;
+  setStatus("Workspace reset. Author draft, Execute session, and Prepare uploads were cleared.");
+  switchView("author");
 }
 
 function syncConditionalFields() {
@@ -600,9 +733,10 @@ function scheduleAuthorSave() {
 function flushAuthorSave() {
   if (state.authorHydrating) return state.authorDraft;
   const draft = readAuthorForm();
-  state.authorDraft = persistAuthorDraft.flush(draft);
-  updateAuthorSaveStatus(state.authorDraft.updatedAt);
-  return state.authorDraft;
+  const saved = persistAuthorDraft.flush(draft) || saveDraft(draft);
+  state.authorDraft = saved;
+  updateAuthorSaveStatus(saved.updatedAt);
+  return saved;
 }
 
 function markLuaCardFromBrowserDraft() {
@@ -635,12 +769,516 @@ function applyDraftToPrepare(draft) {
   return assembled;
 }
 
+function executeQuestionKind() {
+  return (
+    document.querySelector('input[name="execute-kind"]:checked')?.value ||
+    "function"
+  );
+}
+
+function ensureExecuteBuffers() {
+  const draft = state.authorDraft || loadDraft();
+  for (const language of EXECUTABLE_LANGUAGES) {
+    if (!state.execute.buffers[language]) {
+      state.execute.buffers[language] = buffersFromDraft(draft, language);
+    }
+  }
+}
+
+function readExecuteBufferFromDom(language) {
+  return {
+    harness:
+      document.querySelector(`#execute-${language}-harness`)?.value ?? "",
+    solution:
+      document.querySelector(`#execute-${language}-solution`)?.value ?? "",
+    nodeH: document.querySelector(`#execute-${language}-nodeh`)?.value ?? "",
+  };
+}
+
+function syncExecuteBufferFromDom(language) {
+  state.execute.buffers[language] = readExecuteBufferFromDom(language);
+  const limit = Number(
+    document.querySelector(`#execute-${language}-limit`)?.value,
+  );
+  if (Number.isFinite(limit) && limit > 0) {
+    state.execute.timeLimits[language] = limit;
+  }
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function renderExecuteResults(language, summary) {
+  const host = document.querySelector(`#execute-${language}-results`);
+  if (!host) return;
+  if (!summary) {
+    host.innerHTML = "";
+    return;
+  }
+
+  const failed = summary.rows.filter((row) => !row.passed);
+  const passed = summary.rows.filter((row) => row.passed);
+  const wrap = document.createElement("div");
+  wrap.className = "execute-results-wrap";
+
+  const summaryEl = document.createElement("div");
+  summaryEl.className = "execute-results-summary";
+  summaryEl.dataset.tone =
+    summary.passed === summary.total
+      ? "pass"
+      : summary.passed === 0
+        ? "fail"
+        : "mixed";
+  summaryEl.innerHTML = `
+    <strong>${summary.passed}/${summary.total} passed</strong>
+    <span>${failed.length} failed · ${passed.length} passed</span>
+  `;
+  wrap.append(summaryEl);
+
+  if (summary.globalError) {
+    const global = document.createElement("p");
+    global.className = "execute-results-global";
+    global.textContent = summary.globalError;
+    wrap.append(global);
+  }
+
+  if (failed.length > 0) {
+    const failList = document.createElement("div");
+    failList.className = "execute-results-list";
+    for (const row of failed) {
+      const detail = row.error || row.stderr || row.status || "Failed";
+      const item = document.createElement("details");
+      item.className = "execute-result-item execute-result-fail";
+      item.innerHTML = `
+        <summary>
+          <span class="execute-result-order">#${escapeHtml(row.order ?? row.test_index ?? "")}</span>
+          <span class="execute-result-status">${escapeHtml(row.status || "FAIL")}</span>
+          <span class="execute-result-time">${row.time == null ? "" : `${escapeHtml(row.time)}s`}</span>
+        </summary>
+        <pre class="execute-error-pre"></pre>
+      `;
+      item.querySelector("pre").textContent = detail;
+      failList.append(item);
+    }
+    wrap.append(failList);
+  }
+
+  if (passed.length > 0) {
+    const passDetails = document.createElement("details");
+    passDetails.className = "execute-results-passed";
+    passDetails.innerHTML = `
+      <summary>${passed.length} passed case${passed.length === 1 ? "" : "s"}</summary>
+      <ul class="execute-passed-list"></ul>
+    `;
+    const list = passDetails.querySelector("ul");
+    for (const row of passed) {
+      const li = document.createElement("li");
+      li.textContent = `#${row.order ?? row.test_index ?? "?"} · ${row.status || "CORRECT"}${
+        row.time == null ? "" : ` · ${row.time}s`
+      }`;
+      list.append(li);
+    }
+    wrap.append(passDetails);
+  }
+
+  host.replaceChildren(wrap);
+  const banner = document.querySelector(`#execute-${language}-banner`);
+  if (banner) {
+    banner.hidden = false;
+    banner.textContent = summary.globalError
+      ? `${summary.passed}/${summary.total} passed · ${summary.globalError}`
+      : `${summary.passed}/${summary.total} passed`;
+  }
+}
+
+function updateExecuteOverallStatus() {
+  if (!elements.executeOverallStatus) return;
+  if (!state.execute.testcases) {
+    elements.executeOverallStatus.textContent =
+      "Upload testcases, then run each language.";
+    return;
+  }
+  const parts = EXECUTABLE_LANGUAGES.map((language) => {
+    const summary = state.execute.results[language];
+    if (!summary) return `${language}: not run`;
+    return `${language}: ${summary.passed}/${summary.total}`;
+  });
+  elements.executeOverallStatus.textContent = parts.join(" · ");
+}
+
+function renderExecuteLangPanels() {
+  const host = elements.executeLangPanels;
+  if (!host) return;
+  ensureExecuteBuffers();
+  const draft = state.authorDraft || loadDraft();
+  host.replaceChildren();
+
+  for (const language of EXECUTABLE_LANGUAGES) {
+    const buffers = state.execute.buffers[language];
+    const panel = document.createElement("section");
+    panel.className = "panel execute-lang-panel";
+    panel.dataset.executeLang = language;
+
+    const title = language.toUpperCase();
+    const showNodeH = language === "cpp" && draft.structure === "node";
+
+    panel.innerHTML = `
+      <div class="panel-header execute-lang-header">
+        <div>
+          <span class="panel-index">RUN / ${title}</span>
+          <h2>${title}</h2>
+          <p id="execute-${language}-banner" class="notice" hidden></p>
+        </div>
+        <div class="execute-lang-meta">
+          <label>
+            Time limit (s)
+            <input id="execute-${language}-limit" type="number" min="0.1" step="0.1"
+              value="${state.execute.timeLimits[language] ?? DEFAULT_TIME_LIMITS[language]}" />
+          </label>
+        </div>
+      </div>
+      <div class="execute-actions">
+        <button class="button button-primary" type="button" data-execute-run="${language}">Run ${title}</button>
+        <button class="button button-secondary" type="button" data-execute-save="${language}">Save to Lua draft</button>
+        <button class="button button-secondary" type="button" data-execute-reset="${language}">Reset from draft</button>
+      </div>
+      <p class="execute-progress" id="execute-${language}-progress" aria-live="polite"></p>
+      <div id="execute-${language}-results" class="execute-results-host"></div>
+      <details class="execute-code-fold">
+        <summary>Edit harness &amp; solution</summary>
+        <div class="execute-code-fields">
+          <label class="author-field" for="execute-${language}-harness">
+            Harness (CODE_BASE64 / main)
+            <textarea id="execute-${language}-harness" class="author-code" rows="5" spellcheck="false"></textarea>
+          </label>
+          <label class="author-field" for="execute-${language}-solution">
+            Solution
+            <textarea id="execute-${language}-solution" class="author-code" rows="6" spellcheck="false"></textarea>
+          </label>
+          ${
+            showNodeH
+              ? `<label class="author-field" for="execute-${language}-nodeh">
+                  node.h
+                  <textarea id="execute-${language}-nodeh" class="author-code" rows="4" spellcheck="false"></textarea>
+                </label>`
+              : ""
+          }
+        </div>
+      </details>
+    `;
+
+    host.append(panel);
+    const harness = panel.querySelector(`#execute-${language}-harness`);
+    const solution = panel.querySelector(`#execute-${language}-solution`);
+    const nodeh = panel.querySelector(`#execute-${language}-nodeh`);
+    if (harness) harness.value = buffers.harness || "";
+    if (solution) solution.value = buffers.solution || "";
+    if (nodeh) nodeh.value = buffers.nodeH || "";
+    if (state.execute.results[language]) {
+      renderExecuteResults(language, state.execute.results[language]);
+    }
+  }
+  updateExecuteOverallStatus();
+}
+
+function setExecuteControlsBusy(busy) {
+  if (elements.executeRunAll) elements.executeRunAll.disabled = busy;
+  for (const language of EXECUTABLE_LANGUAGES) {
+    const runButton = document.querySelector(`[data-execute-run="${language}"]`);
+    if (runButton) runButton.disabled = busy;
+  }
+}
+
+async function runExecuteLanguage(language, { announce = true, onProgressExtra } = {}) {
+  if (!state.execute.testcases?.length) {
+    throw new Error("Upload testcases.json on the Execute page first.");
+  }
+  syncExecuteBufferFromDom(language);
+  const draft = state.authorDraft || loadDraft();
+  const buffers = state.execute.buffers[language];
+  const progress = document.querySelector(`#execute-${language}-progress`);
+
+  const summary = await runLanguageBatch({
+    language,
+    questionKind: executeQuestionKind(),
+    structure: draft.structure || "standard",
+    timeLimit: state.execute.timeLimits[language],
+    harness: buffers.harness,
+    solution: buffers.solution,
+    nodeH: buffers.nodeH,
+    testcases: state.execute.testcases,
+    questionId: "draft",
+    questionName: draft.SHORT_TEXT || "question",
+    shortText: draft.SHORT_TEXT || "",
+    onProgress: ({ message }) => {
+      if (progress) progress.textContent = message;
+      onProgressExtra?.(language, message);
+    },
+  });
+  state.execute.results[language] = summary;
+  renderExecuteResults(language, summary);
+  updateExecuteOverallStatus();
+  if (progress) {
+    progress.textContent = `${summary.passed}/${summary.total} passed`;
+  }
+  if (announce) {
+    setStatus(
+      summary.passed === summary.total
+        ? `${language.toUpperCase()} passed all cases.`
+        : `${language.toUpperCase()} finished with failures — fix and re-run, or continue to Prepare.`,
+    );
+  }
+  return summary;
+}
+
+async function handleExecuteRun(language) {
+  if (state.execute.running) {
+    setStatus("A language run is already in progress.");
+    return;
+  }
+  if (!state.execute.testcases?.length) {
+    setStatus("Upload testcases.json on the Execute page first.");
+    return;
+  }
+  state.execute.running = language;
+  setExecuteControlsBusy(true);
+  try {
+    await runExecuteLanguage(language);
+  } catch (error) {
+    const progress = document.querySelector(`#execute-${language}-progress`);
+    if (progress) progress.textContent = error.message;
+    setStatus(`Execute failed: ${error.message}`);
+  } finally {
+    state.execute.running = null;
+    setExecuteControlsBusy(false);
+  }
+}
+
+async function handleExecuteRunAll() {
+  if (state.execute.running) {
+    setStatus("A language run is already in progress.");
+    return;
+  }
+  if (!state.execute.testcases?.length) {
+    setStatus("Upload testcases.json on the Execute page first.");
+    return;
+  }
+  state.execute.running = "all";
+  setExecuteControlsBusy(true);
+  const live = Object.fromEntries(
+    EXECUTABLE_LANGUAGES.map((language) => [language, "starting…"]),
+  );
+  const refreshOverall = () => {
+    if (!elements.executeOverallStatus) return;
+    elements.executeOverallStatus.textContent = EXECUTABLE_LANGUAGES.map(
+      (language) => `${language.toUpperCase()}: ${live[language]}`,
+    ).join(" · ");
+  };
+  refreshOverall();
+  setStatus("Running C++, Python, and Java in parallel…");
+  try {
+    const settled = await Promise.allSettled(
+      EXECUTABLE_LANGUAGES.map((language) =>
+        runExecuteLanguage(language, {
+          announce: false,
+          onProgressExtra: (lang, message) => {
+            live[lang] = message;
+            refreshOverall();
+          },
+        }).then((summary) => {
+          live[language] = `${summary.passed}/${summary.total}`;
+          refreshOverall();
+          return { language, summary };
+        }),
+      ),
+    );
+
+    const outcomes = settled.map((result, index) => {
+      const language = EXECUTABLE_LANGUAGES[index];
+      if (result.status === "fulfilled") {
+        const summary = result.value.summary;
+        return {
+          language,
+          ok: summary.passed === summary.total,
+          passed: summary.passed,
+          total: summary.total,
+        };
+      }
+      const progress = document.querySelector(`#execute-${language}-progress`);
+      if (progress) progress.textContent = result.reason?.message || String(result.reason);
+      live[language] = "error";
+      return {
+        language,
+        ok: false,
+        error: result.reason?.message || String(result.reason),
+      };
+    });
+
+    updateExecuteOverallStatus();
+    const failed = outcomes.filter((item) => !item.ok);
+    if (failed.length === 0) {
+      setStatus("All languages passed.");
+    } else {
+      setStatus(
+        `Run all finished with issues: ${failed
+          .map((item) => item.language.toUpperCase())
+          .join(", ")}. Fix and re-run, or continue to Prepare.`,
+      );
+    }
+  } finally {
+    state.execute.running = null;
+    setExecuteControlsBusy(false);
+  }
+}
+
+function handleExecuteSave(language) {
+  syncExecuteBufferFromDom(language);
+  const draft = applyBuffersToDraft(
+    state.authorDraft || loadDraft(),
+    language,
+    state.execute.buffers[language],
+  );
+  state.authorDraft = saveDraft(draft);
+  hydrateAuthorForm(state.authorDraft);
+  ensureExecuteBuffers();
+  setStatus(`${language.toUpperCase()} buffers saved into Author Lua draft.`);
+}
+
+function handleExecuteReset(language) {
+  const draft = state.authorDraft || loadDraft();
+  state.execute.buffers[language] = buffersFromDraft(draft, language);
+  renderExecuteLangPanels();
+  setStatus(`${language.toUpperCase()} reset from Author draft.`);
+}
+
+async function handleExecuteTestcasesUpload(file) {
+  const card = elements.executeTestcasesFile?.closest(".file-card");
+  if (!file) {
+    state.execute.testcases = null;
+    state.execute.testcasesLabel = "";
+    if (elements.executeTestcasesStatus) {
+      elements.executeTestcasesStatus.textContent =
+        "No file selected · cleared on refresh";
+    }
+    if (card) delete card.dataset.state;
+    if (elements.executeSummary) elements.executeSummary.hidden = true;
+    updateExecuteOverallStatus();
+    return;
+  }
+  try {
+    if (card) card.dataset.state = "loading";
+    const text = await file.text();
+    const data = JSON.parse(text);
+    const cases = extractTestCases(data);
+    state.execute.testcases = cases;
+    state.execute.testcasesLabel = file.name;
+    state.execute.results = {};
+    if (elements.executeTestcasesStatus) {
+      elements.executeTestcasesStatus.textContent = `${file.name} · ${cases.length} cases · session only`;
+    }
+    if (card) card.dataset.state = "ready";
+    if (elements.executeSummary) {
+      elements.executeSummary.hidden = false;
+      elements.executeSummary.textContent = `${cases.length} testcases loaded for this session (not stored in localStorage).`;
+    }
+    renderExecuteLangPanels();
+    setStatus(`Loaded ${cases.length} session testcases.`);
+  } catch (error) {
+    if (card) card.dataset.state = "error";
+    if (elements.executeTestcasesStatus) {
+      elements.executeTestcasesStatus.textContent = `Could not read file: ${error.message}`;
+    }
+    setStatus(`Execute upload error: ${error.message}`);
+  }
+}
+
+function initExecuteUi() {
+  renderExecuteLangPanels();
+  elements.executeTestcasesFile?.addEventListener("change", (event) => {
+    handleExecuteTestcasesUpload(event.currentTarget.files?.[0] || null);
+  });
+  elements.executeRunAll?.addEventListener("click", (event) => {
+    event.preventDefault();
+    handleExecuteRunAll();
+  });
+  elements.executeLangPanels?.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.dataset.executeRun) {
+      event.preventDefault();
+      handleExecuteRun(target.dataset.executeRun);
+    } else if (target.dataset.executeSave) {
+      event.preventDefault();
+      handleExecuteSave(target.dataset.executeSave);
+    } else if (target.dataset.executeReset) {
+      event.preventDefault();
+      handleExecuteReset(target.dataset.executeReset);
+    }
+  });
+  elements.executeToPrepare?.addEventListener("click", () => {
+    const draft = flushAuthorSave();
+    applyDraftToPrepare(draft);
+    const kind = executeQuestionKind();
+    const kindRadio = document.querySelector(
+      `input[name="question-kind"][value="${kind}"]`,
+    );
+    if (kindRadio) {
+      kindRadio.checked = true;
+      syncConditionalFields();
+    }
+    if (state.execute.testcases) {
+      state.testcasesData = { test_cases: state.execute.testcases };
+      const status = document.querySelector("#testcases-file-status");
+      const card = document.querySelector("#testcases-file")?.closest(".file-card");
+      if (status) {
+        status.textContent = `From Execute session · ${state.execute.testcases.length} cases`;
+      }
+      if (card) card.dataset.state = "ready";
+    }
+    const failed = EXECUTABLE_LANGUAGES.filter((language) => {
+      const summary = state.execute.results[language];
+      return summary && summary.passed < summary.total;
+    });
+    switchView("prepare");
+    if (failed.length > 0) {
+      setStatus(
+        `Moved to Prepare JSON with warnings: ${failed
+          .map((language) => language.toUpperCase())
+          .join(", ")} had failing cases. Fix later or verify on the platform.`,
+      );
+    } else {
+      setStatus(
+        "Moved to Prepare JSON. Session testcases were copied into this prepare session if uploaded.",
+      );
+    }
+  });
+}
+
+
 for (const link of elements.navLinks) {
   link.addEventListener("click", (event) => {
     event.preventDefault();
     switchView(link.dataset.nav);
   });
 }
+
+document.querySelector("[data-view=\"home\"]")?.addEventListener("click", (event) => {
+  const target = event.target.closest("[data-home-go]");
+  if (!(target instanceof HTMLElement)) return;
+  event.preventDefault();
+  const dest = target.dataset.homeGo;
+  if (VIEW_NAMES.includes(dest)) switchView(dest);
+});
+
+elements.resetWorkspace?.addEventListener("click", (event) => {
+  event.preventDefault();
+  resetWorkspace();
+});
 
 for (const input of document.querySelectorAll(
   '#preparation-form input[type="radio"]',
@@ -791,6 +1429,19 @@ if (elements.authorForm) {
     switchView("prepare");
     setStatus("Browser Lua draft loaded into Prepare JSON.");
   });
+
+  elements.authorUseExecuteButton?.addEventListener("click", () => {
+    flushAuthorSave();
+    const prepareKind =
+      document.querySelector('input[name="question-kind"]:checked')?.value ||
+      "function";
+    const executeKind = document.querySelector(
+      `input[name="execute-kind"][value="${prepareKind}"]`,
+    );
+    if (executeKind) executeKind.checked = true;
+    switchView("execute");
+    setStatus("Author draft ready for Execute. Upload session testcases next.");
+  });
 }
 
 document.addEventListener("visibilitychange", () => {
@@ -810,8 +1461,9 @@ window.addEventListener("hashchange", () => {
 
 hydrateAuthorForm(loadDraft());
 setAuthorLanguageTab("CPP");
+initExecuteUi();
 syncConditionalFields();
 const initialView = window.location.hash.slice(1);
-switchView(VIEW_NAMES.includes(initialView) ? initialView : "prepare", {
+switchView(VIEW_NAMES.includes(initialView) ? initialView : "home", {
   focus: false,
 });

@@ -5,10 +5,20 @@
   "rewrites": [
     { "source": "/", "destination": "/frontend/" },
     {
-      "source": "/((?!frontend/|examples/).*)",
+      "source": "/((?!api(?:/|$)|frontend/|examples/).*)",
       "destination": "/frontend/$1"
     }
   ],
+  "functions": {
+    "api/compile.js": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "api/status/[id].js": {
+      "maxDuration": 15,
+      "memory": 256
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",

@@ -8,6 +8,12 @@
       content="Prepare and validate platform-ready coding_questions.json files entirely in your browser."
     />
     <title>Coding JSON Preparation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e1014'/%3E%3Ctext x='32' y='41' text-anchor='middle' font-size='30' fill='%2334d399'%3E%7B%7D%3C/text%3E%3C/svg%3E"
@@ -39,6 +45,15 @@
         </div>
 
         <nav class="dashboard-nav" aria-label="Dashboard">
+          <a href="#home" data-nav="home">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4.75 11.25 12 4.75l7.25 6.5V19.25a1 1 0 0 1-1 1H5.75a1 1 0 0 1-1-1v-8Z" />
+                <path d="M9.5 20.25v-5.5h5v5.5" />
+              </svg>
+            </span>
+            <span>Home</span>
+          </a>
           <a href="#author" data-nav="author">
             <span class="nav-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none">
@@ -47,7 +62,15 @@
             </span>
             <span>Author Lua</span>
           </a>
-          <a href="#prepare" data-nav="prepare" aria-current="page">
+          <a href="#execute" data-nav="execute">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 4.75 19 12 5 19.25V4.75Z" />
+              </svg>
+            </span>
+            <span>Execute</span>
+          </a>
+          <a href="#prepare" data-nav="prepare">
             <span class="nav-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M14 2.75H6.75a2 2 0 0 0-2 2v14.5a2 2 0 0 0 2 2h10.5a2 2 0 0 0 2-2V8Z" />
@@ -83,13 +106,94 @@
           </a>
         </nav>
 
+        <div class="sidebar-tools">
+          <button
+            class="button button-secondary sidebar-reset"
+            id="reset-workspace"
+            type="button"
+            title="Clear Author draft, Execute session, Prepare uploads, and validation output"
+          >
+            Reset workspace
+          </button>
+        </div>
+
         <footer class="sidebar-footer">
           <div><span>Contract</span><strong>Practice JSON</strong></div>
-          <div><span>Runtime</span><strong>Client-side only</strong></div>
+          <div><span>Runtime</span><strong>Browser + API proxy</strong></div>
         </footer>
       </aside>
 
       <main id="main-content">
+        <section data-view="home" aria-labelledby="home-brand" class="home-view">
+          <div class="home-stage">
+            <div class="home-copy">
+              <p class="home-kicker">Preparation workspace</p>
+              <h1 id="home-brand" class="home-brand" tabindex="-1">Coding JSON</h1>
+              <p class="home-lede">
+                Author Lua, execute reference solutions, and package
+                platform-ready <code>coding_questions.json</code> in the browser.
+              </p>
+              <div class="home-actions">
+                <button
+                  class="button button-primary"
+                  type="button"
+                  data-home-go="author"
+                >
+                  Enter workspace
+                </button>
+                <button
+                  class="button button-secondary"
+                  type="button"
+                  data-home-go="prepare"
+                >
+                  Start with Prepare
+                </button>
+              </div>
+            </div>
+
+            <div class="home-visual" aria-hidden="true">
+              <pre class="home-code">
+<span class="tok-key">"coding_questions"</span>: [{
+  <span class="tok-key">"short_text"</span>: <span class="tok-str">"two_sum"</span>,
+  <span class="tok-key">"languages"</span>: [<span class="tok-str">"CPP"</span>, <span class="tok-str">"PYTHON"</span>, <span class="tok-str">"JAVA"</span>],
+  <span class="tok-key">"test_cases"</span>: <span class="tok-num">12</span>,
+  <span class="tok-key">"status"</span>: <span class="tok-str">"ready"</span>
+}]</pre>
+            </div>
+          </div>
+
+          <section class="home-flow" aria-labelledby="home-flow-title">
+            <h2 id="home-flow-title">Author → Execute → Prepare</h2>
+            <p>
+              One path from Lua draft to review-ready JSON. Node.js packaging is
+              supported; execution for Node is verified on the platform.
+            </p>
+            <ol class="home-flow-list">
+              <li>
+                <button type="button" data-home-go="author">
+                  <span>01</span>
+                  <strong>Author Lua</strong>
+                  <em>Edit the contract. Drafts stay in this browser.</em>
+                </button>
+              </li>
+              <li>
+                <button type="button" data-home-go="execute">
+                  <span>02</span>
+                  <strong>Execute</strong>
+                  <em>Run C++, Python, and Java against session testcases.</em>
+                </button>
+              </li>
+              <li>
+                <button type="button" data-home-go="prepare">
+                  <span>03</span>
+                  <strong>Prepare JSON</strong>
+                  <em>Validate, preview, and download coding_questions.json.</em>
+                </button>
+              </li>
+            </ol>
+          </section>
+        </section>
+
         <section data-view="author" aria-labelledby="author-title" hidden>
           <header class="page-header">
             <div>
@@ -139,6 +243,13 @@
               </button>
               <button
                 class="button button-primary"
+                id="author-use-execute-button"
+                type="button"
+              >
+                Continue to Execute
+              </button>
+              <button
+                class="button button-secondary"
                 id="author-use-prepare-button"
                 type="button"
               >
@@ -654,6 +765,104 @@
               </div>
             </section>
           </form>
+        </section>
+
+        <section data-view="execute" aria-labelledby="execute-title" hidden>
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Session runner</p>
+              <h1 id="execute-title" tabindex="-1">Execute testcases</h1>
+              <p>
+                Upload <code>testcases.json</code> for this session (not saved in
+                the browser). Run C++, Python, and Java against the Author Lua
+                draft. Fix code here, then Save to draft or re-run. Node.js is
+                not executed in this tool — verify it on the platform after load.
+              </p>
+            </div>
+          </header>
+
+          <div class="notice execute-node-notice" role="note">
+            <strong>Node.js not supported here.</strong>
+            Package Node stubs in Author/Prepare if needed, then verify Node.js
+            execution on the platform after the question is loaded.
+          </div>
+
+          <section class="panel" aria-labelledby="execute-upload-title">
+            <div class="panel-header">
+              <div>
+                <span class="panel-index">01 / INPUT</span>
+                <h2 id="execute-upload-title">Session testcases</h2>
+                <p>
+                  Re-upload after refresh. Defaults use Author draft structure and
+                  question kind.
+                </p>
+              </div>
+            </div>
+            <div class="choice-grid">
+              <fieldset>
+                <legend>Question kind</legend>
+                <label>
+                  <input
+                    type="radio"
+                    name="execute-kind"
+                    value="function"
+                    checked
+                  />
+                  Function
+                </label>
+                <label>
+                  <input type="radio" name="execute-kind" value="nonfunction" />
+                  Non-function
+                </label>
+              </fieldset>
+            </div>
+            <div class="file-card">
+              <label for="execute-testcases-file">testcases.json</label>
+              <input
+                id="execute-testcases-file"
+                type="file"
+                accept=".json,application/json"
+                aria-describedby="execute-testcases-status"
+              />
+              <p
+                id="execute-testcases-status"
+                class="file-status"
+                aria-live="polite"
+              >
+                No file selected · cleared on refresh
+              </p>
+            </div>
+            <p id="execute-summary" class="notice" hidden></p>
+            <div class="execute-batch-actions">
+              <button
+                class="button button-primary"
+                id="execute-run-all"
+                type="button"
+              >
+                Run all languages
+              </button>
+              <p class="execute-batch-hint">
+                Runs C++, Python, and Java in parallel. Node.js is skipped.
+              </p>
+            </div>
+          </section>
+
+          <div id="execute-lang-panels" class="execute-lang-stack"></div>
+
+          <section class="panel execute-footer-panel">
+            <div class="actions">
+              <button
+                class="button button-secondary"
+                id="execute-to-prepare"
+                type="button"
+              >
+                Continue to Prepare JSON
+              </button>
+            </div>
+            <p id="execute-overall-status" class="notice" aria-live="polite">
+              Upload testcases, then run each language.
+            </p>
+          </section>
         </section>
 
         <section data-view="prepare" aria-labelledby="prepare-title">
