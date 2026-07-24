@@ -185,6 +185,9 @@ function switchView(name, { focus = true } = {}) {
     }
   }
   document.body.classList.toggle("is-landing", name === "home");
+  document.body.classList.remove("nav-open");
+  const toggle = document.querySelector("#site-nav-toggle");
+  if (toggle) toggle.setAttribute("aria-expanded", "false");
   if (name === "execute") {
     state.authorDraft = loadDraft();
     for (const language of EXECUTABLE_LANGUAGES) {
@@ -1988,6 +1991,13 @@ window.addEventListener("hashchange", () => {
   if (VIEW_NAMES.includes(name)) {
     switchView(name, { focus: false });
   }
+});
+
+document.querySelector("#site-nav-toggle")?.addEventListener("click", () => {
+  const open = document.body.classList.toggle("nav-open");
+  document
+    .querySelector("#site-nav-toggle")
+    ?.setAttribute("aria-expanded", open ? "true" : "false");
 });
 
 hydrateAuthorForm(loadDraft());

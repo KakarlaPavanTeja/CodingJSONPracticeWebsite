@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Prepare and validate platform-ready coding_questions.json files entirely in your browser."
+      content="Author Lua, execute reference solutions, prepare coding_questions.json, and validate platform packages in the browser."
     />
     <title>Coding JSON Preparation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -24,123 +24,58 @@
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <div class="app-shell">
-      <aside class="sidebar">
-        <div class="brand">
-          <div class="brand-lockup">
-            <span class="brand-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M8 3.75H6.75a2 2 0 0 0-2 2V9c0 1.2-.55 2.33-1.5 3 .95.67 1.5 1.8 1.5 3v3.25a2 2 0 0 0 2 2H8M16 3.75h1.25a2 2 0 0 1 2 2V9c0 1.2.55 2.33 1.5 3-.95.67-1.5 1.8-1.5 3v3.25a2 2 0 0 1-2 2H16" />
-                <path d="M12 8.5v7M9.5 12h5" />
-              </svg>
-            </span>
-            <div>
-              <strong>Coding JSON</strong>
-              <span>Preparation workspace</span>
-            </div>
-          </div>
-          <div class="environment-badge">
-            <span class="status-dot" aria-hidden="true"></span>
-            Local browser session
-          </div>
-        </div>
+      <header class="site-header">
+        <a href="#home" class="site-brand" data-nav="home" aria-label="Coding JSON home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M8 3.75H6.75a2 2 0 0 0-2 2V9c0 1.2-.55 2.33-1.5 3 .95.67 1.5 1.8 1.5 3v3.25a2 2 0 0 0 2 2H8M16 3.75h1.25a2 2 0 0 1 2 2V9c0 1.2.55 2.33 1.5 3-.95.67-1.5 1.8-1.5 3v3.25a2 2 0 0 1-2 2H16" />
+              <path d="M12 8.5v7M9.5 12h5" />
+            </svg>
+          </span>
+          <span class="site-brand-text">
+            <strong>Coding JSON</strong>
+            <span>Preparation workspace</span>
+          </span>
+        </a>
 
-        <nav class="dashboard-nav" aria-label="Dashboard">
-          <a href="#home" data-nav="home">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M4.75 11.25 12 4.75l7.25 6.5V19.25a1 1 0 0 1-1 1H5.75a1 1 0 0 1-1-1v-8Z" />
-                <path d="M9.5 20.25v-5.5h5v5.5" />
-              </svg>
-            </span>
-            <span>Home</span>
-          </a>
-          <a href="#author" data-nav="author">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M5.75 19.25h12.5M8 15.5 16.5 7a2.12 2.12 0 0 1 3 3L11 18.5l-3.75.75Z" />
-              </svg>
-            </span>
-            <span>Author Lua</span>
-          </a>
-          <a href="#execute" data-nav="execute">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M5 4.75 19 12 5 19.25V4.75Z" />
-              </svg>
-            </span>
-            <span>Execute</span>
-          </a>
-          <a href="#execute-final" data-nav="execute-final">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M14 2.75H6.75a2 2 0 0 0-2 2v14.5a2 2 0 0 0 2 2h10.5a2 2 0 0 0 2-2V8Z" />
-                <path d="M14 2.75V8h5.25M9 11.25 15.5 15 9 18.75v-7.5Z" />
-              </svg>
-            </span>
-            <span>Execute Final JSON</span>
-          </a>
-          <a href="#prepare" data-nav="prepare">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M14 2.75H6.75a2 2 0 0 0-2 2v14.5a2 2 0 0 0 2 2h10.5a2 2 0 0 0 2-2V8Z" />
-                <path d="M14 2.75V8h5.25M8.5 13l2-2-2-2M13 15h3" />
-              </svg>
-            </span>
-            <span>Prepare JSON</span>
-          </a>
-          <a href="#validation" data-nav="validation">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M12 2.75 20 6v5.25c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6Z" />
-                <path d="m8.5 12 2.25 2.25L15.75 9" />
-              </svg>
-            </span>
-            <span>Validate &amp; preview</span>
-          </a>
-          <a href="#ids" data-nav="ids">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M20 7.5V3.75h-3.75M4 16.5v3.75h3.75M5.4 9a7.25 7.25 0 0 1 11.85-3.1L20 8.5M4 15.5l2.75 2.6A7.25 7.25 0 0 0 18.6 15" />
-              </svg>
-            </span>
-            <span>Internal: Regenerate IDs</span>
-          </a>
-          <a href="#reference" data-nav="reference">
-            <span class="nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M4.25 4.75a2 2 0 0 1 2-2H11v16.5H6.25a2 2 0 0 0-2 2ZM19.75 4.75a2 2 0 0 0-2-2H13v16.5h4.75a2 2 0 0 1 2 2Z" />
-              </svg>
-            </span>
-            <span>Reference</span>
-          </a>
-        </nav>
+        <button
+          class="site-nav-toggle"
+          id="site-nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          Menu
+        </button>
 
-        <div class="sidebar-tools">
+        <nav id="site-nav" class="site-nav" aria-label="Primary">
+          <a href="#author" data-nav="author">Author</a>
+          <a href="#execute" data-nav="execute">Execute</a>
+          <a href="#execute-final" data-nav="execute-final">Final JSON</a>
+          <a href="#prepare" data-nav="prepare">Prepare</a>
+          <a href="#validation" data-nav="validation">Validate</a>
+          <a href="#reference" data-nav="reference">Reference</a>
+          <a href="#ids" data-nav="ids" class="site-nav-muted">IDs</a>
           <button
-            class="button button-secondary sidebar-reset"
+            class="button button-secondary site-reset"
             id="reset-workspace"
             type="button"
             title="Clear Author draft, Execute sessions, Prepare uploads, and validation output"
           >
-            Reset workspace
+            Reset
           </button>
-        </div>
-
-        <footer class="sidebar-footer">
-          <div><span>Contract</span><strong>Practice JSON</strong></div>
-          <div><span>Runtime</span><strong>Browser + API proxy</strong></div>
-        </footer>
-      </aside>
+        </nav>
+      </header>
 
       <main id="main-content">
         <section data-view="home" aria-labelledby="home-brand" class="home-view">
           <div class="home-stage">
             <div class="home-copy">
-              <p class="home-kicker">Preparation workspace</p>
+              <p class="home-kicker">Browser preparation workspace</p>
               <h1 id="home-brand" class="home-brand" tabindex="-1">Coding JSON</h1>
               <p class="home-lede">
-                Author Lua, execute reference solutions, and package
-                platform-ready <code>coding_questions.json</code> in the browser.
+                Author Lua, run reference solutions, and ship platform-ready
+                <code>coding_questions.json</code> without leaving the browser.
               </p>
               <div class="home-actions">
                 <button
@@ -148,55 +83,152 @@
                   type="button"
                   data-home-go="author"
                 >
-                  Enter workspace
+                  Start authoring
                 </button>
                 <button
                   class="button button-secondary"
                   type="button"
-                  data-home-go="prepare"
+                  data-home-go="execute-final"
                 >
-                  Start with Prepare
+                  Execute final JSON
                 </button>
               </div>
             </div>
 
             <div class="home-visual" aria-hidden="true">
               <pre class="home-code">
-<span class="tok-key">"coding_questions"</span>: [{
-  <span class="tok-key">"short_text"</span>: <span class="tok-str">"two_sum"</span>,
-  <span class="tok-key">"languages"</span>: [<span class="tok-str">"CPP"</span>, <span class="tok-str">"PYTHON"</span>, <span class="tok-str">"JAVA"</span>],
-  <span class="tok-key">"test_cases"</span>: <span class="tok-num">12</span>,
-  <span class="tok-key">"status"</span>: <span class="tok-str">"ready"</span>
-}]</pre>
+<span class="tok-key">"question"</span>: {
+  <span class="tok-key">"short_text"</span>: <span class="tok-str">"api_load_balancing"</span>,
+  <span class="tok-key">"structure"</span>: <span class="tok-str">"standard"</span>,
+  <span class="tok-key">"kind"</span>: <span class="tok-str">"function"</span>
+},
+<span class="tok-key">"languages"</span>: [<span class="tok-str">"CPP"</span>, <span class="tok-str">"PYTHON"</span>, <span class="tok-str">"JAVA"</span>, <span class="tok-str">"NODE_JS"</span>],
+<span class="tok-key">"test_cases"</span>: <span class="tok-num">12</span>,
+<span class="tok-key">"status"</span>: <span class="tok-str">"ready_for_review"</span></pre>
             </div>
           </div>
 
-          <section class="home-flow" aria-labelledby="home-flow-title">
-            <h2 id="home-flow-title">Author → Execute → Prepare</h2>
-            <p>
-              One path from Lua draft to review-ready JSON. Node.js packaging is
-              supported; execution for Node is verified on the platform.
-            </p>
+          <section class="home-section home-features" aria-labelledby="home-features-title">
+            <div class="home-section-head">
+              <h2 id="home-features-title">What this platform supports</h2>
+              <p>
+                Every preparation step lives in one workspace. Pick a tool below
+                or follow the build path from draft to downloadable JSON.
+              </p>
+            </div>
+            <div class="home-feature-grid">
+              <button type="button" class="home-feature" data-home-go="author">
+                <span class="home-feature-index">01</span>
+                <strong>Author Lua</strong>
+                <em>Edit standard or node-based Lua contracts with hints, follow-ups, and node.h. Drafts autosave in this browser.</em>
+              </button>
+              <button type="button" class="home-feature" data-home-go="execute">
+                <span class="home-feature-index">02</span>
+                <strong>Execute draft</strong>
+                <em>Upload session testcases and run C++, Python, and Java reference solutions from the Lua draft.</em>
+              </button>
+              <button type="button" class="home-feature" data-home-go="execute-final">
+                <span class="home-feature-index">03</span>
+                <strong>Execute final JSON</strong>
+                <em>Upload packaged coding_questions.json, paste missing solutions if needed, and validate against included cases.</em>
+              </button>
+              <button type="button" class="home-feature" data-home-go="prepare">
+                <span class="home-feature-index">04</span>
+                <strong>Prepare JSON</strong>
+                <em>Create or update practice JSON from Lua + testcases. Preserve stable IDs on update.</em>
+              </button>
+              <button type="button" class="home-feature" data-home-go="validation">
+                <span class="home-feature-index">05</span>
+                <strong>Validate &amp; preview</strong>
+                <em>Inspect preflight issues, change summary, and the full JSON before download.</em>
+              </button>
+              <button type="button" class="home-feature" data-home-go="reference">
+                <span class="home-feature-index">06</span>
+                <strong>Reference</strong>
+                <em>Contracts, supported inputs, tags, weights, and packaging rules in one place.</em>
+              </button>
+              <button type="button" class="home-feature home-feature-muted" data-home-go="ids">
+                <span class="home-feature-index">07</span>
+                <strong>Regenerate IDs</strong>
+                <em>Internal-only UUID refresh for authorized imports. Content stays the same.</em>
+              </button>
+            </div>
+          </section>
+
+          <section class="home-section home-support" aria-labelledby="home-support-title">
+            <div class="home-section-head">
+              <h2 id="home-support-title">Supported packages</h2>
+              <p>
+                Preparation covers the full language set. In-browser execution is
+                limited to the compiler proxy languages below.
+              </p>
+            </div>
+            <div class="home-support-grid">
+              <div class="home-support-block">
+                <h3>Languages</h3>
+                <ul>
+                  <li><strong>C++</strong> — package + execute</li>
+                  <li><strong>Python</strong> — package + execute</li>
+                  <li><strong>Java</strong> — package + execute</li>
+                  <li><strong>Node.js</strong> — package only; verify on platform</li>
+                </ul>
+              </div>
+              <div class="home-support-block">
+                <h3>Question shapes</h3>
+                <ul>
+                  <li><strong>Standard</strong> and <strong>node-based</strong> structures</li>
+                  <li><strong>Function</strong> and <strong>non-function</strong> kinds</li>
+                  <li>Hints, real-life examples, and follow-ups from Lua</li>
+                  <li>Create new or update existing JSON with stable IDs</li>
+                </ul>
+              </div>
+              <div class="home-support-block">
+                <h3>Testcase contract</h3>
+                <ul>
+                  <li>Object or single-element array roots</li>
+                  <li>Public / hidden tags and weightage</li>
+                  <li>Single or multiple possible outputs</li>
+                  <li>Session-only uploads for Execute (cleared on refresh)</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section class="home-section home-flow" aria-labelledby="home-flow-title">
+            <div class="home-section-head">
+              <h2 id="home-flow-title">Recommended path</h2>
+              <p>
+                Most freelancers move left to right. Jump to Execute final JSON
+                when you already have a packaged file to verify.
+              </p>
+            </div>
             <ol class="home-flow-list">
               <li>
                 <button type="button" data-home-go="author">
                   <span>01</span>
-                  <strong>Author Lua</strong>
-                  <em>Edit the contract. Drafts stay in this browser.</em>
+                  <strong>Author</strong>
+                  <em>Build the Lua contract locally.</em>
                 </button>
               </li>
               <li>
                 <button type="button" data-home-go="execute">
                   <span>02</span>
-                  <strong>Execute</strong>
-                  <em>Run C++, Python, and Java against session testcases.</em>
+                  <strong>Execute draft</strong>
+                  <em>Prove C++ / Python / Java against cases.</em>
                 </button>
               </li>
               <li>
                 <button type="button" data-home-go="prepare">
                   <span>03</span>
-                  <strong>Prepare JSON</strong>
-                  <em>Validate, preview, and download coding_questions.json.</em>
+                  <strong>Prepare</strong>
+                  <em>Generate coding_questions.json.</em>
+                </button>
+              </li>
+              <li>
+                <button type="button" data-home-go="validation">
+                  <span>04</span>
+                  <strong>Validate</strong>
+                  <em>Preview, then download for review.</em>
                 </button>
               </li>
             </ol>
@@ -206,7 +238,7 @@
         <section data-view="author" aria-labelledby="author-title" hidden>
           <header class="page-header">
             <div>
-              <p class="eyebrow">Browser draft</p>
+              <p class="eyebrow">Build · Author</p>
               <h1 id="author-title" tabindex="-1">Author Lua</h1>
               <p>
                 Edit the full standard or node Lua contract in the browser. Drafts
@@ -779,7 +811,7 @@
         <section data-view="execute" aria-labelledby="execute-title" hidden>
           <header class="page-header">
             <div>
-              <p class="eyebrow">Session runner</p>
+              <p class="eyebrow">Build · Execute draft</p>
               <h1 id="execute-title" tabindex="-1">Execute testcases</h1>
               <p>
                 Upload <code>testcases.json</code> for this session (not saved in
@@ -881,7 +913,7 @@
         >
           <header class="page-header">
             <div>
-              <p class="eyebrow">Packaged question runner</p>
+              <p class="eyebrow">Build · Execute final JSON</p>
               <h1 id="execute-final-title" tabindex="-1">
                 Execute final JSON
               </h1>
@@ -977,7 +1009,7 @@
         <section data-view="prepare" aria-labelledby="prepare-title">
           <header class="page-header">
             <div>
-              <p class="eyebrow">Browser-only preparation</p>
+              <p class="eyebrow">Package · Prepare</p>
               <h1 id="prepare-title" tabindex="-1">
                 Build a review-ready <code>coding_questions.json</code>
               </h1>
@@ -1221,7 +1253,7 @@
         >
           <header class="page-header">
             <div>
-              <p class="eyebrow">Preflight results</p>
+              <p class="eyebrow">Package · Validate</p>
               <h1 id="validation-title" tabindex="-1">Validate and preview</h1>
               <p>
                 Review normalized fields, preserved IDs, and the exact JSON before
@@ -1302,7 +1334,7 @@
         <section data-view="ids" aria-labelledby="ids-title" hidden>
           <header class="page-header">
             <div>
-              <p class="eyebrow">Internal-team tool</p>
+              <p class="eyebrow">Internal · IDs</p>
               <h1 id="ids-title" tabindex="-1">
                 Internal: Regenerate platform IDs
               </h1>
@@ -1355,7 +1387,7 @@
         <section data-view="reference" aria-labelledby="reference-title" hidden>
           <header class="page-header">
             <div>
-              <p class="eyebrow">Versioned with this tool</p>
+              <p class="eyebrow">Guides · Reference</p>
               <h1 id="reference-title" tabindex="-1">Input contract reference</h1>
               <p>
                 Use these checked-in examples and rules to prepare compatible
