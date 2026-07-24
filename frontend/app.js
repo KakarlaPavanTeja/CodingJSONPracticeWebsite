@@ -1743,7 +1743,7 @@ async function handleFinalExecuteUpload(file) {
 
   try {
     if (file.size > MAX_FINAL_JSON_BYTES) {
-      throw new Error("File exceeds the 2 MiB upload limit.");
+      throw new Error("File exceeds the 100 MiB upload limit.");
     }
     if (card) card.dataset.state = "loading";
     const raw = JSON.parse(await file.text());

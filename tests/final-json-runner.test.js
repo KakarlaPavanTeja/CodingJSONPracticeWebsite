@@ -355,5 +355,5 @@ test("exposes Execute Final JSON page controls", () => {
   assert.match(html, /data-nav="execute-final"/);
   assert.match(html, /id="execute-final-file"/);
   assert.match(html, /id="execute-final-run-all"/);
-  assert.equal(MAX_FINAL_JSON_BYTES, 2 * 1024 * 1024);
+  assert.equal(MAX_FINAL_JSON_BYTES, 100 * 1024 * 1024);
 });

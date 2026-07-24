@@ -1,6 +1,6 @@
 import { DEFAULT_TIME_LIMITS } from "./execute-runner.js";
 
-export const MAX_FINAL_JSON_BYTES = 2 * 1024 * 1024;
+export const MAX_FINAL_JSON_BYTES = 100 * 1024 * 1024;
 
 const MAX_TESTCASES = 200;
 const MAX_REPOSITORY_FILES = 32;
