@@ -234,29 +234,19 @@ async function getStatus(requestId) {
   return data;
 }
 
-export async function runLanguageBatch({
+export async function runCompilerBatch({
   language,
   questionKind,
   structure,
   timeLimit,
-  harness,
-  solution,
-  nodeH,
+  files,
+  mainFilePath,
   testcases,
   questionId,
   questionName,
   shortText,
   onProgress,
 }) {
-  const { mainFilePath, files } = buildLanguageFiles({
-    language,
-    questionKind,
-    structure,
-    harness,
-    solution,
-    nodeH,
-  });
-
   onProgress?.({ phase: "submit", message: "Submitting batch…" });
   const submit = await postCompile({
     language,
@@ -321,4 +311,9 @@ export async function runLanguageBatch({
 
   onProgress?.({ phase: "done", message: "Mapping results…" });
   return mapStatusToRows(statusPayload, idIndex, orderedIds);
+}
+
+export async function runLanguageBatch(options) {
+  const { mainFilePath, files } = buildLanguageFiles(options);
+  return runCompilerBatch({ ...options, mainFilePath, files });
 }

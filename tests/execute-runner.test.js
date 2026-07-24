@@ -6,6 +6,7 @@ import {
   buildLanguageFiles,
   extractTestCases,
   mapStatusToRows,
+  runCompilerBatch,
 } from "../frontend/execute-runner.js";
 import {
   LARGE_IO_THRESHOLD_BYTES,
@@ -137,4 +138,69 @@ test("buildCompilePayload uses v3 language id and time limit", () => {
   assert.equal(payload.default_execution_time_limit, 4);
   assert.equal(payload.main_file_path, "main.py");
   assert.equal(payload.request_type, "CODE_EVALUATION_WITH_IO_TESTCASES");
+});
+
+test("runCompilerBatch forwards packaged files and maps inline results", async (t) => {
+  const originalFetch = globalThis.fetch;
+  let submitted;
+  globalThis.fetch = async (_url, options) => {
+    submitted = JSON.parse(options.body);
+    return new Response(
+      JSON.stringify({
+        id_index: {
+          "case-1": {
+            test_index: 1,
+            order: 1,
+            input: "1",
+            expected: "2",
+          },
+        },
+        inline: {
+          status: "SUCCESS",
+          response: {
+            results: [
+              {
+                testcase_id: "case-1",
+                status: "CORRECT",
+                stdout: "2",
+                stderr: "",
+              },
+            ],
+          },
+        },
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    );
+  };
+  t.after(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  const files = [
+    {
+      file_path: "runner/main.py",
+      file_contents: "cHJpbnQoMik=",
+      base64_encoded: true,
+    },
+    {
+      file_path: "solution.py",
+      file_contents: "def solve(): return 2",
+      base64_encoded: false,
+    },
+  ];
+  const summary = await runCompilerBatch({
+    language: "python",
+    timeLimit: 4,
+    files,
+    mainFilePath: "runner/main.py",
+    testcases: [{ id: "case-1", order: 1, input: "1", output: "2" }],
+    questionId: "question-1",
+    questionName: "Question",
+    shortText: "Question",
+  });
+
+  assert.deepEqual(submitted.files, files);
+  assert.equal(submitted.mainFilePath, "runner/main.py");
+  assert.equal(summary.passed, 1);
+  assert.equal(summary.total, 1);
 });

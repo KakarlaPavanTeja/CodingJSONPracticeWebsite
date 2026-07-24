@@ -39,7 +39,7 @@ are still packaged into the final JSON.
 
 ## Run locally
 
-Static UI only:
+Static UI only (no compiler — Execute buttons will fail):
 
 ```bash
 python3 -m http.server 8000
@@ -47,20 +47,27 @@ python3 -m http.server 8000
 
 Open `http://localhost:8000/frontend/`.
 
-For Execute (API routes + env), use Vercel:
+For **Execute** and **Execute Final JSON** (real `/api/compile` proxy):
 
 ```bash
 cp .env.example .env
 # fill COMPILER_BASE_URL and AWS_* in .env (never commit)
 npm install
-npx vercel dev
+npm run dev
 ```
 
-Then open the printed local URL and use **Author → Execute → Prepare**.
+Then open `http://127.0.0.1:3000/` (rewrites match production: UI at `/`,
+`#execute-final` for final JSON).
+
+`npm run dev` starts `scripts/local-dev.mjs`, which serves the UI and proxies
+`/api/compile` + `/api/status/*` through the same handlers as Vercel to
+`COMPILER_BASE_URL`. A plain `python3 -m http.server` will not hit the
+original compiler.
 
 Use **Author Lua** (`#author`) to edit the full Lua contract. Drafts persist in
 this browser until you clear them. Use **Execute** (`#execute`) after the Lua
-draft and a session testcase upload are ready.
+draft and a session testcase upload are ready, or **Execute Final JSON** with a
+packaged `coding_questions.json`.
 
 Set these on Vercel (Production / Preview) or in `.env` for `vercel dev`:
 `COMPILER_BASE_URL`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`,

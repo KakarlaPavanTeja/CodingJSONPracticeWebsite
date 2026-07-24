@@ -20,13 +20,20 @@ import {
   applyBuffersToDraft,
   buffersFromDraft,
   extractTestCases,
+  runCompilerBatch,
   runLanguageBatch,
 } from "./execute-runner.js";
+import {
+  MAX_FINAL_JSON_BYTES,
+  filesWithSolution,
+  parseFinalCodingQuestion,
+} from "./final-json-runner.js";
 
 const VIEW_NAMES = [
   "home",
   "author",
   "execute",
+  "execute-final",
   "prepare",
   "validation",
   "ids",
@@ -48,6 +55,13 @@ const state = {
     timeLimits: { ...DEFAULT_TIME_LIMITS },
     results: {},
     running: null,
+  },
+  executeFinal: {
+    model: null,
+    solutions: {},
+    results: {},
+    running: null,
+    generation: 0,
   },
 };
 
@@ -90,6 +104,18 @@ const elements = {
   executeRunAll: document.querySelector("#execute-run-all"),
   executeToPrepare: document.querySelector("#execute-to-prepare"),
   executeOverallStatus: document.querySelector("#execute-overall-status"),
+  executeFinalFile: document.querySelector("#execute-final-file"),
+  executeFinalFileStatus: document.querySelector(
+    "#execute-final-file-status",
+  ),
+  executeFinalSummary: document.querySelector("#execute-final-summary"),
+  executeFinalLangPanels: document.querySelector(
+    "#execute-final-lang-panels",
+  ),
+  executeFinalRunAll: document.querySelector("#execute-final-run-all"),
+  executeFinalOverallStatus: document.querySelector(
+    "#execute-final-overall-status",
+  ),
   resetWorkspace: document.querySelector("#reset-workspace"),
 };
 
@@ -371,7 +397,7 @@ function clearPrepareFileCard(inputId, emptyLabel = "No file selected") {
 
 function resetWorkspace() {
   const confirmed = window.confirm(
-    "Reset the whole workspace?\n\nThis clears the Author Lua draft (localStorage), Execute session testcases/results, Prepare uploads, and validation output. This cannot be undone.",
+    "Reset the whole workspace?\n\nThis clears the Author Lua draft (localStorage), Execute sessions, Prepare uploads, and validation output. This cannot be undone.",
   );
   if (!confirmed) return;
 
@@ -389,6 +415,13 @@ function resetWorkspace() {
     timeLimits: { ...DEFAULT_TIME_LIMITS },
     results: {},
     running: null,
+  };
+  state.executeFinal = {
+    model: null,
+    solutions: {},
+    results: {},
+    running: null,
+    generation: state.executeFinal.generation + 1,
   };
 
   const draft = clearDraft();
@@ -417,6 +450,24 @@ function resetWorkspace() {
   renderExecuteLangPanels();
   updateExecuteOverallStatus();
   setExecuteControlsBusy(false);
+
+  if (elements.executeFinalFile) {
+    elements.executeFinalFile.value = "";
+    elements.executeFinalFile.removeAttribute("aria-invalid");
+  }
+  if (elements.executeFinalFileStatus) {
+    elements.executeFinalFileStatus.textContent =
+      "No file selected · cleared on refresh";
+  }
+  const finalCard = elements.executeFinalFile?.closest(".file-card");
+  if (finalCard) delete finalCard.dataset.state;
+  if (elements.executeFinalSummary) {
+    elements.executeFinalSummary.hidden = true;
+    elements.executeFinalSummary.replaceChildren();
+  }
+  renderFinalExecutePanels();
+  updateFinalExecuteOverallStatus();
+  setFinalExecuteControlsBusy(false);
 
   const modeCreate = document.querySelector('input[name="mode"][value="create"]');
   if (modeCreate) modeCreate.checked = true;
@@ -813,8 +864,8 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
-function renderExecuteResults(language, summary) {
-  const host = document.querySelector(`#execute-${language}-results`);
+function renderExecuteResults(language, summary, namespace = "execute") {
+  const host = document.querySelector(`#${namespace}-${language}-results`);
   if (!host) return;
   if (!summary) {
     host.innerHTML = "";
@@ -887,7 +938,7 @@ function renderExecuteResults(language, summary) {
   }
 
   host.replaceChildren(wrap);
-  const banner = document.querySelector(`#execute-${language}-banner`);
+  const banner = document.querySelector(`#${namespace}-${language}-banner`);
   if (banner) {
     banner.hidden = false;
     banner.textContent = summary.globalError
@@ -1259,6 +1310,486 @@ function initExecuteUi() {
   });
 }
 
+function elementWithText(tagName, className, text) {
+  const element = document.createElement(tagName);
+  if (className) element.className = className;
+  element.textContent = text;
+  return element;
+}
+
+function updateFinalExecuteOverallStatus() {
+  const status = elements.executeFinalOverallStatus;
+  if (!status) return;
+  const model = state.executeFinal.model;
+  if (!model) {
+    status.textContent =
+      "Upload a final coding_questions.json to inspect runnable packages.";
+    return;
+  }
+  if (model.packages.length === 0) {
+    status.textContent =
+      "No runnable C++, Python, or Java function packages were found.";
+    return;
+  }
+  status.textContent = model.packages
+    .map((item) => {
+      const summary = state.executeFinal.results[item.language];
+      return summary
+        ? `${item.label}: ${summary.passed}/${summary.total}`
+        : `${item.label}: not run`;
+    })
+    .join(" · ");
+}
+
+function renderFinalExecuteSummary() {
+  const summary = elements.executeFinalSummary;
+  const model = state.executeFinal.model;
+  if (!summary) return;
+  if (!model) {
+    summary.hidden = true;
+    summary.replaceChildren();
+    return;
+  }
+
+  const title = elementWithText("strong", "", model.question.shortText);
+  const missingSolutions = model.packages.filter(
+    (item) => !(state.executeFinal.solutions[item.language] || "").trim(),
+  ).length;
+  const details = elementWithText(
+    "span",
+    "",
+    `${model.question.difficulty || "Difficulty unavailable"} · ${model.testcases.length} testcases · ${model.packages.length} runnable package${model.packages.length === 1 ? "" : "s"} · ${missingSolutions} need solution · ${model.unavailable.length} unavailable`,
+  );
+  summary.replaceChildren(title, document.createTextNode(" — "), details);
+  summary.hidden = false;
+}
+
+function renderFinalExecutePanels() {
+  const host = elements.executeFinalLangPanels;
+  if (!host) return;
+  host.replaceChildren();
+  const model = state.executeFinal.model;
+  if (!model) {
+    updateFinalExecuteOverallStatus();
+    setFinalExecuteControlsBusy(false);
+    return;
+  }
+
+  for (const item of model.packages) {
+    const panel = document.createElement("section");
+    panel.className = "panel execute-lang-panel";
+    panel.dataset.executeFinalLang = item.language;
+
+    const header = document.createElement("div");
+    header.className = "panel-header execute-lang-header";
+    const headingGroup = document.createElement("div");
+    headingGroup.append(
+      elementWithText("span", "panel-index", `FINAL / ${item.platform}`),
+      elementWithText("h2", "", item.label),
+    );
+    const banner = elementWithText("p", "notice", "");
+    banner.id = `execute-final-${item.language}-banner`;
+    banner.hidden = true;
+    headingGroup.append(banner);
+    header.append(headingGroup);
+    header.append(
+      elementWithText(
+        "p",
+        "execute-batch-hint",
+        `${item.structure === "node" ? "Node-based" : "Standard"} function package · ${item.timeLimit}s limit`,
+      ),
+    );
+
+    const actions = document.createElement("div");
+    actions.className = "execute-actions";
+    const runButton = elementWithText(
+      "button",
+      "button button-primary",
+      `Run ${item.label}`,
+    );
+    runButton.type = "button";
+    runButton.dataset.executeFinalRun = item.language;
+    runButton.disabled = Boolean(state.executeFinal.running);
+    actions.append(runButton);
+
+    const progress = elementWithText("p", "execute-progress", "");
+    progress.id = `execute-final-${item.language}-progress`;
+    progress.setAttribute("aria-live", "polite");
+
+    const results = document.createElement("div");
+    results.id = `execute-final-${item.language}-results`;
+    results.className = "execute-results-host";
+
+    const solutionText =
+      state.executeFinal.solutions[item.language] ?? item.solution ?? "";
+    const hasSolutionText = Boolean(solutionText.trim());
+    const fold = document.createElement("details");
+    fold.className = "execute-code-fold";
+    fold.open = !hasSolutionText;
+    const foldSummary = elementWithText(
+      "summary",
+      "",
+      hasSolutionText
+        ? "Reference solution (editable)"
+        : "Add reference solution",
+    );
+    const solutionField = document.createElement("label");
+    solutionField.className = "author-field";
+    solutionField.htmlFor = `execute-final-${item.language}-solution`;
+    solutionField.append(
+      document.createTextNode(`Solution → ${item.submitFilePath}`),
+    );
+    const solutionHelp = elementWithText(
+      "p",
+      "field-help",
+      item.hasSolution
+        ? "Packaged solution is prefilled. Edit before run if needed."
+        : "This JSON has no solution for this language. Paste one to run testcases.",
+    );
+    const solutionInput = document.createElement("textarea");
+    solutionInput.id = `execute-final-${item.language}-solution`;
+    solutionInput.className = "author-code";
+    solutionInput.rows = 8;
+    solutionInput.spellcheck = false;
+    solutionInput.value = solutionText;
+    solutionInput.dataset.executeFinalSolution = item.language;
+    solutionInput.setAttribute(
+      "aria-describedby",
+      `execute-final-${item.language}-solution-help`,
+    );
+    solutionHelp.id = `execute-final-${item.language}-solution-help`;
+    solutionField.append(solutionHelp, solutionInput);
+    fold.append(foldSummary, solutionField);
+
+    runButton.disabled =
+      Boolean(state.executeFinal.running) || !hasSolutionText;
+
+    panel.append(header, actions, progress, results, fold);
+    host.append(panel);
+    if (state.executeFinal.results[item.language]) {
+      renderExecuteResults(
+        item.language,
+        state.executeFinal.results[item.language],
+        "execute-final",
+      );
+    }
+  }
+
+  for (const item of model.unavailable) {
+    const panel = document.createElement("section");
+    panel.className = "panel execute-lang-panel";
+    panel.append(
+      elementWithText("span", "panel-index", `UNAVAILABLE / ${item.platform}`),
+      elementWithText("h2", "", item.label),
+      elementWithText("p", "notice", item.reason),
+    );
+    host.append(panel);
+  }
+
+  updateFinalExecuteOverallStatus();
+  setFinalExecuteControlsBusy(Boolean(state.executeFinal.running));
+}
+
+function packageHasRunnableSolution(language) {
+  return Boolean((state.executeFinal.solutions[language] || "").trim());
+}
+
+function setFinalExecuteControlsBusy(busy) {
+  if (elements.executeFinalFile) elements.executeFinalFile.disabled = busy;
+  const packages = state.executeFinal.model?.packages ?? [];
+  const runnableCount = packages.filter((item) =>
+    packageHasRunnableSolution(item.language),
+  ).length;
+  if (elements.executeFinalRunAll) {
+    elements.executeFinalRunAll.disabled = busy || runnableCount === 0;
+  }
+  for (const button of document.querySelectorAll("[data-execute-final-run]")) {
+    const language = button.dataset.executeFinalRun;
+    button.disabled = busy || !packageHasRunnableSolution(language);
+  }
+  for (const input of document.querySelectorAll(
+    "[data-execute-final-solution]",
+  )) {
+    input.disabled = busy;
+  }
+}
+
+async function runFinalExecuteLanguage(
+  language,
+  { announce = true, onProgressExtra } = {},
+) {
+  const model = state.executeFinal.model;
+  const packageData = model?.packages.find(
+    (item) => item.language === language,
+  );
+  if (!model || !packageData) {
+    throw new Error(`No runnable ${language.toUpperCase()} package is loaded.`);
+  }
+
+  const generation = state.executeFinal.generation;
+  const progress = document.querySelector(
+    `#execute-final-${language}-progress`,
+  );
+  const solutionText =
+    state.executeFinal.solutions[language] ??
+    document.querySelector(`#execute-final-${language}-solution`)?.value ??
+    "";
+  const files = filesWithSolution(packageData, solutionText);
+  const summary = await runCompilerBatch({
+    language,
+    questionKind: packageData.questionKind,
+    structure: packageData.structure,
+    timeLimit: packageData.timeLimit,
+    files,
+    mainFilePath: packageData.mainFilePath,
+    testcases: model.testcases,
+    questionId: model.question.id,
+    questionName: model.question.shortText,
+    shortText: model.question.shortText,
+    onProgress: ({ message }) => {
+      if (generation !== state.executeFinal.generation) return;
+      if (progress) progress.textContent = message;
+      onProgressExtra?.(packageData.label, message);
+    },
+  });
+
+  if (generation !== state.executeFinal.generation) {
+    throw new Error("The final JSON session changed during execution.");
+  }
+  state.executeFinal.results[language] = summary;
+  renderExecuteResults(language, summary, "execute-final");
+  updateFinalExecuteOverallStatus();
+  if (progress) {
+    progress.textContent = `${summary.passed}/${summary.total} passed`;
+  }
+  if (announce) {
+    setStatus(
+      summary.passed === summary.total
+        ? `${packageData.label} final package passed all cases.`
+        : `${packageData.label} final package finished with failures.`,
+    );
+  }
+  return summary;
+}
+
+async function handleFinalExecuteRun(language) {
+  if (state.executeFinal.running) {
+    setStatus("A final JSON language run is already in progress.");
+    return;
+  }
+  const generation = state.executeFinal.generation;
+  state.executeFinal.running = language;
+  setFinalExecuteControlsBusy(true);
+  try {
+    await runFinalExecuteLanguage(language);
+  } catch (error) {
+    if (generation !== state.executeFinal.generation) return;
+    const progress = document.querySelector(
+      `#execute-final-${language}-progress`,
+    );
+    if (progress) progress.textContent = error.message;
+    setStatus(`Final JSON execution failed: ${error.message}`);
+  } finally {
+    if (generation === state.executeFinal.generation) {
+      state.executeFinal.running = null;
+      setFinalExecuteControlsBusy(false);
+    }
+  }
+}
+
+async function handleFinalExecuteRunAll() {
+  const packages = state.executeFinal.model?.packages ?? [];
+  const runnable = packages.filter((item) =>
+    packageHasRunnableSolution(item.language),
+  );
+  if (state.executeFinal.running) {
+    setStatus("A final JSON language run is already in progress.");
+    return;
+  }
+  if (packages.length === 0) {
+    setStatus("Upload a final JSON with at least one runnable package.");
+    return;
+  }
+  if (runnable.length === 0) {
+    setStatus("Paste a reference solution for at least one language first.");
+    return;
+  }
+
+  const generation = state.executeFinal.generation;
+  state.executeFinal.running = "all";
+  setFinalExecuteControlsBusy(true);
+  const live = Object.fromEntries(
+    runnable.map((item) => [item.label, "starting…"]),
+  );
+  const refreshOverall = () => {
+    if (!elements.executeFinalOverallStatus) return;
+    elements.executeFinalOverallStatus.textContent = Object.entries(live)
+      .map(([label, message]) => `${label}: ${message}`)
+      .join(" · ");
+  };
+  refreshOverall();
+  setStatus("Running all packaged final JSON languages in parallel…");
+
+  try {
+    const settled = await Promise.allSettled(
+      runnable.map((item) =>
+        runFinalExecuteLanguage(item.language, {
+          announce: false,
+          onProgressExtra: (label, message) => {
+            live[label] = message;
+            refreshOverall();
+          },
+        }),
+      ),
+    );
+    if (generation !== state.executeFinal.generation) return;
+    const outcomes = settled.map((result, index) => {
+      const packageData = runnable[index];
+      if (result.status === "fulfilled") {
+        live[packageData.label] =
+          `${result.value.passed}/${result.value.total}`;
+        return {
+          label: packageData.label,
+          ok: result.value.passed === result.value.total,
+        };
+      }
+      const message = result.reason?.message || String(result.reason);
+      const progress = document.querySelector(
+        `#execute-final-${packageData.language}-progress`,
+      );
+      if (progress) progress.textContent = message;
+      live[packageData.label] = "error";
+      return { label: packageData.label, ok: false };
+    });
+    const failed = outcomes.filter((result) => !result.ok);
+    updateFinalExecuteOverallStatus();
+    setStatus(
+      failed.length === 0
+        ? "All packaged final JSON languages passed."
+        : `${failed.length} packaged language run${failed.length === 1 ? "" : "s"} finished with issues: ${failed.map((item) => item.label).join(", ")}.`,
+    );
+  } finally {
+    if (generation === state.executeFinal.generation) {
+      state.executeFinal.running = null;
+      setFinalExecuteControlsBusy(false);
+    }
+  }
+}
+
+function resetFinalExecuteSession() {
+  state.executeFinal = {
+    model: null,
+    solutions: {},
+    results: {},
+    running: null,
+    generation: state.executeFinal.generation + 1,
+  };
+  renderFinalExecuteSummary();
+  renderFinalExecutePanels();
+  return state.executeFinal.generation;
+}
+
+function showFinalExecuteUploadError(error, card) {
+  if (card) card.dataset.state = "error";
+  if (elements.executeFinalFile) {
+    elements.executeFinalFile.setAttribute("aria-invalid", "true");
+  }
+  if (elements.executeFinalFileStatus) {
+    elements.executeFinalFileStatus.textContent =
+      `Could not read file: ${error.message}`;
+  }
+  if (elements.executeFinalOverallStatus) {
+    elements.executeFinalOverallStatus.textContent =
+      "The selected final JSON could not be loaded.";
+  }
+  setStatus(`Final JSON upload error: ${error.message}`);
+}
+
+function commitFinalExecuteModel(model, file, card) {
+  state.executeFinal.model = model;
+  state.executeFinal.solutions = Object.fromEntries(
+    model.packages.map((item) => [item.language, item.solution || ""]),
+  );
+  state.executeFinal.results = {};
+  if (elements.executeFinalFile) {
+    elements.executeFinalFile.setAttribute("aria-invalid", "false");
+  }
+  const missingSolutions = model.packages.filter(
+    (item) => !item.hasSolution,
+  ).length;
+  if (elements.executeFinalFileStatus) {
+    elements.executeFinalFileStatus.textContent =
+      `${file.name} · ${model.testcases.length} cases · ${model.packages.length} runnable packages` +
+      (missingSolutions
+        ? ` · ${missingSolutions} need pasted solution`
+        : "");
+  }
+  if (card) card.dataset.state = "ready";
+  renderFinalExecuteSummary();
+  renderFinalExecutePanels();
+}
+
+async function handleFinalExecuteUpload(file) {
+  const generation = resetFinalExecuteSession();
+  const card = elements.executeFinalFile?.closest(".file-card");
+  if (!file) {
+    if (card) delete card.dataset.state;
+    if (elements.executeFinalFileStatus) {
+      elements.executeFinalFileStatus.textContent =
+        "No file selected · cleared on refresh";
+    }
+    return;
+  }
+
+  try {
+    if (file.size > MAX_FINAL_JSON_BYTES) {
+      throw new Error("File exceeds the 2 MiB upload limit.");
+    }
+    if (card) card.dataset.state = "loading";
+    const raw = JSON.parse(await file.text());
+    if (generation !== state.executeFinal.generation) return;
+    commitFinalExecuteModel(parseFinalCodingQuestion(raw), file, card);
+  } catch (error) {
+    if (generation !== state.executeFinal.generation) return;
+    showFinalExecuteUploadError(error, card);
+  }
+}
+
+function initFinalExecuteUi() {
+  renderFinalExecutePanels();
+  elements.executeFinalFile?.addEventListener("change", (event) => {
+    handleFinalExecuteUpload(event.currentTarget.files?.[0] || null);
+  });
+  elements.executeFinalRunAll?.addEventListener("click", (event) => {
+    event.preventDefault();
+    handleFinalExecuteRunAll();
+  });
+  elements.executeFinalLangPanels?.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    if (target.dataset.executeFinalRun) {
+      event.preventDefault();
+      handleFinalExecuteRun(target.dataset.executeFinalRun);
+    }
+  });
+  elements.executeFinalLangPanels?.addEventListener("input", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLTextAreaElement)) return;
+    const language = target.dataset.executeFinalSolution;
+    if (!language) return;
+    state.executeFinal.solutions[language] = target.value;
+    const fold = target.closest("details");
+    const summary = fold?.querySelector("summary");
+    if (summary) {
+      summary.textContent = target.value.trim()
+        ? "Reference solution (editable)"
+        : "Add reference solution";
+    }
+    renderFinalExecuteSummary();
+    setFinalExecuteControlsBusy(Boolean(state.executeFinal.running));
+  });
+}
+
 
 for (const link of elements.navLinks) {
   link.addEventListener("click", (event) => {
@@ -1462,6 +1993,7 @@ window.addEventListener("hashchange", () => {
 hydrateAuthorForm(loadDraft());
 setAuthorLanguageTab("CPP");
 initExecuteUi();
+initFinalExecuteUi();
 syncConditionalFields();
 const initialView = window.location.hash.slice(1);
 switchView(VIEW_NAMES.includes(initialView) ? initialView : "home", {

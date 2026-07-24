@@ -70,6 +70,15 @@
             </span>
             <span>Execute</span>
           </a>
+          <a href="#execute-final" data-nav="execute-final">
+            <span class="nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M14 2.75H6.75a2 2 0 0 0-2 2v14.5a2 2 0 0 0 2 2h10.5a2 2 0 0 0 2-2V8Z" />
+                <path d="M14 2.75V8h5.25M9 11.25 15.5 15 9 18.75v-7.5Z" />
+              </svg>
+            </span>
+            <span>Execute Final JSON</span>
+          </a>
           <a href="#prepare" data-nav="prepare">
             <span class="nav-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none">
@@ -111,7 +120,7 @@
             class="button button-secondary sidebar-reset"
             id="reset-workspace"
             type="button"
-            title="Clear Author draft, Execute session, Prepare uploads, and validation output"
+            title="Clear Author draft, Execute sessions, Prepare uploads, and validation output"
           >
             Reset workspace
           </button>
@@ -861,6 +870,106 @@
             </div>
             <p id="execute-overall-status" class="notice" aria-live="polite">
               Upload testcases, then run each language.
+            </p>
+          </section>
+        </section>
+
+        <section
+          data-view="execute-final"
+          aria-labelledby="execute-final-title"
+          hidden
+        >
+          <header class="page-header">
+            <div>
+              <p class="eyebrow">Packaged question runner</p>
+              <h1 id="execute-final-title" tabindex="-1">
+                Execute final JSON
+              </h1>
+              <p>
+                Upload the final <code>coding_questions.json</code> and run its
+                packaged reference solutions against the included testcases.
+                The uploaded file stays unchanged and is cleared on refresh.
+              </p>
+            </div>
+          </header>
+
+          <div class="notice execute-node-notice" role="note">
+            <strong>Reference validation only.</strong>
+            Runs go through same-origin <code>/api/compile</code> to the
+            configured compiler (start with <code>npm run dev</code>). C++,
+            Python, and Java function packages are supported. If a language is
+            missing its reference solution, paste one in the language panel
+            before running. Node.js and non-function packages must be verified
+            on the platform.
+          </div>
+
+          <section class="panel" aria-labelledby="execute-final-upload-title">
+            <div class="panel-header">
+              <div>
+                <span class="panel-index">01 / FINAL INPUT</span>
+                <h2 id="execute-final-upload-title">Final coding question</h2>
+                <p>
+                  Maximum file size: 2 MiB. The selected file is not saved in
+                  browser storage. Running sends the extracted code and
+                  testcases to the configured compiler service.
+                </p>
+              </div>
+            </div>
+            <div class="file-card">
+              <label for="execute-final-file">coding_questions.json</label>
+              <input
+                id="execute-final-file"
+                type="file"
+                accept=".json,application/json"
+                aria-describedby="execute-final-file-help execute-final-file-status"
+              />
+              <p id="execute-final-file-help" class="field-help">
+                Requires one coding question with testcases and repositories.
+                Reference solutions are optional — missing ones can be pasted
+                per language.
+              </p>
+              <p
+                id="execute-final-file-status"
+                class="file-status"
+                aria-live="polite"
+              >
+                No file selected · cleared on refresh
+              </p>
+            </div>
+            <div
+              id="execute-final-summary"
+              class="notice"
+              aria-live="polite"
+              hidden
+            ></div>
+            <div class="execute-batch-actions">
+              <button
+                class="button button-primary"
+                id="execute-final-run-all"
+                type="button"
+                disabled
+              >
+                Run all packaged languages
+              </button>
+              <p class="execute-batch-hint">
+                Uses the packaged harness, reference solution, time limits, and
+                testcases without modifying the JSON.
+              </p>
+            </div>
+          </section>
+
+          <div
+            id="execute-final-lang-panels"
+            class="execute-lang-stack"
+          ></div>
+
+          <section class="panel execute-footer-panel">
+            <p
+              id="execute-final-overall-status"
+              class="notice"
+              aria-live="polite"
+            >
+              Upload a final coding_questions.json to inspect runnable packages.
             </p>
           </section>
         </section>
